@@ -1,0 +1,126 @@
+openapi: 3.1.0
+info:
+  title: 自建房智能方案 MVP API
+  version: 0.1.0
+servers:
+  - url: /api/v1
+paths:
+  /projects:
+    get:
+      summary: 项目列表
+      responses:
+        "200": {description: OK}
+    post:
+      summary: 创建项目
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: {type: string, maxLength: 80}
+                address: {type: string, maxLength: 200}
+      responses:
+        "201": {description: Created}
+  /projects/{projectId}/site-files:
+    post:
+      summary: 登记 DXF 并创建解析任务
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [assetId, unit]
+              properties:
+                assetId: {type: string}
+                unit: {type: string, enum: [mm, m]}
+      responses:
+        "202": {description: Task accepted}
+  /projects/{projectId}/site-versions/{versionId}/confirm:
+    post:
+      summary: 确认场地信息
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/VersionId"
+      responses:
+        "200": {description: Confirmed}
+  /projects/{projectId}/requirements:
+    post:
+      summary: 创建户型需求版本
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "201": {description: Created}
+  /projects/{projectId}/plan-tasks:
+    post:
+      summary: 创建平面生成任务
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "202": {description: Task accepted}
+  /projects/{projectId}/plans/{versionId}/confirm:
+    post:
+      summary: 确认平面版本
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/VersionId"
+      responses:
+        "200": {description: Confirmed}
+  /projects/{projectId}/render-tasks:
+    post:
+      summary: 创建效果图任务
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "202": {description: Task accepted}
+  /projects/{projectId}/model-tasks:
+    post:
+      summary: 创建三维模型任务
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "202": {description: Task accepted}
+  /projects/{projectId}/document-tasks:
+    post:
+      summary: 创建 PPT/PDF 任务
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "202": {description: Task accepted}
+  /tasks/{taskId}:
+    get:
+      summary: 查询异步任务
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema: {type: string}
+      responses:
+        "200": {description: OK}
+  /tasks/{taskId}/retry:
+    post:
+      summary: 幂等重试任务
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema: {type: string}
+      responses:
+        "202": {description: Retry accepted}
+components:
+  parameters:
+    ProjectId:
+      name: projectId
+      in: path
+      required: true
+      schema: {type: string}
+    VersionId:
+      name: versionId
+      in: path
+      required: true
+      schema: {type: string}

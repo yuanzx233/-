@@ -1,0 +1,102 @@
+{
+  "valid": {
+    "01_rectangle_18x24m.dxf": {
+      "areaMm2": 432000000.0,
+      "perimeterMm": 84000.0,
+      "boundsMm": [
+        0.0,
+        0.0,
+        18000.0,
+        24000.0
+      ],
+      "vertexCount": 4
+    },
+    "02_rectangle_12x30m.dxf": {
+      "areaMm2": 360000000.0,
+      "perimeterMm": 84000.0,
+      "boundsMm": [
+        0.0,
+        0.0,
+        12000.0,
+        30000.0
+      ],
+      "vertexCount": 4
+    },
+    "03_trapezoid.dxf": {
+      "areaMm2": 494000000.0,
+      "perimeterMm": 90382.70249674241,
+      "boundsMm": [
+        0.0,
+        0.0,
+        22000.0,
+        26000.0
+      ],
+      "vertexCount": 4
+    },
+    "04_l_shape.dxf": {
+      "areaMm2": 468000000.0,
+      "perimeterMm": 96000.0,
+      "boundsMm": [
+        0.0,
+        0.0,
+        24000.0,
+        24000.0
+      ],
+      "vertexCount": 6
+    },
+    "05_pentagon.dxf": {
+      "areaMm2": 458000000.0,
+      "perimeterMm": 82278.84178875835,
+      "boundsMm": [
+        0.0,
+        0.0,
+        24000.0,
+        24000.0
+      ],
+      "vertexCount": 5
+    },
+    "06_corner_lot.dxf": {
+      "areaMm2": 400000000.0,
+      "perimeterMm": 80000.0,
+      "boundsMm": [
+        0.0,
+        0.0,
+        20000.0,
+        20000.0
+      ],
+      "vertexCount": 4
+    },
+    "07_compact_15x18m.dxf": {
+      "areaMm2": 270000000.0,
+      "perimeterMm": 66000.0,
+      "boundsMm": [
+        0.0,
+        0.0,
+        15000.0,
+        18000.0
+      ],
+      "vertexCount": 4
+    },
+    "08_irregular_hexagon.dxf": {
+      "areaMm2": 483500000.0,
+      "perimeterMm": 83083.22513913491,
+      "boundsMm": [
+        0.0,
+        0.0,
+        23000.0,
+        26000.0
+      ],
+      "vertexCount": 6
+    }
+  },
+  "invalid": {
+    "invalid_multiple_boundaries.dxf": "SITE_BOUNDARY_COUNT_INVALID",
+    "invalid_open_boundary.dxf": "SITE_BOUNDARY_NOT_CLOSED"
+  },
+  "artifacts": {
+    "preview": "output\\tech-spike\\site-preview.png",
+    "model": "output\\tech-spike\\house-massing.obj",
+    "pptx": "output\\tech-spike\\concept-package.pptx",
+    "pdf": "output\\tech-spike\\concept-package.pdf"
+  }
+}

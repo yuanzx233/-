@@ -8,6 +8,7 @@
 /.pnpm-install.*.log
 __pycache__/
 *.py[cod]
+*.tsbuildinfo
 /.pnp
 .pnp.*
 .yarn/*

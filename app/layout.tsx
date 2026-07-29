@@ -1,38 +1,31 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "Starter Project",
-  description: "A clean starting point for building your site.",
-  icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+  metadataBase: new URL("https://zhuxiangjia.example"),
+  title: {
+    default: "筑想家 | 自建房智能方案",
+    template: "%s · 筑想家",
+  },
+  description: "从标准 DXF 场地分析开始，建立统一、可追溯的自建房概念方案。",
+  icons: { icon: "/favicon.svg" },
+  openGraph: {
+    title: "筑想家",
+    description: "从一张地块图，到可沟通的家",
+    images: [{ url: "/og.png", width: 1536, height: 1024 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "筑想家",
+    description: "从一张地块图，到可沟通的家",
+    images: ["/og.png"],
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+    <html lang="zh-CN">
+      <body>{children}</body>
     </html>
   );
 }

@@ -1,15 +1,24 @@
 import type { Metadata } from "next";
-import { SkeletonPreview } from "./_sites-preview/SkeletonPreview";
+import { getChatGPTUser } from "./chatgpt-auth";
+import { ProjectDashboard } from "./project-dashboard";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Your site is taking shape",
-  description:
-    "Your first version will appear here automatically when it’s ready.",
-  other: {
-    "codex-preview": "development",
-  },
+  title: "项目工作台 | 筑想家",
+  description: "创建项目、上传地块 DXF，并跟踪自建房概念方案生成进度。",
 };
 
-export default function Home() {
-  return <SkeletonPreview />;
+export default async function Home() {
+  const user = await getChatGPTUser();
+
+  return (
+    <ProjectDashboard
+      user={
+        user
+          ? { name: user.displayName, email: user.email, authenticated: true }
+          : { name: "演示设计师", email: "demo@local", authenticated: false }
+      }
+    />
+  );
 }

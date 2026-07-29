@@ -15,10 +15,13 @@ export async function requireApiUser(request: NextRequest): Promise<ApiUser> {
   if (!email) throw new Response("UNAUTHORIZED", { status: 401 });
 
   const encodedName = request.headers.get("oai-authenticated-user-full-name");
+  const demoName = request.headers.get("x-demo-user-name");
   const displayName =
     encodedName && request.headers.get("oai-authenticated-user-full-name-encoding") === "percent-encoded-utf-8"
       ? safeDecode(encodedName) ?? email
-      : request.headers.get("x-demo-user-name") ?? email;
+      : demoName && request.headers.get("x-demo-user-name-encoding") === "percent-encoded-utf-8"
+        ? safeDecode(demoName) ?? email
+        : demoName ?? email;
 
   await ensureDatabase();
   const db = getD1();

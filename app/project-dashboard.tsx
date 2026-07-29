@@ -45,7 +45,8 @@ export function ProjectDashboard({ user }: { user: DashboardUser }) {
 
   const authHeaders = {
     "x-demo-user-email": user.email,
-    "x-demo-user-name": user.name,
+    "x-demo-user-name": encodeURIComponent(user.name),
+    "x-demo-user-name-encoding": "percent-encoded-utf-8",
   };
 
   const loadProjects = useCallback(async () => {

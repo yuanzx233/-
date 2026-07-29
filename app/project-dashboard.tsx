@@ -43,11 +43,13 @@ export function ProjectDashboard({ user }: { user: DashboardUser }) {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
 
-  const authHeaders = {
-    "x-demo-user-email": user.email,
-    "x-demo-user-name": encodeURIComponent(user.name),
-    "x-demo-user-name-encoding": "percent-encoded-utf-8",
-  };
+  const authHeaders: Record<string, string> = user.authenticated
+    ? {}
+    : {
+        "x-demo-user-email": user.email,
+        "x-demo-user-name": encodeURIComponent(user.name),
+        "x-demo-user-name-encoding": "percent-encoded-utf-8",
+      };
 
   const loadProjects = useCallback(async () => {
     setLoading(true);

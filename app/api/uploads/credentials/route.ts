@@ -3,6 +3,7 @@ import { getD1 } from "../../../../db/runtime";
 import { apiError, requireApiUser } from "../../../../lib/api-auth";
 
 const MAX_DXF_BYTES = 50 * 1024 * 1024;
+const ALLOWED_CONTENT_TYPES = new Set(["application/dxf", "application/x-dxf", "application/octet-stream", "text/plain", ""]);
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,12 +14,21 @@ export async function POST(request: NextRequest) {
       contentType?: string;
       size?: number;
       kind?: string;
+      sourceUnit?: "mm" | "cm" | "m";
+      siteInfo?: { roadDirection?: string; roadWidthMeters?: number; note?: string };
     };
-    if (!body.projectId || !body.fileName || !body.size) {
+    if (!body.projectId || !body.fileName || body.size === undefined) {
       return Response.json({ error: "缺少 projectId、fileName 或 size" }, { status: 400 });
     }
     if (!body.fileName.toLowerCase().endsWith(".dxf")) {
       return Response.json({ error: "MVP 仅支持 DXF 文件" }, { status: 400 });
+    }
+    if (!ALLOWED_CONTENT_TYPES.has(body.contentType ?? "")) {
+      return Response.json({ error: "DXF_FILE_TYPE_INVALID" }, { status: 415 });
+    }
+    if (body.size <= 0) return Response.json({ error: "DXF_FILE_EMPTY" }, { status: 400 });
+    if (!body.sourceUnit || !["mm", "cm", "m"].includes(body.sourceUnit)) {
+      return Response.json({ error: "DXF_UNIT_REQUIRED" }, { status: 400 });
     }
     if (body.size > MAX_DXF_BYTES) return Response.json({ error: "DXF 文件不能超过 50 MB" }, { status: 413 });
     const project = await getD1().prepare("SELECT id FROM projects WHERE id = ? AND owner_id = ?")
@@ -35,8 +45,8 @@ export async function POST(request: NextRequest) {
       db.prepare(
         `INSERT INTO file_assets
           (id, project_id, version_id, owner_id, kind, object_key, file_name, content_type, size, status, metadata_json, created_at, updated_at)
-         VALUES (?, ?, NULL, ?, ?, ?, ?, ?, ?, 'PENDING', '{}', ?, ?)`,
-      ).bind(fileId, body.projectId, user.id, body.kind ?? "SITE_DXF", objectKey, body.fileName, body.contentType ?? "application/dxf", body.size, now.toISOString(), now.toISOString()),
+         VALUES (?, ?, NULL, ?, ?, ?, ?, ?, ?, 'PENDING', ?, ?, ?)`,
+      ).bind(fileId, body.projectId, user.id, body.kind ?? "SITE_DXF", objectKey, body.fileName, body.contentType ?? "application/dxf", body.size, JSON.stringify({ sourceUnit: body.sourceUnit, siteInfo: body.siteInfo ?? {} }), now.toISOString(), now.toISOString()),
       db.prepare(
         "INSERT INTO upload_sessions (token, file_id, owner_id, expires_at, consumed_at, created_at) VALUES (?, ?, ?, ?, NULL, ?)",
       ).bind(token, fileId, user.id, expiresAt.toISOString(), now.toISOString()),

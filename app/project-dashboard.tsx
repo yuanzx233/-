@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
+import { SiteUploadWorkspace } from "./site-upload-workspace";
 
 type Project = {
   id: string;
@@ -239,6 +240,8 @@ export function ProjectDashboard({ user }: { user: DashboardUser }) {
           </div>
         </aside>
       </section>
+
+      <SiteUploadWorkspace projects={projects} authHeaders={authHeaders} />
 
       <footer>
         <p>筑想家生成内容仅用于前期概念沟通，不可直接用于施工、报建或结构安全判断。</p>

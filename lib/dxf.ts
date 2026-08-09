@@ -1,10 +1,19 @@
 export type Point2D = { x: number; y: number };
 export type Line2D = { type: "LINE"; layer: string; start: Point2D; end: Point2D };
 export type Polyline2D = { type: "LWPOLYLINE"; layer: string; closed: boolean; points: Point2D[] };
+export type DxfUnit = "mm" | "cm" | "m" | "unknown";
+export type SiteBoundary = {
+  layer: string;
+  points: Point2D[];
+  areaSquareMeters: number;
+  perimeterMeters: number;
+  sideLengthsMeters: number[];
+  majorDimensionsMeters: { width: number; height: number };
+};
 
 export type DxfModel = {
-  schemaVersion: "0.1";
-  sourceUnit: "mm" | "m" | "unknown";
+  schemaVersion: "0.2";
+  sourceUnit: DxfUnit;
   normalizedUnit: "mm";
   origin: Point2D;
   bounds: { min: Point2D; max: Point2D; width: number; height: number };
@@ -12,14 +21,21 @@ export type DxfModel = {
   lines: Line2D[];
   polylines: Polyline2D[];
   stats: { entityCount: number; lineCount: number; polylineCount: number };
+  boundary: SiteBoundary;
+  previewSvg: string;
 };
 
 type Pair = [number, string];
 
-export function parseDxf(source: string): DxfModel {
+export function parseDxf(source: string, options: { unit?: Exclude<DxfUnit, "unknown"> } = {}): DxfModel {
+  if (!source.includes("SECTION") || !source.includes("ENTITIES") || !source.includes("EOF")) {
+    throw new Error("DXF_INVALID_STRUCTURE");
+  }
   const pairs = readPairs(source);
-  const sourceUnit = readUnit(pairs);
-  const scale = sourceUnit === "m" ? 1000 : 1;
+  const detectedUnit = readUnit(pairs);
+  const sourceUnit = options.unit ?? detectedUnit;
+  if (sourceUnit === "unknown") throw new Error("DXF_UNIT_REQUIRED");
+  const scale = sourceUnit === "m" ? 1000 : sourceUnit === "cm" ? 10 : 1;
   const rawLines: Line2D[] = [];
   const rawPolylines: Polyline2D[] = [];
   let inEntities = false;
@@ -91,13 +107,37 @@ export function parseDxf(source: string): DxfModel {
   });
   const lines = rawLines.map((line) => ({ ...line, start: normalize(line.start), end: normalize(line.end) }));
   const polylines = rawPolylines.map((polyline) => ({ ...polyline, points: polyline.points.map(normalize) }));
+  const closed = polylines.filter((polyline) => polyline.closed && polyline.points.length >= 3);
+  const namedBoundaries = closed.filter((polyline) => polyline.layer.toUpperCase() === "SITE_BOUNDARY");
+  const candidates = namedBoundaries.length ? namedBoundaries : closed;
+  if (!candidates.length) throw new Error("DXF_BOUNDARY_NOT_CLOSED");
+  if (candidates.length > 1) throw new Error("DXF_MULTIPLE_BOUNDARIES");
+  const boundaryPolyline = candidates[0];
+  const areaMm2 = polygonArea(boundaryPolyline.points);
+  const sideLengthsMm = polygonSideLengths(boundaryPolyline.points);
+  const perimeterMm = sideLengthsMm.reduce((sum, length) => sum + length, 0);
+  const boundaryBounds = getBounds(boundaryPolyline.points);
+  if (areaMm2 < 4_000_000 || areaMm2 > 1_000_000_000_000 || sideLengthsMm.some((length) => length < 500 || length > 500_000)) {
+    throw new Error("DXF_SCALE_OUT_OF_RANGE");
+  }
+  const boundary: SiteBoundary = {
+    layer: boundaryPolyline.layer,
+    points: boundaryPolyline.points,
+    areaSquareMeters: round(areaMm2 / 1_000_000),
+    perimeterMeters: round(perimeterMm / 1000),
+    sideLengthsMeters: sideLengthsMm.map((length) => round(length / 1000)),
+    majorDimensionsMeters: {
+      width: round(boundaryBounds.width / 1000),
+      height: round(boundaryBounds.height / 1000),
+    },
+  };
   const layerMap = new Map<string, number>();
   for (const entity of [...lines, ...polylines]) {
     layerMap.set(entity.layer, (layerMap.get(entity.layer) ?? 0) + 1);
   }
 
   return {
-    schemaVersion: "0.1",
+    schemaVersion: "0.2",
     sourceUnit,
     normalizedUnit: "mm",
     origin: { x: minX, y: minY },
@@ -115,6 +155,8 @@ export function parseDxf(source: string): DxfModel {
       lineCount: lines.length,
       polylineCount: polylines.length,
     },
+    boundary,
+    previewSvg: renderBoundarySvg(boundary),
   };
 }
 
@@ -131,10 +173,43 @@ function readPairs(source: string): Pair[] {
   return pairs;
 }
 
-function readUnit(pairs: Pair[]): "mm" | "m" | "unknown" {
+function readUnit(pairs: Pair[]): DxfUnit {
   const index = pairs.findIndex(([code, value]) => code === 9 && value === "$INSUNITS");
   const unit = index >= 0 ? Number.parseInt(pairs[index + 1]?.[1] ?? "", 10) : 0;
-  return unit === 4 ? "mm" : unit === 6 ? "m" : "unknown";
+  return unit === 4 ? "mm" : unit === 5 ? "cm" : unit === 6 ? "m" : "unknown";
+}
+
+function getBounds(points: Point2D[]) {
+  const xs = points.map((point) => point.x);
+  const ys = points.map((point) => point.y);
+  const minX = Math.min(...xs);
+  const minY = Math.min(...ys);
+  const maxX = Math.max(...xs);
+  const maxY = Math.max(...ys);
+  return { minX, minY, maxX, maxY, width: maxX - minX, height: maxY - minY };
+}
+
+function polygonArea(points: Point2D[]): number {
+  return Math.abs(points.reduce((sum, point, index) => {
+    const next = points[(index + 1) % points.length];
+    return sum + point.x * next.y - next.x * point.y;
+  }, 0) / 2);
+}
+
+function polygonSideLengths(points: Point2D[]): number[] {
+  return points.map((point, index) => {
+    const next = points[(index + 1) % points.length];
+    return Math.hypot(next.x - point.x, next.y - point.y);
+  });
+}
+
+function renderBoundarySvg(boundary: SiteBoundary): string {
+  const box = getBounds(boundary.points);
+  const padding = Math.max(box.width, box.height) * 0.12 || 1;
+  const viewWidth = box.width + padding * 2;
+  const viewHeight = box.height + padding * 2;
+  const points = boundary.points.map((point) => `${round(point.x - box.minX + padding)},${round(box.maxY - point.y + padding)}`).join(" ");
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${round(viewWidth)} ${round(viewHeight)}" role="img" aria-label="场地边界预览"><rect width="100%" height="100%" fill="#f5f1e8"/><polygon points="${points}" fill="#d8e4d2" stroke="#153b32" stroke-width="${round(Math.max(viewWidth, viewHeight) / 180)}"/><text x="${round(padding)}" y="${round(padding * 0.75)}" fill="#9e5435" font-size="${round(Math.max(viewWidth, viewHeight) / 28)}" font-family="Arial">N ↑</text></svg>`;
 }
 
 function collectEntity(pairs: Pair[], start: number): { pairs: Pair[]; next: number } {

@@ -10,7 +10,17 @@ type BoundaryResult = {
   sideLengthsMeters: number[];
   majorDimensionsMeters: { width: number; height: number };
 };
-type ParseResult = { model: { boundary: BoundaryResult; previewSvg: string; sourceUnit: string } };
+type SiteAnalysis = {
+  roadSides: Array<"north" | "east" | "south" | "west">;
+  roadWidthMeters: number | null;
+  entranceSide: "north" | "east" | "south" | "west" | null;
+  entranceWidthMeters: number | null;
+  northAngleDegrees: number | null;
+  northToleranceDegrees: number;
+  northWithinTolerance: boolean;
+};
+type ParseResult = { model: { boundary: BoundaryResult; siteAnalysis: SiteAnalysis; previewSvg: string; sourceUnit: string } };
+const sideChinese = { north: "北", east: "东", south: "南", west: "西" } as const;
 
 const errorMessages: Record<string, string> = {
   DXF_FILE_TYPE_INVALID: "请选择扩展名为 .dxf 的 ASCII DXF 文件。",
@@ -21,7 +31,7 @@ const errorMessages: Record<string, string> = {
   DXF_GROUP_PAIR_MISMATCH: "DXF 数据不完整，请重新导出文件。",
   DXF_INVALID_GROUP_CODE: "DXF 包含无法识别的数据组，可能已经损坏。",
   DXF_INVALID_COORDINATE: "DXF 中存在无效坐标，请检查 CAD 图形。",
-  DXF_NO_SUPPORTED_ENTITIES: "未找到线段或轻量多段线。请将地块边界导出为 LWPOLYLINE。",
+  DXF_NO_SUPPORTED_ENTITIES: "未找到线段或多段线。请检查 DXF 实体是否完整。",
   DXF_BOUNDARY_NOT_CLOSED: "未识别到闭合地块。请在 CAD 中闭合场地多段线。",
   DXF_MULTIPLE_BOUNDARIES: "识别到多个闭合地块。请只保留一个 SITE_BOUNDARY 边界。",
   DXF_SCALE_OUT_OF_RANGE: "换算后的地块尺寸异常，请检查所选单位或 CAD 比例。",
@@ -93,6 +103,10 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
       const parseResponse = await fetch(`/api/files/${credentialPayload.credential.fileId}/parse`, { method: "POST", headers: authHeaders });
       const parsePayload = await parseResponse.json() as ParseResult & { error?: string };
       if (!parseResponse.ok) throw new Error(parsePayload.error ?? "DXF_PARSE_FAILED");
+      const detectedRoads = parsePayload.model.siteAnalysis.roadSides;
+      if (detectedRoads.length === 1) setRoadDirection(sideChinese[detectedRoads[0]]);
+      if (detectedRoads.length > 1) setRoadDirection("多面临路");
+      if (parsePayload.model.siteAnalysis.roadWidthMeters !== null) setRoadWidth(String(parsePayload.model.siteAnalysis.roadWidthMeters));
       setResult(parsePayload);
       setProgress(100);
       setPhase("done");
@@ -135,16 +149,22 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
         </div>
       </div>
     </section>
-    {result && projectId ? <RequirementsWorkspace projectId={projectId} siteResult={{ areaSquareMeters: result.model.boundary.areaSquareMeters, perimeterMeters: result.model.boundary.perimeterMeters }} initialRoadDirection={roadDirection} authHeaders={authHeaders} onSaved={onProjectUpdated} /> : null}
+    {result && projectId ? <RequirementsWorkspace projectId={projectId} siteResult={{ areaSquareMeters: result.model.boundary.areaSquareMeters, perimeterMeters: result.model.boundary.perimeterMeters }} initialRoadDirection={result.model.siteAnalysis.roadSides[0] ? sideChinese[result.model.siteAnalysis.roadSides[0]] : roadDirection} authHeaders={authHeaders} onSaved={onProjectUpdated} /> : null}
   </>);
 }
 
 function ResultView({ result }: { result: ParseResult }) {
   const boundary = result.model.boundary;
+  const analysis = result.model.siteAnalysis;
   return <>
     <div className="preview-top"><div><small>场地轮廓</small><strong>{boundary.majorDimensionsMeters.width} × {boundary.majorDimensionsMeters.height} m</strong></div><button className="quiet-button" type="button" onClick={() => void downloadPng(result.model.previewSvg)}>下载 PNG</button></div>
     <div className="svg-preview" dangerouslySetInnerHTML={{ __html: result.model.previewSvg }} />
     <div className="site-metrics"><div><small>面积</small><strong>{boundary.areaSquareMeters} m²</strong></div><div><small>周长</small><strong>{boundary.perimeterMeters} m</strong></div><div><small>边数</small><strong>{boundary.sideLengthsMeters.length}</strong></div></div>
+    <div className="semantic-metrics">
+      <span><small>临路</small><strong>{analysis.roadSides.length ? analysis.roadSides.map((side) => `${sideChinese[side]}侧`).join("、") : "待确认"}</strong><em>{analysis.roadWidthMeters === null ? "未识别宽度" : `${analysis.roadWidthMeters} m 宽`}</em></span>
+      <span><small>入口</small><strong>{analysis.entranceSide ? `${sideChinese[analysis.entranceSide]}侧` : "待确认"}</strong><em>{analysis.entranceWidthMeters === null ? "未识别宽度" : `${analysis.entranceWidthMeters} m 宽`}</em></span>
+      <span><small>北向</small><strong>{analysis.northAngleDegrees === null ? "待确认" : `${analysis.northAngleDegrees}°`}</strong><em>{analysis.northWithinTolerance ? `误差 ≤ ${analysis.northToleranceDegrees}°` : "请人工校正"}</em></span>
+    </div>
     <div className="side-list"><small>逐边尺寸</small><div>{boundary.sideLengthsMeters.map((length, index) => <span key={`${index}-${length}`}>边 {index + 1}<strong>{length} m</strong></span>)}</div></div>
   </>;
 }

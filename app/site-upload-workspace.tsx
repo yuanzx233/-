@@ -1,6 +1,7 @@
 "use client";
 
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { RequirementsWorkspace } from "./requirements-workspace";
 
 type ProjectOption = { id: string; name: string; address: string | null };
 type BoundaryResult = {
@@ -27,7 +28,7 @@ const errorMessages: Record<string, string> = {
   UPLOAD_SIZE_MISMATCH: "上传文件大小与登记信息不一致，请重试。",
 };
 
-export function SiteUploadWorkspace({ projects, authHeaders }: { projects: ProjectOption[]; authHeaders: Record<string, string> }) {
+export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }: { projects: ProjectOption[]; authHeaders: Record<string, string>; onProjectUpdated: () => void }) {
   const [projectId, setProjectId] = useState("");
   const [unit, setUnit] = useState<"mm" | "cm" | "m">("mm");
   const [roadDirection, setRoadDirection] = useState("南");
@@ -106,7 +107,7 @@ export function SiteUploadWorkspace({ projects, authHeaders }: { projects: Proje
     setMessage(text);
   }
 
-  return (
+  return (<>
     <section className="cad-workspace" id="cad-upload">
       <div className="cad-heading">
         <div><p className="eyebrow">DAY 3 · CAD 上传与场地解析</p><h2>把 CAD 地块变成可核对的场地数据</h2></div>
@@ -134,7 +135,8 @@ export function SiteUploadWorkspace({ projects, authHeaders }: { projects: Proje
         </div>
       </div>
     </section>
-  );
+    {result && projectId ? <RequirementsWorkspace projectId={projectId} siteResult={{ areaSquareMeters: result.model.boundary.areaSquareMeters, perimeterMeters: result.model.boundary.perimeterMeters }} initialRoadDirection={roadDirection} authHeaders={authHeaders} onSaved={onProjectUpdated} /> : null}
+  </>);
 }
 
 function ResultView({ result }: { result: ParseResult }) {

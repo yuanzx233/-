@@ -50,12 +50,33 @@ paths:
       responses:
         "200": {description: Confirmed}
   /projects/{projectId}/requirements:
-    post:
-      summary: 创建户型需求版本
+    get:
+      summary: 获取最新场地确认与户型需求
       parameters:
         - $ref: "#/components/parameters/ProjectId"
       responses:
+        "200": {description: OK}
+    post:
+      summary: 确认场地并创建结构化户型需求版本
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [site, requirements]
+              properties:
+                site:
+                  type: object
+                  required: [northDirection, entranceDirection, roadDirections, boundaryConfirmed, areaSquareMeters, perimeterMeters]
+                requirements:
+                  type: object
+                  required: [floors, householdSize, areaMin, areaMax, bedroomCount, bathroomCount, stairCount, priorities]
+      responses:
         "201": {description: Created}
+        "422": {description: Validation failed}
   /projects/{projectId}/plan-tasks:
     post:
       summary: 创建平面生成任务

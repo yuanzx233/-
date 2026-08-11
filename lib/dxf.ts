@@ -263,13 +263,19 @@ function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnaly
   const entranceGap = analysis.entranceSegment ? renderEntranceGap(analysis.entranceSegment, analysis.entranceSide, map, stroke) : "";
   const topLeft = map({ x: boundaryBox.minX, y: boundaryBox.maxY });
   const topRight = map({ x: boundaryBox.maxX, y: boundaryBox.maxY });
+  const bottomLeft = map({ x: boundaryBox.minX, y: boundaryBox.minY });
   const bottomRight = map({ x: boundaryBox.maxX, y: boundaryBox.minY });
   const dimensionOffset = dimensionSpace * 0.45;
-  const widthY = round(topLeft.y - dimensionOffset);
-  const heightX = round(topRight.x + dimensionOffset);
-  const dimensions = `<g stroke="#567069" fill="#153b32" stroke-width="${round(stroke * .55)}" font-family="Arial, sans-serif" font-size="${round(font * .72)}"><line x1="${topLeft.x}" y1="${widthY}" x2="${topRight.x}" y2="${widthY}"/><line x1="${topLeft.x}" y1="${round(widthY - font * .3)}" x2="${topLeft.x}" y2="${round(widthY + font * .3)}"/><line x1="${topRight.x}" y1="${round(widthY - font * .3)}" x2="${topRight.x}" y2="${round(widthY + font * .3)}"/><text x="${round((topLeft.x + topRight.x) / 2)}" y="${round(widthY - font * .35)}" text-anchor="middle" stroke="none">${boundary.majorDimensionsMeters.width} m</text><line x1="${heightX}" y1="${topRight.y}" x2="${heightX}" y2="${bottomRight.y}"/><line x1="${round(heightX - font * .3)}" y1="${topRight.y}" x2="${round(heightX + font * .3)}" y2="${topRight.y}"/><line x1="${round(heightX - font * .3)}" y1="${bottomRight.y}" x2="${round(heightX + font * .3)}" y2="${bottomRight.y}"/><text x="${round(heightX + font * .65)}" y="${round((topRight.y + bottomRight.y) / 2)}" transform="rotate(90 ${round(heightX + font * .65)} ${round((topRight.y + bottomRight.y) / 2)})" text-anchor="middle" stroke="none">${boundary.majorDimensionsMeters.height} m</text></g>`;
-  const roadLabel = roads[0] ? labelAtCenter(roads[0].points, `${sideLabel(analysis.roadSides[0])}侧道路 ${analysis.roadWidthMeters ?? "?"} m`, map, font, "#fffdf8") : "";
-  const entranceLabel = analysis.entranceSegment ? labelAtCenter([analysis.entranceSegment.start, analysis.entranceSegment.end], `入口 ${analysis.entranceWidthMeters ?? "?"} m`, map, font * .72, "#9e5435", -font * .7) : "";
+  const widthOnTop = !analysis.roadSides.includes("north");
+  const heightOnRight = !analysis.roadSides.includes("east");
+  const widthY = round(widthOnTop ? topLeft.y - dimensionOffset : bottomLeft.y + dimensionOffset);
+  const heightX = round(heightOnRight ? topRight.x + dimensionOffset : topLeft.x - dimensionOffset);
+  const widthTextY = round(widthY + (widthOnTop ? -font * .35 : font * .9));
+  const heightTextX = round(heightX + (heightOnRight ? font * .65 : -font * .65));
+  const heightMiddleY = round((topRight.y + bottomRight.y) / 2);
+  const dimensions = `<g stroke="#567069" fill="#153b32" stroke-width="${round(stroke * .55)}" font-family="Arial, sans-serif" font-size="${round(font * .72)}"><line x1="${topLeft.x}" y1="${widthY}" x2="${topRight.x}" y2="${widthY}"/><line x1="${topLeft.x}" y1="${round(widthY - font * .3)}" x2="${topLeft.x}" y2="${round(widthY + font * .3)}"/><line x1="${topRight.x}" y1="${round(widthY - font * .3)}" x2="${topRight.x}" y2="${round(widthY + font * .3)}"/><text x="${round((topLeft.x + topRight.x) / 2)}" y="${widthTextY}" text-anchor="middle" stroke="none">${boundary.majorDimensionsMeters.width} m</text><line x1="${heightX}" y1="${topRight.y}" x2="${heightX}" y2="${bottomRight.y}"/><line x1="${round(heightX - font * .3)}" y1="${topRight.y}" x2="${round(heightX + font * .3)}" y2="${topRight.y}"/><line x1="${round(heightX - font * .3)}" y1="${bottomRight.y}" x2="${round(heightX + font * .3)}" y2="${bottomRight.y}"/><text x="${heightTextX}" y="${heightMiddleY}" transform="rotate(90 ${heightTextX} ${heightMiddleY})" text-anchor="middle" stroke="none">${boundary.majorDimensionsMeters.height} m</text></g>`;
+  const roadLabel = roads[0] ? renderRoadLabel(roads[0].points, analysis.roadSides[0], `${sideLabel(analysis.roadSides[0])}侧道路 ${analysis.roadWidthMeters ?? "?"} m`, map, font) : "";
+  const entranceLabel = analysis.entranceSegment ? renderEntranceLabel(analysis.entranceSegment, analysis.entranceSide, `入口 ${analysis.entranceWidthMeters ?? "?"} m`, map, font * .72) : "";
   const northTip = northLines[0]?.end;
   const northLabel = northTip ? labelAtCenter([northTip], `N ${analysis.northAngleDegrees ?? "?"}°`, map, font, "#153b32", -font * .55) : "";
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${round(viewWidth)} ${round(viewHeight)}" role="img" aria-label="场地边界、临路、入口、北向和尺寸预览"><rect width="100%" height="100%" fill="#f5f1e8"/>${roadShapes}${roadLabel}${boundaryShape}${entranceGap}${entranceShapes}${entranceLabel}${northShapes}${northLabel}${dimensions}</svg>`;
@@ -290,6 +296,22 @@ function labelAtCenter(items: Point2D[], text: string, map: (point: Point2D) => 
   const center = items.reduce((sum, item) => ({ x: sum.x + item.x / items.length, y: sum.y + item.y / items.length }), { x: 0, y: 0 });
   const point = map(center);
   return `<text x="${point.x}" y="${round(point.y + offsetY)}" text-anchor="middle" dominant-baseline="middle" fill="${color}" font-size="${round(font)}" font-family="Arial, sans-serif" font-weight="700">${text}</text>`;
+}
+
+function renderRoadLabel(items: Point2D[], side: CardinalSide | undefined, text: string, map: (point: Point2D) => Point2D, font: number): string {
+  const center = items.reduce((sum, item) => ({ x: sum.x + item.x / items.length, y: sum.y + item.y / items.length }), { x: 0, y: 0 });
+  const point = map(center);
+  const rotation = side === "east" || side === "west" ? 90 : 0;
+  return `<text x="${point.x}" y="${point.y}" transform="rotate(${rotation} ${point.x} ${point.y})" text-anchor="middle" dominant-baseline="middle" fill="#fffdf8" stroke="#9e5435" stroke-width="${round(font * .16)}" paint-order="stroke" font-size="${round(font * .88)}" font-family="Arial, sans-serif" font-weight="700">${text}</text>`;
+}
+
+function renderEntranceLabel(segment: { start: Point2D; end: Point2D }, side: CardinalSide | null, text: string, map: (point: Point2D) => Point2D, font: number): string {
+  const center = map({ x: (segment.start.x + segment.end.x) / 2, y: (segment.start.y + segment.end.y) / 2 });
+  const offset = font * 1.25;
+  const x = round(center.x + (side === "west" ? offset : side === "east" ? -offset : 0));
+  const y = round(center.y + (side === "north" ? offset : side === "south" ? -offset : 0));
+  const anchor = side === "east" ? "end" : side === "west" ? "start" : "middle";
+  return `<text x="${x}" y="${y}" text-anchor="${anchor}" dominant-baseline="middle" fill="#9e5435" stroke="#fffdf8" stroke-width="${round(font * .35)}" paint-order="stroke" font-size="${round(font)}" font-family="Arial, sans-serif" font-weight="700">${text}</text>`;
 }
 
 function sideLabel(side: CardinalSide | undefined): string {

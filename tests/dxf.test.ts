@@ -71,6 +71,9 @@ test("DXF-02 auto-detects meters, preserves scale, and accepts rotated north", a
   assert.equal(automatic.siteAnalysis.entranceWidthMeters, 3.5);
   assert.ok(automatic.siteAnalysis.northAngleDegrees !== null && Math.abs(automatic.siteAnalysis.northAngleDegrees - 15) <= 2);
   assert.equal(automatic.siteAnalysis.northDetected, true);
+  assert.match(automatic.previewSvg, /东侧道路 4 m/);
+  assert.match(automatic.previewSvg, /transform="rotate\(90/);
+  assert.match(automatic.previewSvg, /text-anchor="end"[^>]*>入口 3\.5 m/);
 
   const confirmed = parseDxf(source, { unit: "m" });
   assert.equal(confirmed.boundary.areaSquareMeters, 300);

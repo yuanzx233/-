@@ -47,7 +47,7 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
   const [unit, setUnit] = useState<"auto" | "mm" | "cm" | "m">("auto");
   const [detectedUnit, setDetectedUnit] = useState<"mm" | "cm" | "m" | null>(null);
   const [roadDirection, setRoadDirection] = useState("南");
-  const [roadWidth, setRoadWidth] = useState("6");
+  const [roadWidth, setRoadWidth] = useState("6.0");
   const [note, setNote] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [progress, setProgress] = useState(0);
@@ -112,7 +112,7 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
       const detectedRoads = parsePayload.model.siteAnalysis.roadSides;
       if (detectedRoads.length === 1) setRoadDirection(sideChinese[detectedRoads[0]]);
       if (detectedRoads.length > 1) setRoadDirection("多面临路");
-      if (parsePayload.model.siteAnalysis.roadWidthMeters !== null) setRoadWidth(String(parsePayload.model.siteAnalysis.roadWidthMeters));
+      if (parsePayload.model.siteAnalysis.roadWidthMeters !== null) setRoadWidth(formatMetric(parsePayload.model.siteAnalysis.roadWidthMeters));
       if (["mm", "cm", "m"].includes(parsePayload.model.sourceUnit)) setDetectedUnit(parsePayload.model.sourceUnit as "mm" | "cm" | "m");
       setResult(parsePayload);
       setProgress(100);
@@ -178,7 +178,7 @@ function ResultView({ result }: { result: ParseResult }) {
     };
   }, [isPreviewOpen]);
   return <>
-    <div className="preview-top"><div><small>场地轮廓</small><strong>{boundary.majorDimensionsMeters.width} × {boundary.majorDimensionsMeters.height} m</strong></div><button className="quiet-button" type="button" onClick={() => void downloadPng(result.model.previewSvg)}>下载 PNG</button></div>
+    <div className="preview-top"><div><small>场地轮廓</small><strong>{formatMetric(boundary.majorDimensionsMeters.width)} × {formatMetric(boundary.majorDimensionsMeters.height)} m</strong></div><button className="quiet-button" type="button" onClick={() => void downloadPng(result.model.previewSvg)}>下载 PNG</button></div>
     <button className="svg-preview preview-zoom-trigger" type="button" aria-label="放大查看场地轮廓图" onClick={() => setIsPreviewOpen(true)}>
       <span className="preview-zoom-hint">点击放大</span>
       <span className="preview-svg-content" dangerouslySetInnerHTML={{ __html: result.model.previewSvg }} />
@@ -190,20 +190,23 @@ function ResultView({ result }: { result: ParseResult }) {
         <p>按 Esc 或点击图片外区域关闭</p>
       </div>
     </div>}
-    <div className="site-metrics"><div><small>面积</small><strong>{boundary.areaSquareMeters} m²</strong></div><div><small>周长</small><strong>{boundary.perimeterMeters} m</strong></div><div><small>边数</small><strong>{boundary.sideLengthsMeters.length}</strong></div></div>
+    <div className="site-metrics"><div><small>面积</small><strong>{formatMetric(boundary.areaSquareMeters)} m²</strong></div><div><small>周长</small><strong>{formatMetric(boundary.perimeterMeters)} m</strong></div><div><small>边数</small><strong>{boundary.sideLengthsMeters.length}</strong></div></div>
     <div className="semantic-metrics">
-      <span><small>临路</small><strong>{analysis.roads?.length ? analysis.roads.map((road) => `${sideChinese[road.side]}侧 ${road.widthMeters} m`).join("、") : analysis.roadSides.length ? analysis.roadSides.map((side) => `${sideChinese[side]}侧`).join("、") : "待确认"}</strong><em>{analysis.roads?.length ? `${analysis.roads.length} 面道路` : analysis.roadWidthMeters === null ? "未识别宽度" : `${analysis.roadWidthMeters} m 宽`}</em></span>
-      <span><small>入口</small><strong>{analysis.entranceSide ? `${sideChinese[analysis.entranceSide]}侧` : "待确认"}</strong><em>{analysis.entranceWidthMeters === null ? "未识别宽度" : `${analysis.entranceWidthMeters} m 宽`}</em></span>
+      <span><small>临路</small><strong>{analysis.roads?.length ? analysis.roads.map((road) => `${sideChinese[road.side]}侧 ${formatMetric(road.widthMeters)} m`).join("、") : analysis.roadSides.length ? analysis.roadSides.map((side) => `${sideChinese[side]}侧`).join("、") : "待确认"}</strong><em>{analysis.roads?.length ? `${analysis.roads.length} 面道路` : analysis.roadWidthMeters === null ? "未识别宽度" : `${formatMetric(analysis.roadWidthMeters)} m 宽`}</em></span>
+      <span><small>入口</small><strong>{analysis.entranceSide ? `${sideChinese[analysis.entranceSide]}侧` : "待确认"}</strong><em>{analysis.entranceWidthMeters === null ? "未识别宽度" : `${formatMetric(analysis.entranceWidthMeters)} m 宽`}</em></span>
       <span><small>北向</small><strong>{analysis.northAngleDegrees === null ? "待确认" : `${analysis.northAngleDegrees}°`}</strong><em>{analysis.northDetected ? "已识别 · 顺时针自图纸上方" : "未找到 NORTH 图层"}</em></span>
-      <span><small>主要方向</small><strong>{boundary.majorDirectionDegrees}°</strong><em>相对图纸水平轴</em></span>
-      {result.model.buildableArea && <span><small>可建设范围</small><strong>{result.model.buildableArea.areaSquareMeters} m²</strong><em>控制线内 · 周长 {result.model.buildableArea.perimeterMeters} m</em></span>}
+      {result.model.buildableArea && <span><small>可建设范围</small><strong>{formatMetric(result.model.buildableArea.areaSquareMeters)} m²</strong><em>控制线内 · 周长 {formatMetric(result.model.buildableArea.perimeterMeters)} m</em></span>}
     </div>
-    <div className="side-list"><small>逐边尺寸</small><div>{boundary.sideLengthsMeters.map((length, index) => <span key={`${index}-${length}`}>边 {index + 1}<strong>{length} m</strong></span>)}</div></div>
+    <div className="side-list"><small>逐边尺寸</small><div>{boundary.sideLengthsMeters.map((length, index) => <span key={`${index}-${length}`}>边 {index + 1}<strong>{formatMetric(length)} m</strong></span>)}</div></div>
   </>;
 }
 
 function unitName(unit: "mm" | "cm" | "m"): string {
   return unit === "mm" ? "毫米（mm）" : unit === "cm" ? "厘米（cm）" : "米（m）";
+}
+
+function formatMetric(value: number): string {
+  return value.toFixed(1);
 }
 
 function uploadWithProgress(url: string, file: File, onProgress: (value: number) => void): Promise<void> {

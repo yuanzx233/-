@@ -51,10 +51,10 @@ test("accepts DXF-01 legacy POLYLINE and recognizes site semantics within tolera
   assert.equal(model.siteAnalysis.northDetected, true);
   assert.match(model.previewSvg, /<polygon/);
   assert.match(model.previewSvg, /N 0°/);
-  assert.match(model.previewSvg, /南侧道路 6 m/);
-  assert.match(model.previewSvg, /入口 4 m/);
-  assert.match(model.previewSvg, />18 m</);
-  assert.match(model.previewSvg, />24 m</);
+  assert.match(model.previewSvg, /南侧道路 6\.0 m/);
+  assert.match(model.previewSvg, /入口 4\.0 m/);
+  assert.match(model.previewSvg, />18\.0 m</);
+  assert.match(model.previewSvg, />24\.0 m</);
   assert.match(model.previewSvg, /场地边界、建筑控制线、临路、入口、北向和尺寸预览/);
 });
 
@@ -71,7 +71,7 @@ test("DXF-02 auto-detects meters, preserves scale, and accepts rotated north", a
   assert.equal(automatic.siteAnalysis.entranceWidthMeters, 3.5);
   assert.ok(automatic.siteAnalysis.northAngleDegrees !== null && Math.abs(automatic.siteAnalysis.northAngleDegrees - 15) <= 2);
   assert.equal(automatic.siteAnalysis.northDetected, true);
-  assert.match(automatic.previewSvg, /东侧道路 4 m/);
+  assert.match(automatic.previewSvg, /东侧道路 4\.0 m/);
   assert.match(automatic.previewSvg, /transform="rotate\(90/);
   assert.match(automatic.previewSvg, /text-anchor="end"[^>]*>入口 3\.5 m/);
 
@@ -91,8 +91,8 @@ test("labels every L-shaped boundary edge and each road with its own width", asy
   assert.deepEqual(model.siteAnalysis.roadSides, ["south", "west"]);
   assert.equal(model.siteAnalysis.roadWidthMeters, 5);
   assert.equal((model.previewSvg.match(/data-edge=/g) ?? []).length, 6);
-  assert.match(model.previewSvg, /南侧道路 5 m/);
-  assert.match(model.previewSvg, /西侧道路 4 m/);
+  assert.match(model.previewSvg, /南侧道路 5\.0 m/);
+  assert.match(model.previewSvg, /西侧道路 4\.0 m/);
 });
 
 test("DXF-04 preserves sloped boundaries and calculates the buildable control area", async () => {
@@ -113,8 +113,8 @@ test("DXF-04 preserves sloped boundaries and calculates the buildable control ar
   assert.ok(Math.abs(model.buildableArea!.areaSquareMeters - expected.buildable_area_m2) <= .05);
   assert.equal((model.previewSvg.match(/data-edge=/g) ?? []).length, 4);
   assert.match(model.previewSvg, /data-layer="BUILDABLE_AREA"/);
-  assert.match(model.previewSvg, />28 m</);
-  assert.match(model.previewSvg, />21 m</);
+  assert.match(model.previewSvg, />28\.0 m</);
+  assert.match(model.previewSvg, />21\.0 m</);
 });
 
 test("rejects files without supported entities", () => {

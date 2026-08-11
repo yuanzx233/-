@@ -305,12 +305,12 @@ function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnaly
   const widthTextY = round(widthY + (widthOnTop ? -font * .35 : font * .9));
   const heightTextX = round(heightX + (heightOnRight ? font * .65 : -font * .65));
   const heightMiddleY = round((topRight.y + bottomRight.y) / 2);
-  const dimensions = `<g stroke="#567069" fill="#153b32" stroke-width="${round(stroke * .55)}" font-family="Arial, sans-serif" font-size="${round(font * .72)}"><line x1="${topLeft.x}" y1="${widthY}" x2="${topRight.x}" y2="${widthY}"/><line x1="${topLeft.x}" y1="${round(widthY - font * .3)}" x2="${topLeft.x}" y2="${round(widthY + font * .3)}"/><line x1="${topRight.x}" y1="${round(widthY - font * .3)}" x2="${topRight.x}" y2="${round(widthY + font * .3)}"/><text x="${round((topLeft.x + topRight.x) / 2)}" y="${widthTextY}" text-anchor="middle" stroke="none">${boundary.majorDimensionsMeters.width} m</text><line x1="${heightX}" y1="${topRight.y}" x2="${heightX}" y2="${bottomRight.y}"/><line x1="${round(heightX - font * .3)}" y1="${topRight.y}" x2="${round(heightX + font * .3)}" y2="${topRight.y}"/><line x1="${round(heightX - font * .3)}" y1="${bottomRight.y}" x2="${round(heightX + font * .3)}" y2="${bottomRight.y}"/><text x="${heightTextX}" y="${heightMiddleY}" transform="rotate(90 ${heightTextX} ${heightMiddleY})" text-anchor="middle" stroke="none">${boundary.majorDimensionsMeters.height} m</text></g>`;
+  const dimensions = `<g stroke="#567069" fill="#153b32" stroke-width="${round(stroke * .55)}" font-family="Arial, sans-serif" font-size="${round(font * .72)}"><line x1="${topLeft.x}" y1="${widthY}" x2="${topRight.x}" y2="${widthY}"/><line x1="${topLeft.x}" y1="${round(widthY - font * .3)}" x2="${topLeft.x}" y2="${round(widthY + font * .3)}"/><line x1="${topRight.x}" y1="${round(widthY - font * .3)}" x2="${topRight.x}" y2="${round(widthY + font * .3)}"/><text x="${round((topLeft.x + topRight.x) / 2)}" y="${widthTextY}" text-anchor="middle" stroke="none">${formatMetric(boundary.majorDimensionsMeters.width)} m</text><line x1="${heightX}" y1="${topRight.y}" x2="${heightX}" y2="${bottomRight.y}"/><line x1="${round(heightX - font * .3)}" y1="${topRight.y}" x2="${round(heightX + font * .3)}" y2="${topRight.y}"/><line x1="${round(heightX - font * .3)}" y1="${bottomRight.y}" x2="${round(heightX + font * .3)}" y2="${bottomRight.y}"/><text x="${heightTextX}" y="${heightMiddleY}" transform="rotate(90 ${heightTextX} ${heightMiddleY})" text-anchor="middle" stroke="none">${formatMetric(boundary.majorDimensionsMeters.height)} m</text></g>`;
   const roadLabels = roads.map((road, index) => {
     const detail = analysis.roads[index];
-    return renderRoadLabel(road.points, detail?.side, `${sideLabel(detail?.side)}侧道路 ${detail?.widthMeters ?? "?"} m`, map, font);
+    return renderRoadLabel(road.points, detail?.side, `${sideLabel(detail?.side)}侧道路 ${detail ? formatMetric(detail.widthMeters) : "?"} m`, map, font);
   }).join("");
-  const entranceLabel = analysis.entranceSegment ? renderEntranceLabel(analysis.entranceSegment, analysis.entranceSide, `入口 ${analysis.entranceWidthMeters ?? "?"} m`, map, font * .72) : "";
+  const entranceLabel = analysis.entranceSegment ? renderEntranceLabel(analysis.entranceSegment, analysis.entranceSide, `入口 ${analysis.entranceWidthMeters === null ? "?" : formatMetric(analysis.entranceWidthMeters)} m`, map, font * .72) : "";
   const northTip = northLines[0]?.end;
   const northLabel = northTip ? labelAtCenter([northTip], `N ${analysis.northAngleDegrees ?? "?"}°`, map, font, "#153b32", -font * .55) : "";
   const edgeDimensions = renderEdgeDimensions(boundary, analysis, map, font, stroke);
@@ -343,7 +343,7 @@ function renderEdgeDimensions(boundary: SiteBoundary, analysis: DxfModel["siteAn
     const label = { x: round(midpoint.x + normal.x * font * .9), y: round(midpoint.y + normal.y * font * .9) };
     let angle = Math.atan2(dy, dx) * 180 / Math.PI;
     if (angle > 90 || angle < -90) angle += 180;
-    return `<text x="${label.x}" y="${label.y}" transform="rotate(${round(angle)} ${label.x} ${label.y})" text-anchor="middle" dominant-baseline="middle" fill="#153b32" stroke="#f5f1e8" stroke-width="${round(stroke * 1.4)}" paint-order="stroke" font-size="${round(font * .62)}" font-family="Arial, sans-serif" font-weight="700" data-edge="${index + 1}">${boundary.sideLengthsMeters[index]} m</text>`;
+    return `<text x="${label.x}" y="${label.y}" transform="rotate(${round(angle)} ${label.x} ${label.y})" text-anchor="middle" dominant-baseline="middle" fill="#153b32" stroke="#f5f1e8" stroke-width="${round(stroke * 1.4)}" paint-order="stroke" font-size="${round(font * .62)}" font-family="Arial, sans-serif" font-weight="700" data-edge="${index + 1}">${formatMetric(boundary.sideLengthsMeters[index])} m</text>`;
   }).join("");
 }
 
@@ -539,4 +539,8 @@ function finite(value: string): number {
 
 function round(value: number): number {
   return Math.round(value * 1000) / 1000;
+}
+
+function formatMetric(value: number): string {
+  return value.toFixed(1);
 }

@@ -80,6 +80,20 @@ test("DXF-02 auto-detects meters, preserves scale, and accepts rotated north", a
   assert.throws(() => parseDxf(source, { unit: "mm" }), /DXF_SCALE_OUT_OF_RANGE/);
 });
 
+test("labels every L-shaped boundary edge and each road with its own width", async () => {
+  const source = await readFile("tests/fixtures/dxf/11_l_shape_multi_road.dxf", "utf8");
+  const model = parseDxf(source);
+  assert.deepEqual(model.boundary.sideLengthsMeters, [24, 10, 10, 12, 14, 22]);
+  assert.deepEqual(model.siteAnalysis.roads, [
+    { side: "south", widthMeters: 5 },
+    { side: "west", widthMeters: 4 },
+  ]);
+  assert.deepEqual(model.siteAnalysis.roadSides, ["south", "west"]);
+  assert.equal((model.previewSvg.match(/data-edge=/g) ?? []).length, 6);
+  assert.match(model.previewSvg, /南侧道路 5 m/);
+  assert.match(model.previewSvg, /西侧道路 4 m/);
+});
+
 test("rejects files without supported entities", () => {
   assert.throws(
     () => parseDxf("0\nSECTION\n2\nENTITIES\n0\nENDSEC\n0\nEOF\n", { unit: "mm" }),

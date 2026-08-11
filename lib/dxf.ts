@@ -26,6 +26,7 @@ export type DxfModel = {
   siteAnalysis: {
     roadSides: CardinalSide[];
     roadWidthMeters: number | null;
+    roads: Array<{ side: CardinalSide; widthMeters: number }>;
     entranceSide: CardinalSide | null;
     entranceWidthMeters: number | null;
     entranceSegment: { start: Point2D; end: Point2D } | null;
@@ -274,11 +275,52 @@ function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnaly
   const heightTextX = round(heightX + (heightOnRight ? font * .65 : -font * .65));
   const heightMiddleY = round((topRight.y + bottomRight.y) / 2);
   const dimensions = `<g stroke="#567069" fill="#153b32" stroke-width="${round(stroke * .55)}" font-family="Arial, sans-serif" font-size="${round(font * .72)}"><line x1="${topLeft.x}" y1="${widthY}" x2="${topRight.x}" y2="${widthY}"/><line x1="${topLeft.x}" y1="${round(widthY - font * .3)}" x2="${topLeft.x}" y2="${round(widthY + font * .3)}"/><line x1="${topRight.x}" y1="${round(widthY - font * .3)}" x2="${topRight.x}" y2="${round(widthY + font * .3)}"/><text x="${round((topLeft.x + topRight.x) / 2)}" y="${widthTextY}" text-anchor="middle" stroke="none">${boundary.majorDimensionsMeters.width} m</text><line x1="${heightX}" y1="${topRight.y}" x2="${heightX}" y2="${bottomRight.y}"/><line x1="${round(heightX - font * .3)}" y1="${topRight.y}" x2="${round(heightX + font * .3)}" y2="${topRight.y}"/><line x1="${round(heightX - font * .3)}" y1="${bottomRight.y}" x2="${round(heightX + font * .3)}" y2="${bottomRight.y}"/><text x="${heightTextX}" y="${heightMiddleY}" transform="rotate(90 ${heightTextX} ${heightMiddleY})" text-anchor="middle" stroke="none">${boundary.majorDimensionsMeters.height} m</text></g>`;
-  const roadLabel = roads[0] ? renderRoadLabel(roads[0].points, analysis.roadSides[0], `${sideLabel(analysis.roadSides[0])}侧道路 ${analysis.roadWidthMeters ?? "?"} m`, map, font) : "";
+  const roadLabels = roads.map((road, index) => {
+    const detail = analysis.roads[index];
+    return renderRoadLabel(road.points, detail?.side, `${sideLabel(detail?.side)}侧道路 ${detail?.widthMeters ?? "?"} m`, map, font);
+  }).join("");
   const entranceLabel = analysis.entranceSegment ? renderEntranceLabel(analysis.entranceSegment, analysis.entranceSide, `入口 ${analysis.entranceWidthMeters ?? "?"} m`, map, font * .72) : "";
   const northTip = northLines[0]?.end;
   const northLabel = northTip ? labelAtCenter([northTip], `N ${analysis.northAngleDegrees ?? "?"}°`, map, font, "#153b32", -font * .55) : "";
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${round(viewWidth)} ${round(viewHeight)}" role="img" aria-label="场地边界、临路、入口、北向和尺寸预览"><rect width="100%" height="100%" fill="#f5f1e8"/>${roadShapes}${roadLabel}${boundaryShape}${entranceGap}${entranceShapes}${entranceLabel}${northShapes}${northLabel}${dimensions}</svg>`;
+  const edgeDimensions = boundary.points.length > 4 ? renderEdgeDimensions(boundary, analysis, map, font, stroke) : dimensions;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${round(viewWidth)} ${round(viewHeight)}" role="img" aria-label="场地边界、临路、入口、北向和尺寸预览"><rect width="100%" height="100%" fill="#f5f1e8"/>${roadShapes}${roadLabels}${boundaryShape}${entranceGap}${entranceShapes}${entranceLabel}${northShapes}${northLabel}${edgeDimensions}</svg>`;
+}
+
+function renderEdgeDimensions(boundary: SiteBoundary, analysis: DxfModel["siteAnalysis"], map: (point: Point2D) => Point2D, font: number, stroke: number): string {
+  const mapped = boundary.points.map(map);
+  const center = mapped.reduce((sum, point) => ({ x: sum.x + point.x / mapped.length, y: sum.y + point.y / mapped.length }), { x: 0, y: 0 });
+  const bounds = getBounds(boundary.points);
+  return mapped.map((start, index) => {
+    const end = mapped[(index + 1) % mapped.length];
+    const worldStart = boundary.points[index];
+    const worldEnd = boundary.points[(index + 1) % boundary.points.length];
+    const edgeSide = boundaryEdgeSide(worldStart, worldEnd, bounds);
+    const roadAdjacent = edgeSide !== null && analysis.roadSides.includes(edgeSide);
+    const position = edgeSide === analysis.entranceSide ? .72 : .5;
+    const midpoint = { x: start.x + (end.x - start.x) * position, y: start.y + (end.y - start.y) * position };
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const length = Math.hypot(dx, dy) || 1;
+    const normalA = { x: -dy / length, y: dx / length };
+    const normalB = { x: -normalA.x, y: -normalA.y };
+    const distanceA = Math.hypot(midpoint.x + normalA.x * font - center.x, midpoint.y + normalA.y * font - center.y);
+    const distanceB = Math.hypot(midpoint.x + normalB.x * font - center.x, midpoint.y + normalB.y * font - center.y);
+    const outsideNormal = distanceA >= distanceB ? normalA : normalB;
+    const normal = roadAdjacent ? { x: -outsideNormal.x, y: -outsideNormal.y } : outsideNormal;
+    const label = { x: round(midpoint.x + normal.x * font * (roadAdjacent ? .9 : .72)), y: round(midpoint.y + normal.y * font * (roadAdjacent ? .9 : .72)) };
+    let angle = Math.atan2(dy, dx) * 180 / Math.PI;
+    if (angle > 90 || angle < -90) angle += 180;
+    return `<text x="${label.x}" y="${label.y}" transform="rotate(${round(angle)} ${label.x} ${label.y})" text-anchor="middle" dominant-baseline="middle" fill="#153b32" stroke="#f5f1e8" stroke-width="${round(stroke * 1.4)}" paint-order="stroke" font-size="${round(font * .62)}" font-family="Arial, sans-serif" font-weight="700" data-edge="${index + 1}">${boundary.sideLengthsMeters[index]} m</text>`;
+  }).join("");
+}
+
+function boundaryEdgeSide(start: Point2D, end: Point2D, bounds: ReturnType<typeof getBounds>): CardinalSide | null {
+  const tolerance = 1;
+  if (Math.abs(start.y - bounds.minY) <= tolerance && Math.abs(end.y - bounds.minY) <= tolerance) return "south";
+  if (Math.abs(start.y - bounds.maxY) <= tolerance && Math.abs(end.y - bounds.maxY) <= tolerance) return "north";
+  if (Math.abs(start.x - bounds.minX) <= tolerance && Math.abs(end.x - bounds.minX) <= tolerance) return "west";
+  if (Math.abs(start.x - bounds.maxX) <= tolerance && Math.abs(end.x - bounds.maxX) <= tolerance) return "east";
+  return null;
 }
 
 function renderEntranceGap(segment: { start: Point2D; end: Point2D }, side: CardinalSide | null, map: (point: Point2D) => Point2D, stroke: number): string {
@@ -354,6 +396,7 @@ function analyzeSite(lines: Line2D[], polylines: Polyline2D[], boundary: SiteBou
   });
   const roadSides = [...new Set(roadPairs.map((item) => item.side))];
   const roadWidthMm = roadPairs.length ? Math.min(...roadPairs.map((item) => item.width)) : null;
+  const roadDetails = roadPairs.map((item) => ({ side: item.side, widthMeters: round(item.width / 1000) }));
 
   const entranceLines = lines.filter((line) => line.layer.toUpperCase() === "ENTRANCE");
   let entranceSide: CardinalSide | null = null;
@@ -384,6 +427,7 @@ function analyzeSite(lines: Line2D[], polylines: Polyline2D[], boundary: SiteBou
   return {
     roadSides,
     roadWidthMeters: roadWidthMm === null ? null : round(roadWidthMm / 1000),
+    roads: roadDetails,
     entranceSide,
     entranceWidthMeters: entranceWidthMm === null ? null : round(entranceWidthMm / 1000),
     entranceSegment,

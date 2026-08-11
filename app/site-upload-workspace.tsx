@@ -13,6 +13,7 @@ type BoundaryResult = {
 type SiteAnalysis = {
   roadSides: Array<"north" | "east" | "south" | "west">;
   roadWidthMeters: number | null;
+  roads: Array<{ side: "north" | "east" | "south" | "west"; widthMeters: number }>;
   entranceSide: "north" | "east" | "south" | "west" | null;
   entranceWidthMeters: number | null;
   entranceSegment: { start: { x: number; y: number }; end: { x: number; y: number } } | null;
@@ -165,7 +166,7 @@ function ResultView({ result }: { result: ParseResult }) {
     <div className="svg-preview" dangerouslySetInnerHTML={{ __html: result.model.previewSvg }} />
     <div className="site-metrics"><div><small>面积</small><strong>{boundary.areaSquareMeters} m²</strong></div><div><small>周长</small><strong>{boundary.perimeterMeters} m</strong></div><div><small>边数</small><strong>{boundary.sideLengthsMeters.length}</strong></div></div>
     <div className="semantic-metrics">
-      <span><small>临路</small><strong>{analysis.roadSides.length ? analysis.roadSides.map((side) => `${sideChinese[side]}侧`).join("、") : "待确认"}</strong><em>{analysis.roadWidthMeters === null ? "未识别宽度" : `${analysis.roadWidthMeters} m 宽`}</em></span>
+      <span><small>临路</small><strong>{analysis.roads?.length ? analysis.roads.map((road) => `${sideChinese[road.side]}侧 ${road.widthMeters} m`).join("、") : analysis.roadSides.length ? analysis.roadSides.map((side) => `${sideChinese[side]}侧`).join("、") : "待确认"}</strong><em>{analysis.roads?.length ? `${analysis.roads.length} 面道路` : analysis.roadWidthMeters === null ? "未识别宽度" : `${analysis.roadWidthMeters} m 宽`}</em></span>
       <span><small>入口</small><strong>{analysis.entranceSide ? `${sideChinese[analysis.entranceSide]}侧` : "待确认"}</strong><em>{analysis.entranceWidthMeters === null ? "未识别宽度" : `${analysis.entranceWidthMeters} m 宽`}</em></span>
       <span><small>北向</small><strong>{analysis.northAngleDegrees === null ? "待确认" : `${analysis.northAngleDegrees}°`}</strong><em>{analysis.northDetected ? "已识别 · 顺时针自图纸上方" : "未找到 NORTH 图层"}</em></span>
     </div>

@@ -24,7 +24,9 @@ test("parses layers, lines and closed polylines into millimeters", async () => {
   assert.equal(model.boundary.perimeterMeters, 84);
   assert.deepEqual(model.boundary.sideLengthsMeters, [18, 24, 18, 24]);
   assert.deepEqual(model.boundary.majorDimensionsMeters, { width: 18, height: 24 });
+  assert.equal(model.buildableArea, null);
   assert.match(model.previewSvg, /<polygon/);
+  assert.doesNotMatch(model.previewSvg, /data-layer="BUILDABLE_AREA"/);
 });
 
 test("accepts DXF-01 legacy POLYLINE and recognizes site semantics within tolerance", async () => {

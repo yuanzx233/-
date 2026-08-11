@@ -113,6 +113,7 @@ test("DXF-04 preserves sloped boundaries and calculates the buildable control ar
   assert.ok(Math.abs(model.buildableArea!.areaSquareMeters - expected.buildable_area_m2) <= .05);
   assert.equal((model.previewSvg.match(/data-edge=/g) ?? []).length, 4);
   assert.match(model.previewSvg, /data-layer="BUILDABLE_AREA"/);
+  assert.doesNotMatch(model.previewSvg, /stroke-dasharray/);
   assert.match(model.previewSvg, />28\.0 m</);
   assert.match(model.previewSvg, />21\.0 m</);
 });

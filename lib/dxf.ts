@@ -283,7 +283,7 @@ function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnaly
   const line = (item: Line2D, color: string, width = stroke) => { const start = map(item.start); const end = map(item.end); return `<line x1="${start.x}" y1="${start.y}" x2="${end.x}" y2="${end.y}" stroke="${color}" stroke-width="${round(width)}" stroke-linecap="round"/>`; };
   const roadShapes = roads.map((item) => `<polygon points="${points(item.points)}" fill="#c98962" fill-opacity=".78" stroke="#9e5435" stroke-width="${round(stroke)}"/>`).join("");
   const boundaryShape = `<polygon points="${points(boundary.points)}" fill="#d8e4d2" fill-opacity=".88" stroke="#153b32" stroke-width="${round(stroke * 1.35)}"/>`;
-  const buildableShapes = buildablePolylines.map((item) => `<polygon points="${points(item.points)}" fill="#fffdf8" fill-opacity=".2" stroke="#bb6e48" stroke-width="${round(stroke)}" stroke-dasharray="${round(stroke * 3)} ${round(stroke * 2)}" data-layer="BUILDABLE_AREA"/>`).join("");
+  const buildableShapes = buildablePolylines.map((item) => `<polygon points="${points(item.points)}" fill="#fffdf8" fill-opacity=".2" stroke="#bb6e48" stroke-width="${round(stroke)}" data-layer="BUILDABLE_AREA"/>`).join("");
   const entranceShapes = [
     ...entranceLines.map((item) => line(item, "#bb6e48", stroke * 1.5)),
     ...entrancePolylines.map((item) => `<polyline points="${points(item.points)}" fill="${item.closed ? "#bb6e48" : "none"}" stroke="#9e5435" stroke-width="${round(stroke)}"/>`),

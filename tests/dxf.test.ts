@@ -43,10 +43,19 @@ test("accepts DXF-01 legacy POLYLINE and recognizes site semantics within tolera
   assert.equal(model.siteAnalysis.roadWidthMeters, 6);
   assert.equal(model.siteAnalysis.entranceSide, "south");
   assert.equal(model.siteAnalysis.entranceWidthMeters, 4);
+  assert.deepEqual(model.siteAnalysis.entranceSegment, {
+    start: { x: 10000, y: 6000 },
+    end: { x: 14000, y: 6000 },
+  });
   assert.ok(model.siteAnalysis.northAngleDegrees !== null && Math.abs(model.siteAnalysis.northAngleDegrees) <= 2);
   assert.equal(model.siteAnalysis.northWithinTolerance, true);
   assert.match(model.previewSvg, /<polygon/);
   assert.match(model.previewSvg, /N 0°/);
+  assert.match(model.previewSvg, /南侧道路 6 m/);
+  assert.match(model.previewSvg, /入口 4 m/);
+  assert.match(model.previewSvg, />18 m</);
+  assert.match(model.previewSvg, />24 m</);
+  assert.match(model.previewSvg, /场地边界、临路、入口、北向和尺寸预览/);
 });
 
 test("rejects files without supported entities", () => {

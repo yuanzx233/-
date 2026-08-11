@@ -15,6 +15,7 @@ type SiteAnalysis = {
   roadWidthMeters: number | null;
   entranceSide: "north" | "east" | "south" | "west" | null;
   entranceWidthMeters: number | null;
+  entranceSegment: { start: { x: number; y: number }; end: { x: number; y: number } } | null;
   northAngleDegrees: number | null;
   northToleranceDegrees: number;
   northWithinTolerance: boolean;

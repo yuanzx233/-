@@ -161,9 +161,33 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
 function ResultView({ result }: { result: ParseResult }) {
   const boundary = result.model.boundary;
   const analysis = result.model.siteAnalysis;
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  useEffect(() => {
+    if (!isPreviewOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsPreviewOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [isPreviewOpen]);
   return <>
     <div className="preview-top"><div><small>场地轮廓</small><strong>{boundary.majorDimensionsMeters.width} × {boundary.majorDimensionsMeters.height} m</strong></div><button className="quiet-button" type="button" onClick={() => void downloadPng(result.model.previewSvg)}>下载 PNG</button></div>
-    <div className="svg-preview" dangerouslySetInnerHTML={{ __html: result.model.previewSvg }} />
+    <button className="svg-preview preview-zoom-trigger" type="button" aria-label="放大查看场地轮廓图" onClick={() => setIsPreviewOpen(true)}>
+      <span className="preview-zoom-hint">点击放大</span>
+      <span className="preview-svg-content" dangerouslySetInnerHTML={{ __html: result.model.previewSvg }} />
+    </button>
+    {isPreviewOpen && <div className="preview-lightbox" role="dialog" aria-modal="true" aria-label="场地轮廓放大图" onMouseDown={(event) => { if (event.target === event.currentTarget) setIsPreviewOpen(false); }}>
+      <div className="preview-lightbox-panel">
+        <button className="preview-lightbox-close" type="button" aria-label="关闭放大图" autoFocus onClick={() => setIsPreviewOpen(false)}>×</button>
+        <div className="preview-lightbox-image" dangerouslySetInnerHTML={{ __html: result.model.previewSvg }} />
+        <p>按 Esc 或点击图片外区域关闭</p>
+      </div>
+    </div>}
     <div className="site-metrics"><div><small>面积</small><strong>{boundary.areaSquareMeters} m²</strong></div><div><small>周长</small><strong>{boundary.perimeterMeters} m</strong></div><div><small>边数</small><strong>{boundary.sideLengthsMeters.length}</strong></div></div>
     <div className="semantic-metrics">
       <span><small>临路</small><strong>{analysis.roads?.length ? analysis.roads.map((road) => `${sideChinese[road.side]}侧 ${road.widthMeters} m`).join("、") : analysis.roadSides.length ? analysis.roadSides.map((side) => `${sideChinese[side]}侧`).join("、") : "待确认"}</strong><em>{analysis.roads?.length ? `${analysis.roads.length} 面道路` : analysis.roadWidthMeters === null ? "未识别宽度" : `${analysis.roadWidthMeters} m 宽`}</em></span>

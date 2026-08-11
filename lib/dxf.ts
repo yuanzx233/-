@@ -9,7 +9,15 @@ export type SiteBoundary = {
   areaSquareMeters: number;
   perimeterMeters: number;
   sideLengthsMeters: number[];
+  sideAnglesDegrees: number[];
   majorDimensionsMeters: { width: number; height: number };
+  majorDirectionDegrees: number;
+};
+
+export type BuildableArea = {
+  points: Point2D[];
+  areaSquareMeters: number;
+  perimeterMeters: number;
 };
 
 export type DxfModel = {
@@ -23,6 +31,7 @@ export type DxfModel = {
   polylines: Polyline2D[];
   stats: { entityCount: number; lineCount: number; polylineCount: number };
   boundary: SiteBoundary;
+  buildableArea: BuildableArea | null;
   siteAnalysis: {
     roadSides: CardinalSide[];
     roadWidthMeters: number | null;
@@ -143,11 +152,22 @@ export function parseDxf(source: string, options: { unit?: Exclude<DxfUnit, "unk
     areaSquareMeters: round(areaMm2 / 1_000_000),
     perimeterMeters: round(perimeterMm / 1000),
     sideLengthsMeters: sideLengthsMm.map((length) => round(length / 1000)),
+    sideAnglesDegrees: boundaryPolyline.points.map((point, index) => {
+      const next = boundaryPolyline.points[(index + 1) % boundaryPolyline.points.length];
+      return round(((Math.atan2(next.y - point.y, next.x - point.x) * 180 / Math.PI) % 360 + 360) % 360);
+    }),
     majorDimensionsMeters: {
       width: round(boundaryBounds.width / 1000),
       height: round(boundaryBounds.height / 1000),
     },
+    majorDirectionDegrees: polygonMajorDirection(boundaryPolyline.points),
   };
+  const buildablePolyline = closed.find((polyline) => polyline.layer.toUpperCase() === "BUILDABLE_AREA");
+  const buildableArea = buildablePolyline ? {
+    points: buildablePolyline.points,
+    areaSquareMeters: round(polygonArea(buildablePolyline.points) / 1_000_000),
+    perimeterMeters: round(polygonSideLengths(buildablePolyline.points).reduce((sum, length) => sum + length, 0) / 1000),
+  } : null;
   const siteAnalysis = analyzeSite(lines, polylines, boundary);
   const layerMap = new Map<string, number>();
   for (const entity of [...lines, ...polylines]) {
@@ -174,6 +194,7 @@ export function parseDxf(source: string, options: { unit?: Exclude<DxfUnit, "unk
       polylineCount: polylines.length,
     },
     boundary,
+    buildableArea,
     siteAnalysis,
     previewSvg: renderBoundarySvg(boundary, siteAnalysis, lines, polylines),
   };
@@ -222,12 +243,20 @@ function polygonSideLengths(points: Point2D[]): number[] {
   });
 }
 
+function polygonMajorDirection(points: Point2D[]): number {
+  const longest = points.map((point, index) => ({ point, next: points[(index + 1) % points.length] }))
+    .sort((a, b) => Math.hypot(b.next.x - b.point.x, b.next.y - b.point.y) - Math.hypot(a.next.x - a.point.x, a.next.y - a.point.y))[0];
+  const angle = Math.atan2(longest.next.y - longest.point.y, longest.next.x - longest.point.x) * 180 / Math.PI;
+  return round(((angle % 180) + 180) % 180);
+}
+
 function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnalysis"], lines: Line2D[], polylines: Polyline2D[]): string {
   const roads = polylines.filter((item) => item.layer.toUpperCase() === "ROAD");
   const entranceLines = lines.filter((item) => item.layer.toUpperCase() === "ENTRANCE");
   const entrancePolylines = polylines.filter((item) => item.layer.toUpperCase() === "ENTRANCE");
   const northLines = lines.filter((item) => item.layer.toUpperCase() === "NORTH");
   const northPolylines = polylines.filter((item) => item.layer.toUpperCase() === "NORTH");
+  const buildablePolylines = polylines.filter((item) => item.layer.toUpperCase() === "BUILDABLE_AREA" && item.closed);
   const featurePoints = [
     ...boundary.points,
     ...roads.flatMap((item) => item.points),
@@ -235,6 +264,7 @@ function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnaly
     ...entrancePolylines.flatMap((item) => item.points),
     ...northLines.flatMap((item) => [item.start, item.end]),
     ...northPolylines.flatMap((item) => item.points),
+    ...buildablePolylines.flatMap((item) => item.points),
   ];
   const content = getBounds(featurePoints);
   const boundaryBox = getBounds(boundary.points);
@@ -253,6 +283,7 @@ function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnaly
   const line = (item: Line2D, color: string, width = stroke) => { const start = map(item.start); const end = map(item.end); return `<line x1="${start.x}" y1="${start.y}" x2="${end.x}" y2="${end.y}" stroke="${color}" stroke-width="${round(width)}" stroke-linecap="round"/>`; };
   const roadShapes = roads.map((item) => `<polygon points="${points(item.points)}" fill="#c98962" fill-opacity=".78" stroke="#9e5435" stroke-width="${round(stroke)}"/>`).join("");
   const boundaryShape = `<polygon points="${points(boundary.points)}" fill="#d8e4d2" fill-opacity=".88" stroke="#153b32" stroke-width="${round(stroke * 1.35)}"/>`;
+  const buildableShapes = buildablePolylines.map((item) => `<polygon points="${points(item.points)}" fill="#fffdf8" fill-opacity=".2" stroke="#bb6e48" stroke-width="${round(stroke)}" stroke-dasharray="${round(stroke * 3)} ${round(stroke * 2)}" data-layer="BUILDABLE_AREA"/>`).join("");
   const entranceShapes = [
     ...entranceLines.map((item) => line(item, "#bb6e48", stroke * 1.5)),
     ...entrancePolylines.map((item) => `<polyline points="${points(item.points)}" fill="${item.closed ? "#bb6e48" : "none"}" stroke="#9e5435" stroke-width="${round(stroke)}"/>`),
@@ -282,8 +313,8 @@ function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnaly
   const entranceLabel = analysis.entranceSegment ? renderEntranceLabel(analysis.entranceSegment, analysis.entranceSide, `入口 ${analysis.entranceWidthMeters ?? "?"} m`, map, font * .72) : "";
   const northTip = northLines[0]?.end;
   const northLabel = northTip ? labelAtCenter([northTip], `N ${analysis.northAngleDegrees ?? "?"}°`, map, font, "#153b32", -font * .55) : "";
-  const edgeDimensions = boundary.points.length > 4 ? renderEdgeDimensions(boundary, analysis, map, font, stroke) : dimensions;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${round(viewWidth)} ${round(viewHeight)}" role="img" aria-label="场地边界、临路、入口、北向和尺寸预览"><rect width="100%" height="100%" fill="#f5f1e8"/>${roadShapes}${roadLabels}${boundaryShape}${entranceGap}${entranceShapes}${entranceLabel}${northShapes}${northLabel}${edgeDimensions}</svg>`;
+  const edgeDimensions = renderEdgeDimensions(boundary, analysis, map, font, stroke);
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${round(viewWidth)} ${round(viewHeight)}" role="img" aria-label="场地边界、建筑控制线、临路、入口、北向和尺寸预览"><rect width="100%" height="100%" fill="#f5f1e8"/>${roadShapes}${roadLabels}${boundaryShape}${buildableShapes}${entranceGap}${entranceShapes}${entranceLabel}${northShapes}${northLabel}${edgeDimensions}${dimensions}</svg>`;
 }
 
 function renderEdgeDimensions(boundary: SiteBoundary, analysis: DxfModel["siteAnalysis"], map: (point: Point2D) => Point2D, font: number, stroke: number): string {
@@ -295,8 +326,10 @@ function renderEdgeDimensions(boundary: SiteBoundary, analysis: DxfModel["siteAn
     const worldStart = boundary.points[index];
     const worldEnd = boundary.points[(index + 1) % boundary.points.length];
     const edgeSide = boundaryEdgeSide(worldStart, worldEnd, bounds);
-    const roadAdjacent = edgeSide !== null && analysis.roadSides.includes(edgeSide);
-    const position = edgeSide === analysis.entranceSide ? .72 : .5;
+    const containsEntrance = analysis.entranceSegment !== null
+      && projectToSegment(analysis.entranceSegment.start, worldStart, worldEnd).distance <= 700
+      && projectToSegment(analysis.entranceSegment.end, worldStart, worldEnd).distance <= 700;
+    const position = containsEntrance || edgeSide === analysis.entranceSide ? .78 : .5;
     const midpoint = { x: start.x + (end.x - start.x) * position, y: start.y + (end.y - start.y) * position };
     const dx = end.x - start.x;
     const dy = end.y - start.y;
@@ -306,8 +339,8 @@ function renderEdgeDimensions(boundary: SiteBoundary, analysis: DxfModel["siteAn
     const distanceA = Math.hypot(midpoint.x + normalA.x * font - center.x, midpoint.y + normalA.y * font - center.y);
     const distanceB = Math.hypot(midpoint.x + normalB.x * font - center.x, midpoint.y + normalB.y * font - center.y);
     const outsideNormal = distanceA >= distanceB ? normalA : normalB;
-    const normal = roadAdjacent ? { x: -outsideNormal.x, y: -outsideNormal.y } : outsideNormal;
-    const label = { x: round(midpoint.x + normal.x * font * (roadAdjacent ? .9 : .72)), y: round(midpoint.y + normal.y * font * (roadAdjacent ? .9 : .72)) };
+    const normal = { x: -outsideNormal.x, y: -outsideNormal.y };
+    const label = { x: round(midpoint.x + normal.x * font * .9), y: round(midpoint.y + normal.y * font * .9) };
     let angle = Math.atan2(dy, dx) * 180 / Math.PI;
     if (angle > 90 || angle < -90) angle += 180;
     return `<text x="${label.x}" y="${label.y}" transform="rotate(${round(angle)} ${label.x} ${label.y})" text-anchor="middle" dominant-baseline="middle" fill="#153b32" stroke="#f5f1e8" stroke-width="${round(stroke * 1.4)}" paint-order="stroke" font-size="${round(font * .62)}" font-family="Arial, sans-serif" font-weight="700" data-edge="${index + 1}">${boundary.sideLengthsMeters[index]} m</text>`;
@@ -391,7 +424,7 @@ function analyzeSite(lines: Line2D[], polylines: Polyline2D[], boundary: SiteBou
   const roadPairs = roads.map((road) => {
     const box = getBounds(road.points);
     const side = nearestSide(box, boundaryBox);
-    const width = side === "north" || side === "south" ? box.height : box.width;
+    const width = Math.min(...polygonSideLengths(road.points));
     return { side, width };
   });
   const roadSides = [...new Set(roadPairs.map((item) => item.side))];
@@ -402,18 +435,20 @@ function analyzeSite(lines: Line2D[], polylines: Polyline2D[], boundary: SiteBou
   let entranceSide: CardinalSide | null = null;
   let entranceWidthMm: number | null = null;
   let entranceSegment: { start: Point2D; end: Point2D } | null = null;
-  for (const side of ["south", "north", "west", "east"] as CardinalSide[]) {
-    const positions = entranceLines
-      .filter((line) => touchesBoundarySide(line, boundaryBox, side))
-      .map((line) => side === "south" || side === "north" ? (line.start.x + line.end.x) / 2 : (line.start.y + line.end.y) / 2)
-      .sort((a, b) => a - b);
-    if (positions.length >= 2) {
-      entranceSide = side;
-      entranceWidthMm = positions.at(-1)! - positions[0];
-      const fixed = side === "south" ? boundaryBox.minY : side === "north" ? boundaryBox.maxY : side === "west" ? boundaryBox.minX : boundaryBox.maxX;
-      entranceSegment = side === "south" || side === "north"
-        ? { start: { x: positions[0], y: fixed }, end: { x: positions.at(-1)!, y: fixed } }
-        : { start: { x: fixed, y: positions[0] }, end: { x: fixed, y: positions.at(-1)! } };
+  for (let index = 0; index < boundary.points.length; index += 1) {
+    const edgeStart = boundary.points[index];
+    const edgeEnd = boundary.points[(index + 1) % boundary.points.length];
+    const projections = entranceLines.flatMap((line) => {
+      const candidates = [projectToSegment(line.start, edgeStart, edgeEnd), projectToSegment(line.end, edgeStart, edgeEnd)];
+      const nearest = candidates.sort((a, b) => a.distance - b.distance)[0];
+      return nearest.distance <= 700 ? [nearest] : [];
+    }).sort((a, b) => a.t - b.t);
+    if (projections.length >= 2) {
+      const first = projections[0];
+      const last = projections.at(-1)!;
+      entranceSide = classifyBoundaryEdge(edgeStart, edgeEnd, boundaryBox);
+      entranceWidthMm = Math.hypot(last.point.x - first.point.x, last.point.y - first.point.y);
+      entranceSegment = { start: first.point, end: last.point };
       break;
     }
   }
@@ -451,6 +486,26 @@ function touchesBoundarySide(line: Line2D, boundary: ReturnType<typeof getBounds
   const coordinate = side === "south" ? boundary.minY : side === "north" ? boundary.maxY : side === "west" ? boundary.minX : boundary.maxX;
   const values = side === "south" || side === "north" ? [line.start.y, line.end.y] : [line.start.x, line.end.x];
   return Math.min(...values) <= coordinate + tolerance && Math.max(...values) >= coordinate - tolerance;
+}
+
+function projectToSegment(point: Point2D, start: Point2D, end: Point2D): { point: Point2D; t: number; distance: number } {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const lengthSquared = dx * dx + dy * dy || 1;
+  const t = Math.max(0, Math.min(1, ((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared));
+  const projected = { x: round(start.x + t * dx), y: round(start.y + t * dy) };
+  return { point: projected, t, distance: Math.hypot(point.x - projected.x, point.y - projected.y) };
+}
+
+function classifyBoundaryEdge(start: Point2D, end: Point2D, bounds: ReturnType<typeof getBounds>): CardinalSide {
+  const midpoint = { x: (start.x + end.x) / 2, y: (start.y + end.y) / 2 };
+  const distances: Array<[CardinalSide, number]> = [
+    ["south", Math.abs(midpoint.y - bounds.minY)],
+    ["north", Math.abs(midpoint.y - bounds.maxY)],
+    ["west", Math.abs(midpoint.x - bounds.minX)],
+    ["east", Math.abs(midpoint.x - bounds.maxX)],
+  ];
+  return distances.sort((a, b) => a[1] - b[1])[0][0];
 }
 
 function lineLength(line: Line2D): number {

@@ -55,7 +55,7 @@ test("accepts DXF-01 legacy POLYLINE and recognizes site semantics within tolera
   assert.match(model.previewSvg, /入口 4 m/);
   assert.match(model.previewSvg, />18 m</);
   assert.match(model.previewSvg, />24 m</);
-  assert.match(model.previewSvg, /场地边界、临路、入口、北向和尺寸预览/);
+  assert.match(model.previewSvg, /场地边界、建筑控制线、临路、入口、北向和尺寸预览/);
 });
 
 test("DXF-02 auto-detects meters, preserves scale, and accepts rotated north", async () => {
@@ -93,6 +93,28 @@ test("labels every L-shaped boundary edge and each road with its own width", asy
   assert.equal((model.previewSvg.match(/data-edge=/g) ?? []).length, 6);
   assert.match(model.previewSvg, /南侧道路 5 m/);
   assert.match(model.previewSvg, /西侧道路 4 m/);
+});
+
+test("DXF-04 preserves sloped boundaries and calculates the buildable control area", async () => {
+  const source = await readFile("tests/fixtures/dxf/12_trapezoid_sloped_site.dxf", "utf8");
+  const expected = JSON.parse(await readFile("tests/fixtures/dxf/12_trapezoid_sloped_site.expected.json", "utf8"));
+  const model = parseDxf(source);
+  assert.equal(model.boundary.areaSquareMeters, expected.site_area_m2);
+  model.boundary.sideLengthsMeters.forEach((length, index) => {
+    assert.ok(Math.abs(length - expected.side_lengths_m[index]) <= .05);
+  });
+  assert.ok(model.boundary.majorDirectionDegrees > 10 && model.boundary.majorDirectionDegrees < 12);
+  assert.ok(model.boundary.sideAnglesDegrees.some((angle) => angle > 90 && angle < 100));
+  assert.equal(model.siteAnalysis.roadWidthMeters, expected.road_width_m);
+  assert.equal(model.siteAnalysis.entranceSide, "north");
+  assert.ok(model.siteAnalysis.entranceWidthMeters !== null && Math.abs(model.siteAnalysis.entranceWidthMeters - expected.entrance_width_m) <= .05);
+  assert.ok(model.siteAnalysis.northAngleDegrees !== null && Math.abs(model.siteAnalysis.northAngleDegrees - expected.north_angle_deg_clockwise_from_up) <= 2);
+  assert.ok(model.buildableArea);
+  assert.ok(Math.abs(model.buildableArea!.areaSquareMeters - expected.buildable_area_m2) <= .05);
+  assert.equal((model.previewSvg.match(/data-edge=/g) ?? []).length, 4);
+  assert.match(model.previewSvg, /data-layer="BUILDABLE_AREA"/);
+  assert.match(model.previewSvg, />28 m</);
+  assert.match(model.previewSvg, />21 m</);
 });
 
 test("rejects files without supported entities", () => {

@@ -8,7 +8,9 @@ type BoundaryResult = {
   areaSquareMeters: number;
   perimeterMeters: number;
   sideLengthsMeters: number[];
+  sideAnglesDegrees: number[];
   majorDimensionsMeters: { width: number; height: number };
+  majorDirectionDegrees: number;
 };
 type SiteAnalysis = {
   roadSides: Array<"north" | "east" | "south" | "west">;
@@ -20,7 +22,7 @@ type SiteAnalysis = {
   northAngleDegrees: number | null;
   northDetected: boolean;
 };
-type ParseResult = { model: { boundary: BoundaryResult; siteAnalysis: SiteAnalysis; previewSvg: string; sourceUnit: string } };
+type ParseResult = { model: { boundary: BoundaryResult; buildableArea: { areaSquareMeters: number; perimeterMeters: number } | null; siteAnalysis: SiteAnalysis; previewSvg: string; sourceUnit: string } };
 const sideChinese = { north: "北", east: "东", south: "南", west: "西" } as const;
 
 const errorMessages: Record<string, string> = {
@@ -193,6 +195,8 @@ function ResultView({ result }: { result: ParseResult }) {
       <span><small>临路</small><strong>{analysis.roads?.length ? analysis.roads.map((road) => `${sideChinese[road.side]}侧 ${road.widthMeters} m`).join("、") : analysis.roadSides.length ? analysis.roadSides.map((side) => `${sideChinese[side]}侧`).join("、") : "待确认"}</strong><em>{analysis.roads?.length ? `${analysis.roads.length} 面道路` : analysis.roadWidthMeters === null ? "未识别宽度" : `${analysis.roadWidthMeters} m 宽`}</em></span>
       <span><small>入口</small><strong>{analysis.entranceSide ? `${sideChinese[analysis.entranceSide]}侧` : "待确认"}</strong><em>{analysis.entranceWidthMeters === null ? "未识别宽度" : `${analysis.entranceWidthMeters} m 宽`}</em></span>
       <span><small>北向</small><strong>{analysis.northAngleDegrees === null ? "待确认" : `${analysis.northAngleDegrees}°`}</strong><em>{analysis.northDetected ? "已识别 · 顺时针自图纸上方" : "未找到 NORTH 图层"}</em></span>
+      <span><small>主要方向</small><strong>{boundary.majorDirectionDegrees}°</strong><em>相对图纸水平轴</em></span>
+      {result.model.buildableArea && <span><small>可建设范围</small><strong>{result.model.buildableArea.areaSquareMeters} m²</strong><em>控制线内 · 周长 {result.model.buildableArea.perimeterMeters} m</em></span>}
     </div>
     <div className="side-list"><small>逐边尺寸</small><div>{boundary.sideLengthsMeters.map((length, index) => <span key={`${index}-${length}`}>边 {index + 1}<strong>{length} m</strong></span>)}</div></div>
   </>;

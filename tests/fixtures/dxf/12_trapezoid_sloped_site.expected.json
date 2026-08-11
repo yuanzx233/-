@@ -1,0 +1,43 @@
+{
+  "drawing_unit": "mm",
+  "autocad_insunits_code": 4,
+  "dxf_version": "AC1009",
+  "site_boundary_count": 1,
+  "site_shape": "convex_irregular_quadrilateral",
+  "boundary_vertices_m": [
+    [
+      0.0,
+      0.0
+    ],
+    [
+      25.0,
+      0.0
+    ],
+    [
+      23.0,
+      21.0
+    ],
+    [
+      -3.0,
+      16.0
+    ]
+  ],
+  "site_area_m2": 478.0,
+  "side_lengths_m": [
+    25.0,
+    21.095,
+    26.476,
+    16.279
+  ],
+  "north_angle_deg_clockwise_from_up": 30.0,
+  "road_sides": [
+    "north_sloped_edge"
+  ],
+  "road_width_m": 6.0,
+  "entrance_side": "north_sloped_edge",
+  "entrance_width_m": 4.0,
+  "building_control_line": "closed_2m_inward_offset",
+  "buildable_area_m2": 316.399,
+  "requires_manual_confirmation": false,
+  "expected_result": "success"
+}

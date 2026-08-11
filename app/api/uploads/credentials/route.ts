@@ -27,8 +27,8 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: "DXF_FILE_TYPE_INVALID" }, { status: 415 });
     }
     if (body.size <= 0) return Response.json({ error: "DXF_FILE_EMPTY" }, { status: 400 });
-    if (!body.sourceUnit || !["mm", "cm", "m"].includes(body.sourceUnit)) {
-      return Response.json({ error: "DXF_UNIT_REQUIRED" }, { status: 400 });
+    if (body.sourceUnit && !["mm", "cm", "m"].includes(body.sourceUnit)) {
+      return Response.json({ error: "DXF_UNIT_INVALID" }, { status: 400 });
     }
     if (body.size > MAX_DXF_BYTES) return Response.json({ error: "DXF 文件不能超过 50 MB" }, { status: 413 });
     const project = await getD1().prepare("SELECT id FROM projects WHERE id = ? AND owner_id = ?")
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
         `INSERT INTO file_assets
           (id, project_id, version_id, owner_id, kind, object_key, file_name, content_type, size, status, metadata_json, created_at, updated_at)
          VALUES (?, ?, NULL, ?, ?, ?, ?, ?, ?, 'PENDING', ?, ?, ?)`,
-      ).bind(fileId, body.projectId, user.id, body.kind ?? "SITE_DXF", objectKey, body.fileName, body.contentType ?? "application/dxf", body.size, JSON.stringify({ sourceUnit: body.sourceUnit, siteInfo: body.siteInfo ?? {} }), now.toISOString(), now.toISOString()),
+      ).bind(fileId, body.projectId, user.id, body.kind ?? "SITE_DXF", objectKey, body.fileName, body.contentType ?? "application/dxf", body.size, JSON.stringify({ ...(body.sourceUnit ? { sourceUnit: body.sourceUnit } : {}), siteInfo: body.siteInfo ?? {} }), now.toISOString(), now.toISOString()),
       db.prepare(
         "INSERT INTO upload_sessions (token, file_id, owner_id, expires_at, consumed_at, created_at) VALUES (?, ?, ?, ?, NULL, ?)",
       ).bind(token, fileId, user.id, expiresAt.toISOString(), now.toISOString()),

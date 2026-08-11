@@ -29,6 +29,8 @@ test("login and API routes are present in the production build", async () => {
   assert.match(login, /使用 ChatGPT 登录/);
   assert.match(projectsRoute, /export async function POST/);
   assert.match(uploadRoute, /uploadUrl/);
+  assert.match(uploadRoute, /body\.sourceUnit &&/);
+  assert.doesNotMatch(uploadRoute, /!body\.sourceUnit/);
   assert.match(parseRoute, /parseDxf/);
 });
 
@@ -43,6 +45,8 @@ test("Day 4 site confirmation and structured requirements are present", async ()
   assert.match(workspace, /临路方向/);
   assert.match(uploadWorkspace, /siteAnalysis/);
   assert.match(uploadWorkspace, /RequirementsWorkspace/);
+  assert.match(uploadWorkspace, /自动读取 DXF（推荐）/);
+  assert.match(uploadWorkspace, /已识别 · 顺时针自图纸上方/);
   assert.match(rules, /老人房必须设在首层/);
   assert.match(rules, /面积上限超过概念容量/);
   assert.match(route, /'REQUIREMENTS', 'CONFIRMED'/);

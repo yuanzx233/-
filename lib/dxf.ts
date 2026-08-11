@@ -13,7 +13,7 @@ export type SiteBoundary = {
 };
 
 export type DxfModel = {
-  schemaVersion: "0.3";
+  schemaVersion: "0.4";
   sourceUnit: DxfUnit;
   normalizedUnit: "mm";
   origin: Point2D;
@@ -30,8 +30,7 @@ export type DxfModel = {
     entranceWidthMeters: number | null;
     entranceSegment: { start: Point2D; end: Point2D } | null;
     northAngleDegrees: number | null;
-    northToleranceDegrees: 2;
-    northWithinTolerance: boolean;
+    northDetected: boolean;
   };
   previewSvg: string;
 };
@@ -155,7 +154,7 @@ export function parseDxf(source: string, options: { unit?: Exclude<DxfUnit, "unk
   }
 
   return {
-    schemaVersion: "0.3",
+    schemaVersion: "0.4",
     sourceUnit,
     normalizedUnit: "mm",
     origin: { x: minX, y: minY },
@@ -367,8 +366,7 @@ function analyzeSite(lines: Line2D[], polylines: Polyline2D[], boundary: SiteBou
     entranceWidthMeters: entranceWidthMm === null ? null : round(entranceWidthMm / 1000),
     entranceSegment,
     northAngleDegrees,
-    northToleranceDegrees: 2,
-    northWithinTolerance: northAngleDegrees !== null && Math.abs(northAngleDegrees) <= 2,
+    northDetected: northAngleDegrees !== null,
   };
 }
 

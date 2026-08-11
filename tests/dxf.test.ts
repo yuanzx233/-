@@ -19,7 +19,7 @@ test("parses layers, lines and closed polylines into millimeters", async () => {
   const boundary = model.polylines.find((entity) => entity.layer === "SITE_BOUNDARY");
   assert.equal(boundary?.closed, true);
   assert.equal(boundary?.points.length, 4);
-  assert.equal(model.schemaVersion, "0.3");
+  assert.equal(model.schemaVersion, "0.4");
   assert.equal(model.boundary.areaSquareMeters, 432);
   assert.equal(model.boundary.perimeterMeters, 84);
   assert.deepEqual(model.boundary.sideLengthsMeters, [18, 24, 18, 24]);
@@ -48,7 +48,7 @@ test("accepts DXF-01 legacy POLYLINE and recognizes site semantics within tolera
     end: { x: 14000, y: 6000 },
   });
   assert.ok(model.siteAnalysis.northAngleDegrees !== null && Math.abs(model.siteAnalysis.northAngleDegrees) <= 2);
-  assert.equal(model.siteAnalysis.northWithinTolerance, true);
+  assert.equal(model.siteAnalysis.northDetected, true);
   assert.match(model.previewSvg, /<polygon/);
   assert.match(model.previewSvg, /N 0°/);
   assert.match(model.previewSvg, /南侧道路 6 m/);
@@ -56,6 +56,25 @@ test("accepts DXF-01 legacy POLYLINE and recognizes site semantics within tolera
   assert.match(model.previewSvg, />18 m</);
   assert.match(model.previewSvg, />24 m</);
   assert.match(model.previewSvg, /场地边界、临路、入口、北向和尺寸预览/);
+});
+
+test("DXF-02 auto-detects meters, preserves scale, and accepts rotated north", async () => {
+  const source = await readFile("tests/fixtures/dxf/10_meter_rectangular_site.dxf", "utf8");
+  const automatic = parseDxf(source);
+  assert.equal(automatic.sourceUnit, "m");
+  assert.equal(automatic.boundary.areaSquareMeters, 300);
+  assert.equal(automatic.boundary.perimeterMeters, 70);
+  assert.deepEqual(automatic.boundary.sideLengthsMeters, [15, 20, 15, 20]);
+  assert.deepEqual(automatic.siteAnalysis.roadSides, ["east"]);
+  assert.equal(automatic.siteAnalysis.roadWidthMeters, 4);
+  assert.equal(automatic.siteAnalysis.entranceSide, "east");
+  assert.equal(automatic.siteAnalysis.entranceWidthMeters, 3.5);
+  assert.ok(automatic.siteAnalysis.northAngleDegrees !== null && Math.abs(automatic.siteAnalysis.northAngleDegrees - 15) <= 2);
+  assert.equal(automatic.siteAnalysis.northDetected, true);
+
+  const confirmed = parseDxf(source, { unit: "m" });
+  assert.equal(confirmed.boundary.areaSquareMeters, 300);
+  assert.throws(() => parseDxf(source, { unit: "mm" }), /DXF_SCALE_OUT_OF_RANGE/);
 });
 
 test("rejects files without supported entities", () => {

@@ -145,6 +145,7 @@ footer { padding: 26px clamp(24px, 7vw, 108px); display: flex; justify-content: 
 .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .field-grid label, .wide-field { display: flex; flex-direction: column; gap: 8px; font-size: 12px; font-weight: 700; }
 .field-grid input, .field-grid select, .wide-field input { width: 100%; border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 12px 13px; outline: 0; }
+.unit-hint { min-height: 28px; color: var(--ink-soft); font-size: 9px; line-height: 1.45; font-weight: 400; }
 .wide-field { margin-top: 16px; }
 .drop-zone { width: 100%; min-height: 160px; margin: 22px 0 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border: 1px dashed rgba(21,59,50,.32); background: #f8f5ee; color: var(--ink); cursor: pointer; }
 .drop-zone:hover { border-color: var(--terracotta); background: #fbf4ee; }

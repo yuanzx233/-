@@ -17,8 +17,7 @@ type SiteAnalysis = {
   entranceWidthMeters: number | null;
   entranceSegment: { start: { x: number; y: number }; end: { x: number; y: number } } | null;
   northAngleDegrees: number | null;
-  northToleranceDegrees: number;
-  northWithinTolerance: boolean;
+  northDetected: boolean;
 };
 type ParseResult = { model: { boundary: BoundaryResult; siteAnalysis: SiteAnalysis; previewSvg: string; sourceUnit: string } };
 const sideChinese = { north: "北", east: "东", south: "南", west: "西" } as const;
@@ -26,7 +25,8 @@ const sideChinese = { north: "北", east: "东", south: "南", west: "西" } as 
 const errorMessages: Record<string, string> = {
   DXF_FILE_TYPE_INVALID: "请选择扩展名为 .dxf 的 ASCII DXF 文件。",
   DXF_FILE_EMPTY: "文件为空，请重新从 CAD 软件导出。",
-  DXF_UNIT_REQUIRED: "请选择 CAD 文件使用的绘图单位。",
+  DXF_UNIT_REQUIRED: "DXF 未声明绘图单位，请在“CAD 绘图单位”中手动确认后重试。",
+  DXF_UNIT_INVALID: "绘图单位无效，请重新选择。",
   DXF_INVALID_STRUCTURE: "文件结构不完整，可能已损坏或不是标准 DXF。",
   DXF_BINARY_UNSUPPORTED: "暂不支持二进制 DXF，请另存为 ASCII DXF 后重试。",
   DXF_GROUP_PAIR_MISMATCH: "DXF 数据不完整，请重新导出文件。",
@@ -41,7 +41,8 @@ const errorMessages: Record<string, string> = {
 
 export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }: { projects: ProjectOption[]; authHeaders: Record<string, string>; onProjectUpdated: () => void }) {
   const [projectId, setProjectId] = useState("");
-  const [unit, setUnit] = useState<"mm" | "cm" | "m">("mm");
+  const [unit, setUnit] = useState<"auto" | "mm" | "cm" | "m">("auto");
+  const [detectedUnit, setDetectedUnit] = useState<"mm" | "cm" | "m" | null>(null);
   const [roadDirection, setRoadDirection] = useState("南");
   const [roadWidth, setRoadWidth] = useState("6");
   const [note, setNote] = useState("");
@@ -60,6 +61,7 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
   function chooseFile(event: ChangeEvent<HTMLInputElement>) {
     const next = event.target.files?.[0] ?? null;
     setResult(null);
+    setDetectedUnit(null);
     setMessage("");
     setProgress(0);
     if (!next) return setFile(null);
@@ -93,7 +95,7 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
           fileName: file.name,
           contentType: file.type || "application/octet-stream",
           size: file.size,
-          sourceUnit: unit,
+          sourceUnit: unit === "auto" ? undefined : unit,
           siteInfo: { roadDirection, roadWidthMeters: Number(roadWidth) || 0, note: note.trim() },
         }),
       });
@@ -108,6 +110,7 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
       if (detectedRoads.length === 1) setRoadDirection(sideChinese[detectedRoads[0]]);
       if (detectedRoads.length > 1) setRoadDirection("多面临路");
       if (parsePayload.model.siteAnalysis.roadWidthMeters !== null) setRoadWidth(String(parsePayload.model.siteAnalysis.roadWidthMeters));
+      if (["mm", "cm", "m"].includes(parsePayload.model.sourceUnit)) setDetectedUnit(parsePayload.model.sourceUnit as "mm" | "cm" | "m");
       setResult(parsePayload);
       setProgress(100);
       setPhase("done");
@@ -132,7 +135,7 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
         <div className="upload-card">
           <div className="field-grid">
             <label>所属项目<select value={projectId} onChange={(event) => setProjectId(event.target.value)} disabled={!projects.length}><option value="">请先创建项目</option>{projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>
-            <label>CAD 绘图单位<select value={unit} onChange={(event) => setUnit(event.target.value as "mm" | "cm" | "m")}><option value="mm">毫米（mm）</option><option value="cm">厘米（cm）</option><option value="m">米（m）</option></select></label>
+            <label>CAD 绘图单位<select value={unit} onChange={(event) => { setUnit(event.target.value as "auto" | "mm" | "cm" | "m"); setDetectedUnit(null); }}><option value="auto">自动读取 DXF（推荐）</option><option value="mm">手动指定：毫米（mm）</option><option value="cm">手动指定：厘米（cm）</option><option value="m">手动指定：米（m）</option></select><small className="unit-hint">{detectedUnit ? `已从文件识别：${unitName(detectedUnit)}` : unit === "auto" ? "优先读取文件中的 $INSUNITS；缺失时会要求确认" : `将覆盖文件声明，按${unitName(unit)}重新计算`}</small></label>
             <label>临路方向<select value={roadDirection} onChange={(event) => setRoadDirection(event.target.value)}>{["东", "南", "西", "北", "多面临路"].map((item) => <option key={item}>{item}</option>)}</select></label>
             <label>道路宽度（米）<input type="number" min="0" max="100" step="0.1" value={roadWidth} onChange={(event) => setRoadWidth(event.target.value)} /></label>
           </div>
@@ -164,10 +167,14 @@ function ResultView({ result }: { result: ParseResult }) {
     <div className="semantic-metrics">
       <span><small>临路</small><strong>{analysis.roadSides.length ? analysis.roadSides.map((side) => `${sideChinese[side]}侧`).join("、") : "待确认"}</strong><em>{analysis.roadWidthMeters === null ? "未识别宽度" : `${analysis.roadWidthMeters} m 宽`}</em></span>
       <span><small>入口</small><strong>{analysis.entranceSide ? `${sideChinese[analysis.entranceSide]}侧` : "待确认"}</strong><em>{analysis.entranceWidthMeters === null ? "未识别宽度" : `${analysis.entranceWidthMeters} m 宽`}</em></span>
-      <span><small>北向</small><strong>{analysis.northAngleDegrees === null ? "待确认" : `${analysis.northAngleDegrees}°`}</strong><em>{analysis.northWithinTolerance ? `误差 ≤ ${analysis.northToleranceDegrees}°` : "请人工校正"}</em></span>
+      <span><small>北向</small><strong>{analysis.northAngleDegrees === null ? "待确认" : `${analysis.northAngleDegrees}°`}</strong><em>{analysis.northDetected ? "已识别 · 顺时针自图纸上方" : "未找到 NORTH 图层"}</em></span>
     </div>
     <div className="side-list"><small>逐边尺寸</small><div>{boundary.sideLengthsMeters.map((length, index) => <span key={`${index}-${length}`}>边 {index + 1}<strong>{length} m</strong></span>)}</div></div>
   </>;
+}
+
+function unitName(unit: "mm" | "cm" | "m"): string {
+  return unit === "mm" ? "毫米（mm）" : unit === "cm" ? "厘米（cm）" : "米（m）";
 }
 
 function uploadWithProgress(url: string, file: File, onProgress: (value: number) => void): Promise<void> {

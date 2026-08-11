@@ -395,7 +395,7 @@ function analyzeSite(lines: Line2D[], polylines: Polyline2D[], boundary: SiteBou
     return { side, width };
   });
   const roadSides = [...new Set(roadPairs.map((item) => item.side))];
-  const roadWidthMm = roadPairs.length ? Math.min(...roadPairs.map((item) => item.width)) : null;
+  const roadWidthMm = roadPairs.length ? Math.max(...roadPairs.map((item) => item.width)) : null;
   const roadDetails = roadPairs.map((item) => ({ side: item.side, widthMeters: round(item.width / 1000) }));
 
   const entranceLines = lines.filter((line) => line.layer.toUpperCase() === "ENTRANCE");

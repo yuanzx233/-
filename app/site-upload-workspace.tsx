@@ -138,7 +138,7 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
             <label>所属项目<select value={projectId} onChange={(event) => setProjectId(event.target.value)} disabled={!projects.length}><option value="">请先创建项目</option>{projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>
             <label>CAD 绘图单位<select value={unit} onChange={(event) => { setUnit(event.target.value as "auto" | "mm" | "cm" | "m"); setDetectedUnit(null); }}><option value="auto">自动读取 DXF（推荐）</option><option value="mm">手动指定：毫米（mm）</option><option value="cm">手动指定：厘米（cm）</option><option value="m">手动指定：米（m）</option></select><small className="unit-hint">{detectedUnit ? `已从文件识别：${unitName(detectedUnit)}` : unit === "auto" ? "优先读取文件中的 $INSUNITS；缺失时会要求确认" : `将覆盖文件声明，按${unitName(unit)}重新计算`}</small></label>
             <label>临路方向<select value={roadDirection} onChange={(event) => setRoadDirection(event.target.value)}>{["东", "南", "西", "北", "多面临路"].map((item) => <option key={item}>{item}</option>)}</select></label>
-            <label>道路宽度（米）<input type="number" min="0" max="100" step="0.1" value={roadWidth} onChange={(event) => setRoadWidth(event.target.value)} /></label>
+            <label>主要道路宽度（米）<input type="number" min="0" max="100" step="0.1" value={roadWidth} onChange={(event) => setRoadWidth(event.target.value)} /></label>
           </div>
           <label className="wide-field">场地备注<input maxLength={160} placeholder="例如：北侧邻宅，西南角有古树" value={note} onChange={(event) => setNote(event.target.value)} /></label>
           <button className="drop-zone" type="button" onClick={() => inputRef.current?.click()}>

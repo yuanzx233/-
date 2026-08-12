@@ -52,6 +52,7 @@ test("Day 4 site confirmation and structured requirements are present", async ()
   assert.match(uploadWorkspace, /function formatMetric/);
   assert.doesNotMatch(uploadWorkspace, /<small>主要方向<\/small>/);
   assert.match(uploadWorkspace, /各方向退界距离/);
+  assert.match(uploadWorkspace, /<small>用地面积<\/small>/);
   assert.match(uploadWorkspace, /自动读取 DXF（推荐）/);
   assert.match(uploadWorkspace, /已识别 · 顺时针自图纸上方/);
   assert.match(rules, /老人房必须设在首层/);

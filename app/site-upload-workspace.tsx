@@ -190,7 +190,7 @@ function ResultView({ result }: { result: ParseResult }) {
         <p>按 Esc 或点击图片外区域关闭</p>
       </div>
     </div>}
-    <div className="site-metrics"><div><small>面积</small><strong>{formatMetric(boundary.areaSquareMeters)} m²</strong></div><div><small>周长</small><strong>{formatMetric(boundary.perimeterMeters)} m</strong></div><div><small>边数</small><strong>{boundary.sideLengthsMeters.length}</strong></div></div>
+    <div className="site-metrics"><div><small>用地面积</small><strong>{formatMetric(boundary.areaSquareMeters)} m²</strong></div><div><small>周长</small><strong>{formatMetric(boundary.perimeterMeters)} m</strong></div><div><small>边数</small><strong>{boundary.sideLengthsMeters.length}</strong></div></div>
     <div className="semantic-metrics">
       <span><small>临路</small><strong>{analysis.roads?.length ? analysis.roads.map((road) => `${sideChinese[road.side]}侧 ${formatMetric(road.widthMeters)} m`).join("、") : analysis.roadSides.length ? analysis.roadSides.map((side) => `${sideChinese[side]}侧`).join("、") : "待确认"}</strong><em>{analysis.roads?.length ? `${analysis.roads.length} 面道路` : analysis.roadWidthMeters === null ? "未识别宽度" : `${formatMetric(analysis.roadWidthMeters)} m 宽`}</em></span>
       <span><small>入口</small><strong>{analysis.entranceSide ? `${sideChinese[analysis.entranceSide]}侧` : "待确认"}</strong><em>{analysis.entranceWidthMeters === null ? "未识别宽度" : `${formatMetric(analysis.entranceWidthMeters)} m 宽`}</em></span>

@@ -211,6 +211,12 @@ footer { padding: 26px clamp(24px, 7vw, 108px); display: flex; justify-content: 
 .candidate-list label { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
 .candidate-list label span { margin-left: auto; }
 .titleblock-confirm { display: block; padding: 10px; background: #fffdf8; border: 1px solid #d8b3a8; }
+.diagnostic-checklist { display: grid; gap: 8px; margin: 14px 0; }
+.diagnostic-checklist label { display: flex; align-items: flex-start; gap: 9px; padding: 9px 11px; background: #fffdf8; border: 1px solid #d8b3a8; }
+.diagnostic-checklist input { margin-top: 4px; }
+.diagnostic-continue { width: 100%; padding: 13px 16px; border: 0; background: #9e5435; color: white; font-weight: 700; cursor: pointer; }
+.diagnostic-continue:disabled { opacity: .42; cursor: not-allowed; }
+.diagnostic-panel.confirmed { border-color: #557a51; background: #eef6ea; color: #31572e; }
 .semantic-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 10px; }
 .semantic-metrics span { display: flex; flex-direction: column; gap: 4px; padding: 11px 12px; background: #f2f5ed; border: 1px solid rgba(21,59,50,.1); }
 .semantic-metrics small { color: var(--ink-soft); font-size: 9px; }

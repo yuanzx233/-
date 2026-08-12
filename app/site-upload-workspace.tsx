@@ -57,6 +57,7 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
   const [phase, setPhase] = useState<"idle" | "uploading" | "parsing" | "done" | "error">("idle");
   const [message, setMessage] = useState("");
   const [result, setResult] = useState<ParseResult | null>(null);
+  const [manualDiagnosticsConfirmed, setManualDiagnosticsConfirmed] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -67,6 +68,7 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
   function chooseFile(event: ChangeEvent<HTMLInputElement>) {
     const next = event.target.files?.[0] ?? null;
     setResult(null);
+    setManualDiagnosticsConfirmed(false);
     setDetectedUnit(null);
     setMessage("");
     setProgress(0);
@@ -89,6 +91,7 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
     if (!projectId) return fail("请先创建并选择一个项目。");
     if (!file) return fail("请选择要解析的 DXF 文件。");
     setResult(null);
+    setManualDiagnosticsConfirmed(false);
     setMessage("");
     setProgress(0);
     setPhase("uploading");
@@ -155,22 +158,33 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
           <button className="submit-button" type="button" disabled={phase === "uploading" || phase === "parsing" || !projects.length} onClick={() => void startUpload()}>{phase === "error" ? "重新上传并解析" : phase === "uploading" || phase === "parsing" ? "处理中…" : "上传并解析场地"}</button>
         </div>
         <div className="preview-card">
-          {result ? <ResultView result={result} /> : <div className="preview-empty"><span>⌗</span><strong>等待场地文件</strong><p>解析后将在这里显示闭合轮廓、面积、周长和每条边的长度。</p></div>}
+          {result ? <ResultView result={result} onManualConfirmed={() => setManualDiagnosticsConfirmed(true)} /> : <div className="preview-empty"><span>⌗</span><strong>等待场地文件</strong><p>解析后将在这里显示闭合轮廓、面积、周长和每条边的长度。</p></div>}
         </div>
       </div>
     </section>
-    {result && projectId && !result.model.diagnostics?.blockDownstreamGeneration ? <RequirementsWorkspace projectId={projectId} siteResult={{ areaSquareMeters: result.model.boundary.areaSquareMeters, perimeterMeters: result.model.boundary.perimeterMeters }} initialRoadDirection={result.model.siteAnalysis.roadSides[0] ? sideChinese[result.model.siteAnalysis.roadSides[0]] : roadDirection} authHeaders={authHeaders} onSaved={onProjectUpdated} /> : null}
+    {result && projectId && (!result.model.diagnostics?.blockDownstreamGeneration || manualDiagnosticsConfirmed) ? <RequirementsWorkspace projectId={projectId} siteResult={{ areaSquareMeters: result.model.boundary.areaSquareMeters, perimeterMeters: result.model.boundary.perimeterMeters }} initialRoadDirection={result.model.siteAnalysis.roadSides[0] ? sideChinese[result.model.siteAnalysis.roadSides[0]] : roadDirection} authHeaders={authHeaders} onSaved={onProjectUpdated} /> : null}
   </>);
 }
 
-function ResultView({ result }: { result: ParseResult }) {
+function ResultView({ result, onManualConfirmed }: { result: ParseResult; onManualConfirmed: () => void }) {
   const boundary = result.model.boundary;
   const analysis = result.model.siteAnalysis;
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [objectActions, setObjectActions] = useState<Record<string, "keep" | "remove" | "ignore">>({});
+  const [selectedBoundary, setSelectedBoundary] = useState("");
+  const [acknowledgedWarnings, setAcknowledgedWarnings] = useState<Record<string, boolean>>({});
+  const [diagnosticsConfirmed, setDiagnosticsConfirmed] = useState(false);
   useEffect(() => {
     setObjectActions(Object.fromEntries((result.model.existingObjects ?? []).map((object) => [object.id, object.defaultAction])));
   }, [result.model.existingObjects]);
+  useEffect(() => {
+    setSelectedBoundary("");
+    setAcknowledgedWarnings({});
+    setDiagnosticsConfirmed(false);
+  }, [result.model.diagnostics]);
+  const warningsToAcknowledge = (result.model.diagnostics?.warnings ?? []).filter((warning) => warning !== "MULTIPLE_SITE_BOUNDARIES");
+  const boundaryConfirmed = (result.model.diagnostics?.boundaryCandidates.length ?? 0) <= 1 || Boolean(selectedBoundary);
+  const allDiagnosticsAcknowledged = boundaryConfirmed && warningsToAcknowledge.every((warning) => acknowledgedWarnings[warning]);
   useEffect(() => {
     if (!isPreviewOpen) return;
     const previousOverflow = document.body.style.overflow;
@@ -218,12 +232,14 @@ function ResultView({ result }: { result: ParseResult }) {
       <div className="terrain-metrics"><span>等高线<strong>{result.model.terrainAnalysis.contourCount} 条</strong></span><span>高程点<strong>{result.model.terrainAnalysis.elevationPoints.length} 个</strong></span><span>总体高差<strong>{result.model.terrainAnalysis.elevationDifferenceMeters === null ? "待确认" : `${formatMetric(result.model.terrainAnalysis.elevationDifferenceMeters)} m`}</strong></span><span>高程范围<strong>{result.model.terrainAnalysis.minimumElevationMeters === null ? "待确认" : `${formatMetric(result.model.terrainAnalysis.minimumElevationMeters)}–${formatMetric(result.model.terrainAnalysis.maximumElevationMeters!)} m`}</strong></span></div>
       <ul><li>南侧入口位于相对低点，需复核雨水倒灌与入口排水组织。</li><li>约 4 m 高差可能涉及挡墙、分台地或基础高差，需专项结构复核。</li><li>当前仅完成二维等高线与高程点识别，尚不支持精确坡地自动设计，建议人工复核。</li></ul>
     </section>}
-    {result.model.diagnostics?.requiresManualConfirmation && <section className="diagnostic-panel" role="alert">
-      <div><small>解析存在歧义</small><strong>必须人工确认，已阻止进入平面方案生成</strong></div>
-      {result.model.diagnostics.boundaryCandidates.length > 1 && <div className="candidate-list"><p>检测到多个疑似地块，请选择正确边界：</p>{result.model.diagnostics.boundaryCandidates.map((candidate) => <label key={candidate.layer}><input type="radio" name="boundary-candidate" /> <strong>{candidate.layer}</strong><span>{formatMetric(candidate.areaSquareMeters)} m²</span></label>)}</div>}
-      <ul>{result.model.diagnostics.warnings.map((warning) => <li key={warning}>{diagnosticMessage(warning)}</li>)}</ul>
-      {result.model.diagnostics.titleblockPresent && <label className="titleblock-confirm"><input type="checkbox" /> 确认忽略图框和图签</label>}
-      <p>完成边界、北向、入口及异常几何人工确认后，方可继续生成方案。</p>
+    {result.model.diagnostics?.requiresManualConfirmation && <section className={`diagnostic-panel ${diagnosticsConfirmed ? "confirmed" : ""}`} role="alert">
+      <div><small>解析存在歧义</small><strong>{diagnosticsConfirmed ? "人工确认已完成，可继续填写户型需求" : "必须人工确认，已阻止进入平面方案生成"}</strong></div>
+      {!diagnosticsConfirmed && <>
+        {result.model.diagnostics.boundaryCandidates.length > 1 && <div className="candidate-list"><p>检测到多个疑似地块，请选择正确边界：</p>{result.model.diagnostics.boundaryCandidates.map((candidate) => <label key={candidate.layer}><input type="radio" name="boundary-candidate" value={candidate.layer} checked={selectedBoundary === candidate.layer} onChange={() => setSelectedBoundary(candidate.layer)} /> <strong>{candidate.layer}</strong><span>{formatMetric(candidate.areaSquareMeters)} m²</span></label>)}</div>}
+        <div className="diagnostic-checklist">{warningsToAcknowledge.map((warning) => <label key={warning}><input type="checkbox" checked={Boolean(acknowledgedWarnings[warning])} onChange={(event) => setAcknowledgedWarnings((current) => ({ ...current, [warning]: event.target.checked }))} /><span>{diagnosticMessage(warning)}</span></label>)}</div>
+        <button className="diagnostic-continue" type="button" disabled={!allDiagnosticsAcknowledged} onClick={() => { setDiagnosticsConfirmed(true); onManualConfirmed(); }}>确认以上事项并继续</button>
+        <p>{allDiagnosticsAcknowledged ? "确认后将解锁户型需求填写。" : "请先选择边界，并逐项确认北向、入口、异常几何及图框图签处理。"}</p>
+      </>}
     </section>}
     <div className="side-list"><small>逐边尺寸</small><div>{boundary.sideLengthsMeters.map((length, index) => <span key={`${index}-${length}`}>边 {index + 1}<strong>{formatMetric(length)} m</strong></span>)}</div></div>
   </>;

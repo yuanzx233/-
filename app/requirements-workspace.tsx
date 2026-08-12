@@ -11,7 +11,7 @@ import {
 } from "../lib/requirements";
 import { PlanWorkspace } from "./plan-workspace";
 
-type SiteResult = { areaSquareMeters: number; perimeterMeters: number };
+type SiteResult = { areaSquareMeters: number; perimeterMeters: number; boundaryPoints?: Array<{ x: number; y: number }>; buildablePoints?: Array<{ x: number; y: number }>; buildableAreaSquareMeters?: number; retainedObjects?: Array<{ type: string; points?: Array<{ x: number; y: number }>; center?: { x: number; y: number }; radius?: number }> };
 type Props = {
   projectId: string;
   siteResult: SiteResult;

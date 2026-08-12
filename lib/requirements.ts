@@ -7,6 +7,10 @@ export type SiteConfirmation = {
   boundaryConfirmed: boolean;
   areaSquareMeters: number;
   perimeterMeters: number;
+  boundaryPoints?: Array<{ x: number; y: number }>;
+  buildablePoints?: Array<{ x: number; y: number }>;
+  buildableAreaSquareMeters?: number;
+  retainedObjects?: Array<{ type: string; points?: Array<{ x: number; y: number }>; center?: { x: number; y: number }; radius?: number }>;
 };
 
 export type HousingRequirements = {

@@ -1,7 +1,7 @@
 import type { RequirementSubmission } from "./requirements";
 
 export type PlanRoom = { id: string; name: string; floor: number; area: number; x: number; y: number; width: number; height: number };
-export type PlanCandidate = { id: string; name: string; templateId: string; score: number; totalArea: number; floors: number; rooms: PlanRoom[]; strengths: string[]; tradeoffs: string[]; satisfaction: Array<{ label: string; met: boolean; detail: string }>; svg: string };
+export type PlanCandidate = { id: string; name: string; templateId: string; score: number; totalArea: number; floors: number; footprint: Array<{ x: number; y: number }>; siteFit: { fits: boolean; basis: "buildable" | "boundary"; coveragePercent: number; clearanceNote: string }; rooms: PlanRoom[]; strengths: string[]; tradeoffs: string[]; satisfaction: Array<{ label: string; met: boolean; detail: string }>; svg: string };
 type Template = { id: string; name: string; aspect: number; floors: number; bedrooms: number; layout: "central" | "side" | "courtyard"; tags: string[] };
 
 export const planTemplates: Template[] = Array.from({ length: 16 }, (_, index) => ({
@@ -18,20 +18,29 @@ export function generatePlanCandidates(input: RequirementSubmission): PlanCandid
   const r = input.requirements;
   const targetArea = (r.areaMin + r.areaMax) / 2;
   const siteAspect = Math.max(.55, Math.min(1.8, input.site.areaSquareMeters / Math.max(1, input.site.perimeterMeters ** 2) * 16));
+  const available = input.site.buildablePoints?.length ? input.site.buildablePoints : input.site.boundaryPoints;
+  if (!available?.length) throw new Error("SITE_GEOMETRY_REQUIRED");
+  const bounds = polygonBounds(available);
+  const availableArea = input.site.buildableAreaSquareMeters ?? input.site.areaSquareMeters;
   return planTemplates.map((template) => {
     const floorFit = 1 - Math.min(1, Math.abs(template.floors - r.floors) / 2);
     const bedroomFit = 1 - Math.min(1, Math.abs(template.bedrooms - r.bedroomCount) / Math.max(1, r.bedroomCount));
     const aspectFit = 1 - Math.min(1, Math.abs(template.aspect - siteAspect) / 1.2);
     const priorityFit = r.priorities.filter((item) => template.tags.includes(item)).length / Math.max(1, r.priorities.length);
     const score = Math.round((floorFit * 35 + bedroomFit * 30 + aspectFit * 20 + priorityFit * 15) * 10) / 10;
-    return buildCandidate(template, input, targetArea, score);
-  }).sort((a, b) => b.score - a.score).slice(0, 3).map((plan, index) => ({ ...plan, id: `P${index + 1}`, name: `方案 ${String.fromCharCode(65 + index)} · ${plan.name}` }));
+    return buildCandidate(template, input, targetArea, score, available, bounds, availableArea);
+  }).filter((plan) => plan.siteFit.fits).sort((a, b) => b.score - a.score).slice(0, 3).map((plan, index) => ({ ...plan, id: `P${index + 1}`, name: `方案 ${String.fromCharCode(65 + index)} · ${plan.name}` }));
 }
 
-function buildCandidate(template: Template, input: RequirementSubmission, targetArea: number, score: number): PlanCandidate {
+function buildCandidate(template: Template, input: RequirementSubmission, targetArea: number, score: number, available: Array<{ x: number; y: number }>, bounds: ReturnType<typeof polygonBounds>, availableArea: number): PlanCandidate {
   const r = input.requirements;
   const totalArea = round(Math.min(r.areaMax, Math.max(r.areaMin, targetArea * (0.94 + (Number(template.id.slice(1)) % 3) * .04))));
   const perFloor = totalArea / r.floors;
+  const footprintWidth = Math.sqrt(perFloor * template.aspect) * 1000, footprintHeight = perFloor / (footprintWidth / 1000) * 1000;
+  const cx = (bounds.minX + bounds.maxX) / 2, cy = (bounds.minY + bounds.maxY) / 2;
+  const footprint = [{ x: cx - footprintWidth / 2, y: cy - footprintHeight / 2 }, { x: cx + footprintWidth / 2, y: cy - footprintHeight / 2 }, { x: cx + footprintWidth / 2, y: cy + footprintHeight / 2 }, { x: cx - footprintWidth / 2, y: cy + footprintHeight / 2 }];
+  const within = footprint.every((point) => pointInPolygon(point, available)), avoids = avoidsRetainedObjects(footprint, input.site.retainedObjects ?? []), capacity = perFloor <= availableArea * .8;
+  const siteFit = { fits: within && avoids && capacity, basis: input.site.buildablePoints?.length ? "buildable" as const : "boundary" as const, coveragePercent: round(perFloor / availableArea * 100), clearanceNote: !within ? "建筑轮廓超出可建设边界" : !avoids ? "建筑轮廓占用保留对象" : !capacity ? "首层占地超过可建设面积 80%" : "建筑轮廓完整位于可建设范围内" };
   const living = Math.max(r.minLivingArea, round(perFloor * .24));
   const kitchen = Math.max(r.minKitchenArea, round(perFloor * .1));
   const bathArea = Math.max(r.minBathroomArea, round(perFloor * .055));
@@ -51,11 +60,14 @@ function buildCandidate(template: Template, input: RequirementSubmission, target
     { label: "老人房首层", met: r.elderRoomCount === 0 || r.elderRoomFirstFloor, detail: r.elderRoomCount ? `${r.elderRoomCount} 间首层老人房` : "无老人房要求" },
     { label: "优先需求", met: template.tags.some(tag => r.priorities.includes(tag)), detail: template.tags.join("、") },
   ];
-  const plan = { id: template.id, name: template.name, templateId: template.id, score, totalArea, floors: r.floors, rooms, strengths: [`匹配 ${template.tags.join("、")} 偏好`, "主要房间沿外墙布置", "交通面积控制紧凑"], tradeoffs: template.layout === "courtyard" ? ["庭院界面增加造价", "需复核场地退界"] : ["次卧尺度较紧凑", "门窗位置需结合立面深化"], satisfaction, svg: "" };
+  const plan = { id: template.id, name: template.name, templateId: template.id, score, totalArea, floors: r.floors, footprint, siteFit, rooms, strengths: [`匹配 ${template.tags.join("、")} 偏好`, "主要房间沿外墙布置", "交通面积控制紧凑"], tradeoffs: template.layout === "courtyard" ? ["庭院界面增加造价", "需复核场地退界"] : ["次卧尺度较紧凑", "门窗位置需结合立面深化"], satisfaction, svg: "" };
   return { ...plan, svg: renderPlanSvg(plan) };
 }
 
 function room(id: string, name: string, floor: number, area: number, x: number, y: number, width: number, height: number): PlanRoom { return { id, name, floor, area: round(area), x, y, width, height }; }
+function polygonBounds(points: Array<{ x: number; y: number }>) { const xs = points.map(p => p.x), ys = points.map(p => p.y); return { minX: Math.min(...xs), maxX: Math.max(...xs), minY: Math.min(...ys), maxY: Math.max(...ys) }; }
+function pointInPolygon(point: { x: number; y: number }, polygon: Array<{ x: number; y: number }>) { let inside = false; for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) { const a = polygon[i], b = polygon[j]; if (((a.y > point.y) !== (b.y > point.y)) && point.x < (b.x - a.x) * (point.y - a.y) / ((b.y - a.y) || 1) + a.x) inside = !inside; } return inside; }
+function avoidsRetainedObjects(footprint: Array<{ x: number; y: number }>, objects: NonNullable<RequirementSubmission["site"]["retainedObjects"]>) { return objects.every(object => { if (object.center && object.radius) return footprint.every(point => Math.hypot(point.x - object.center!.x, point.y - object.center!.y) > object.radius!); if (object.points?.length) return object.points.every(point => !pointInPolygon(point, footprint)) && footprint.every(point => !pointInPolygon(point, object.points!)); return true; }); }
 function round(value: number) { return Math.round(value * 10) / 10; }
 function escapeXml(value: string) { return value.replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" }[char]!)); }
 function renderPlanSvg(plan: Omit<PlanCandidate, "svg">): string {

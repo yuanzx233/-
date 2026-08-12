@@ -5,6 +5,7 @@ import { RequirementsWorkspace } from "./requirements-workspace";
 
 type ProjectOption = { id: string; name: string; address: string | null };
 type BoundaryResult = {
+  points: Array<{ x: number; y: number }>;
   areaSquareMeters: number;
   perimeterMeters: number;
   sideLengthsMeters: number[];
@@ -22,10 +23,10 @@ type SiteAnalysis = {
   northAngleDegrees: number | null;
   northDetected: boolean;
 };
-type ExistingObject = { id: string; type: "building" | "tree" | "water" | "wall"; label: string; defaultAction: "keep" | "remove" | "ignore"; areaSquareMeters?: number; widthMeters?: number };
+type ExistingObject = { id: string; type: "building" | "tree" | "water" | "wall"; label: string; defaultAction: "keep" | "remove" | "ignore"; points?: Array<{ x: number; y: number }>; center?: { x: number; y: number }; radius?: number; areaSquareMeters?: number; widthMeters?: number };
 type TerrainAnalysis = { contourCount: number; contourElevationsMeters: number[]; elevationPoints: Array<{ elevationMeters: number }>; minimumElevationMeters: number | null; maximumElevationMeters: number | null; elevationDifferenceMeters: number | null; slopeDirection: "north_high_south_low" | "south_high_north_low" | "undetermined"; warnings: string[]; manualReviewRequired: boolean };
 type Diagnostics = { warnings: string[]; requiresManualConfirmation: boolean; blockDownstreamGeneration: boolean; boundaryCandidates: Array<{ layer: string; areaSquareMeters: number }>; unclosedPolylineCount: number; duplicateLinePairs: number; zeroLengthLineCount: number; selfIntersectingPolylineCount: number; titleblockPresent: boolean };
-type ParseResult = { model: { boundary: BoundaryResult; buildableArea: { areaSquareMeters: number; perimeterMeters: number; setbacksMeters: Record<"north" | "east" | "south" | "west", number> } | null; existingObjects: ExistingObject[]; terrainAnalysis: TerrainAnalysis; diagnostics: Diagnostics; siteAnalysis: SiteAnalysis; previewSvg: string; sourceUnit: string } };
+type ParseResult = { model: { boundary: BoundaryResult; buildableArea: { points: Array<{ x: number; y: number }>; areaSquareMeters: number; perimeterMeters: number; setbacksMeters: Record<"north" | "east" | "south" | "west", number> } | null; existingObjects: ExistingObject[]; terrainAnalysis: TerrainAnalysis; diagnostics: Diagnostics; siteAnalysis: SiteAnalysis; previewSvg: string; sourceUnit: string } };
 const sideChinese = { north: "北", east: "东", south: "南", west: "西" } as const;
 
 const errorMessages: Record<string, string> = {
@@ -175,7 +176,7 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
         </div>
       </section>
     </div>}
-    {result && projectId && !result.model.diagnostics?.blockDownstreamGeneration ? <RequirementsWorkspace projectId={projectId} siteResult={{ areaSquareMeters: result.model.boundary.areaSquareMeters, perimeterMeters: result.model.boundary.perimeterMeters }} initialRoadDirection={result.model.siteAnalysis.roadSides[0] ? sideChinese[result.model.siteAnalysis.roadSides[0]] : roadDirection} authHeaders={authHeaders} onSaved={onProjectUpdated} /> : null}
+    {result && projectId && !result.model.diagnostics?.blockDownstreamGeneration ? <RequirementsWorkspace projectId={projectId} siteResult={{ areaSquareMeters: result.model.boundary.areaSquareMeters, perimeterMeters: result.model.boundary.perimeterMeters, boundaryPoints: result.model.boundary.points, buildablePoints: result.model.buildableArea?.points, buildableAreaSquareMeters: result.model.buildableArea?.areaSquareMeters, retainedObjects: result.model.existingObjects.filter((object) => object.defaultAction === "keep").map(({ type, points, center, radius }) => ({ type, points, center, radius })) }} initialRoadDirection={result.model.siteAnalysis.roadSides[0] ? sideChinese[result.model.siteAnalysis.roadSides[0]] : roadDirection} authHeaders={authHeaders} onSaved={onProjectUpdated} /> : null}
   </>);
 }
 

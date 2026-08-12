@@ -150,6 +150,8 @@ test("DXF-06 distinguishes existing objects and enforces retained-object avoidan
   assert.equal(model.existingObjects.find((object) => object.type === "water")?.widthMeters, 1.2);
   assert.ok(model.existingObjects.every((object) => object.defaultAction === "keep"));
   assert.match(model.previewSvg, /data-existing-object="building"/);
+  assert.match(model.previewSvg, /data-existing-object="building"><polygon[^>]+fill="#b8b8b8"[^>]+stroke="#111111"/);
+  assert.match(model.previewSvg, />现状建筑<\/text>/);
   assert.match(model.previewSvg, /data-existing-object="tree"/);
   assert.match(model.previewSvg, /data-existing-object="water"/);
   assert.match(model.previewSvg, /data-existing-object="wall"/);

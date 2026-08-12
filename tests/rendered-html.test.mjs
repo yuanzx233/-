@@ -64,3 +64,10 @@ test("Day 4 site confirmation and structured requirements are present", async ()
   assert.match(route, /'REQUIREMENTS', 'CONFIRMED'/);
   assert.match(route, /PLAN_READY/);
 });
+
+test("Day 5 plan generation, comparison and confirmation are present", async () => {
+  const [workspace, generator, route] = await Promise.all([readFile("app/plan-workspace.tsx", "utf8"), readFile("lib/plan-generator.ts", "utf8"), readFile("app/api/projects/[id]/plans/route.ts", "utf8")]);
+  assert.match(workspace, /生成 3 套候选方案/); assert.match(workspace, /确认此方案/); assert.match(workspace, /需求满足度|plan-satisfaction/);
+  assert.match(generator, /length: 16/); assert.match(generator, /generatePlanCandidates/); assert.match(generator, /renderPlanSvg/);
+  assert.match(route, /action === "confirm"/); assert.match(route, /stage, status, data_json/);
+});

@@ -9,6 +9,7 @@ import {
   type ValidationIssue,
   validateRequirementSubmission,
 } from "../lib/requirements";
+import { PlanWorkspace } from "./plan-workspace";
 
 type SiteResult = { areaSquareMeters: number; perimeterMeters: number };
 type Props = {
@@ -102,7 +103,7 @@ export function RequirementsWorkspace({ projectId, siteResult, initialRoadDirect
     }
   }
 
-  return (
+  return (<>
     <section className="requirements-workspace" id="requirements">
       <div className="cad-heading">
         <div><p className="eyebrow">DAY 4 · 场地确认与户型需求</p><h2>先确认地块，再说清楚一家人的生活</h2></div>
@@ -155,6 +156,8 @@ export function RequirementsWorkspace({ projectId, siteResult, initialRoadDirect
         <div className="requirement-submit"><span>提交前将再次校验面积、房间下限、老人房楼层及卧卫楼梯数量。</span><button className="submit-button" disabled={saving} type="submit">{saving ? "正在保存…" : "确认场地并提交需求"}</button></div>
       </form>
     </section>
+    {savedVersion ? <PlanWorkspace projectId={projectId} authHeaders={authHeaders} onConfirmed={onSaved} /> : null}
+    </>
   );
 }
 

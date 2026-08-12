@@ -1,0 +1,32 @@
+{
+  "drawing_unit": "mm",
+  "autocad_insunits_code": 4,
+  "dxf_version": "AC1009",
+  "site_boundary_count": 1,
+  "site_dimensions_m": {
+    "width": 20.0,
+    "depth": 25.0
+  },
+  "site_area_m2": 500.0,
+  "site_perimeter_m": 90.0,
+  "setbacks_m": {
+    "south": 5.0,
+    "north": 3.0,
+    "west": 2.0,
+    "east": 2.0
+  },
+  "buildable_dimensions_m": {
+    "width": 16.0,
+    "depth": 17.0
+  },
+  "buildable_area_m2": 272.0,
+  "road_sides": [
+    "south"
+  ],
+  "road_width_m": 6.0,
+  "entrance_side": "south",
+  "entrance_width_m": 4.0,
+  "north_angle_deg": 0.0,
+  "requires_manual_confirmation": false,
+  "expected_result": "success"
+}

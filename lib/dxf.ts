@@ -18,6 +18,7 @@ export type BuildableArea = {
   points: Point2D[];
   areaSquareMeters: number;
   perimeterMeters: number;
+  setbacksMeters: Record<CardinalSide, number>;
 };
 
 export type DxfModel = {
@@ -167,6 +168,7 @@ export function parseDxf(source: string, options: { unit?: Exclude<DxfUnit, "unk
     points: buildablePolyline.points,
     areaSquareMeters: round(polygonArea(buildablePolyline.points) / 1_000_000),
     perimeterMeters: round(polygonSideLengths(buildablePolyline.points).reduce((sum, length) => sum + length, 0) / 1000),
+    setbacksMeters: calculateSetbacks(boundaryPolyline.points, buildablePolyline.points),
   } : null;
   const siteAnalysis = analyzeSite(lines, polylines, boundary);
   const layerMap = new Map<string, number>();
@@ -248,6 +250,35 @@ function polygonMajorDirection(points: Point2D[]): number {
     .sort((a, b) => Math.hypot(b.next.x - b.point.x, b.next.y - b.point.y) - Math.hypot(a.next.x - a.point.x, a.next.y - a.point.y))[0];
   const angle = Math.atan2(longest.next.y - longest.point.y, longest.next.x - longest.point.x) * 180 / Math.PI;
   return round(((angle % 180) + 180) % 180);
+}
+
+function calculateSetbacks(boundary: Point2D[], buildable: Point2D[]): Record<CardinalSide, number> {
+  const site = getBounds(boundary);
+  const control = getBounds(buildable);
+  return {
+    south: round((control.minY - site.minY) / 1000),
+    north: round((site.maxY - control.maxY) / 1000),
+    west: round((control.minX - site.minX) / 1000),
+    east: round((site.maxX - control.maxX) / 1000),
+  };
+}
+
+export function isFootprintWithinBuildableArea(buildableArea: BuildableArea | null, footprint: Point2D[]): boolean {
+  if (!buildableArea || footprint.length < 3) return false;
+  return footprint.every((point) => pointInPolygonOrBoundary(point, buildableArea.points));
+}
+
+function pointInPolygonOrBoundary(point: Point2D, polygon: Point2D[]): boolean {
+  let inside = false;
+  for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index++) {
+    const start = polygon[previous];
+    const end = polygon[index];
+    if (projectToSegment(point, start, end).distance <= 1) return true;
+    const crosses = (end.y > point.y) !== (start.y > point.y)
+      && point.x < (start.x - end.x) * (point.y - end.y) / (start.y - end.y) + end.x;
+    if (crosses) inside = !inside;
+  }
+  return inside;
 }
 
 function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnalysis"], lines: Line2D[], polylines: Polyline2D[]): string {

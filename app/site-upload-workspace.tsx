@@ -22,7 +22,7 @@ type SiteAnalysis = {
   northAngleDegrees: number | null;
   northDetected: boolean;
 };
-type ParseResult = { model: { boundary: BoundaryResult; buildableArea: { areaSquareMeters: number; perimeterMeters: number } | null; siteAnalysis: SiteAnalysis; previewSvg: string; sourceUnit: string } };
+type ParseResult = { model: { boundary: BoundaryResult; buildableArea: { areaSquareMeters: number; perimeterMeters: number; setbacksMeters: Record<"north" | "east" | "south" | "west", number> } | null; siteAnalysis: SiteAnalysis; previewSvg: string; sourceUnit: string } };
 const sideChinese = { north: "北", east: "东", south: "南", west: "西" } as const;
 
 const errorMessages: Record<string, string> = {
@@ -197,6 +197,7 @@ function ResultView({ result }: { result: ParseResult }) {
       <span><small>北向</small><strong>{analysis.northAngleDegrees === null ? "待确认" : `${analysis.northAngleDegrees}°`}</strong><em>{analysis.northDetected ? "已识别 · 顺时针自图纸上方" : "未找到 NORTH 图层"}</em></span>
       {result.model.buildableArea && <span><small>可建设范围</small><strong>{formatMetric(result.model.buildableArea.areaSquareMeters)} m²</strong><em>控制线内 · 周长 {formatMetric(result.model.buildableArea.perimeterMeters)} m</em></span>}
     </div>
+    {result.model.buildableArea && <div className="side-list setback-list"><small>各方向退界距离</small><div>{(["south", "north", "west", "east"] as const).map((side) => <span key={side}>{sideChinese[side]}侧<strong>{formatMetric(result.model.buildableArea!.setbacksMeters[side])} m</strong></span>)}</div></div>}
     <div className="side-list"><small>逐边尺寸</small><div>{boundary.sideLengthsMeters.map((length, index) => <span key={`${index}-${length}`}>边 {index + 1}<strong>{formatMetric(length)} m</strong></span>)}</div></div>
   </>;
 }

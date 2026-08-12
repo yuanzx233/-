@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { parseDxf } from "../lib/dxf";
+import { isFootprintWithinBuildableArea, parseDxf } from "../lib/dxf";
 
 test("parses layers, lines and closed polylines into millimeters", async () => {
   const source = await readFile("tests/fixtures/dxf/01_rectangle_18x24m.dxf", "utf8");
@@ -118,6 +118,24 @@ test("DXF-04 preserves sloped boundaries and calculates the buildable control ar
   assert.doesNotMatch(model.previewSvg, /stroke-dasharray/);
   assert.match(model.previewSvg, />28\.0 m</);
   assert.match(model.previewSvg, />21\.0 m</);
+});
+
+test("DXF-05 keeps site and buildable areas separate and enforces setbacks", async () => {
+  const source = await readFile("tests/fixtures/dxf/13_setback_control_line.dxf", "utf8");
+  const expected = JSON.parse(await readFile("tests/fixtures/dxf/13_setback_control_line.expected.json", "utf8"));
+  const model = parseDxf(source);
+  assert.equal(model.boundary.layer, "SITE_BOUNDARY");
+  assert.equal(model.boundary.areaSquareMeters, expected.site_area_m2);
+  assert.equal(model.boundary.perimeterMeters, expected.site_perimeter_m);
+  assert.ok(model.buildableArea);
+  assert.equal(model.buildableArea!.areaSquareMeters, expected.buildable_area_m2);
+  assert.deepEqual(model.buildableArea!.setbacksMeters, expected.setbacks_m);
+  assert.equal(isFootprintWithinBuildableArea(model.buildableArea, [
+    { x: 7000, y: 13000 }, { x: 21000, y: 13000 }, { x: 21000, y: 28000 }, { x: 7000, y: 28000 },
+  ]), true);
+  assert.equal(isFootprintWithinBuildableArea(model.buildableArea, [
+    { x: 5000, y: 11000 }, { x: 23000, y: 11000 }, { x: 23000, y: 30000 }, { x: 5000, y: 30000 },
+  ]), false);
 });
 
 test("rejects files without supported entities", () => {

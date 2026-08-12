@@ -176,6 +176,11 @@ test("DXF-07 reads contours, elevation points and reports terrain review risks",
   assert.deepEqual(model.terrainAnalysis.warnings, expected.expected_warnings);
   assert.equal((model.previewSvg.match(/data-terrain="contour"/g) ?? []).length, 5);
   assert.equal((model.previewSvg.match(/data-terrain="elevation-point"/g) ?? []).length, 6);
+  assert.equal((model.previewSvg.match(/data-elevation-symbol="triangle"/g) ?? []).length, 6);
+  assert.equal((model.previewSvg.match(/data-terrain="elevation-band"/g) ?? []).length, 5);
+  assert.doesNotMatch(model.previewSvg, /data-terrain="elevation-point"><circle/);
+  assert.match(model.previewSvg, /fill="#bfe0b8"/);
+  assert.match(model.previewSvg, /fill="#f4c44f"/);
 });
 
 test("rejects files without supported entities", () => {

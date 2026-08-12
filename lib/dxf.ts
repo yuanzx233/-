@@ -306,6 +306,10 @@ function polygonSideLengths(points: Point2D[]): number[] {
   });
 }
 
+function averageY(points: Point2D[]): number {
+  return points.reduce((sum, point) => sum + point.y, 0) / Math.max(points.length, 1);
+}
+
 function polygonMajorDirection(points: Point2D[]): number {
   const longest = points.map((point, index) => ({ point, next: points[(index + 1) % points.length] }))
     .sort((a, b) => Math.hypot(b.next.x - b.point.x, b.next.y - b.point.y) - Math.hypot(a.next.x - a.point.x, a.next.y - a.point.y))[0];
@@ -464,7 +468,7 @@ function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnaly
   const points = (items: Point2D[]) => items.map((point) => { const value = map(point); return `${value.x},${value.y}`; }).join(" ");
   const line = (item: Line2D, color: string, width = stroke) => { const start = map(item.start); const end = map(item.end); return `<line x1="${start.x}" y1="${start.y}" x2="${end.x}" y2="${end.y}" stroke="${color}" stroke-width="${round(width)}" stroke-linecap="round"/>`; };
   const roadShapes = roads.map((item) => `<polygon points="${points(item.points)}" fill="#c98962" fill-opacity=".78" stroke="#9e5435" stroke-width="${round(stroke)}"/>`).join("");
-  const boundaryShape = `<polygon points="${points(boundary.points)}" fill="#d8e4d2" fill-opacity=".88" stroke="#153b32" stroke-width="${round(stroke * 1.35)}"/>`;
+  const boundaryShape = `<polygon points="${points(boundary.points)}" fill="${contourPolylines.length ? "#bfe0b8" : "#d8e4d2"}" fill-opacity=".88" stroke="#153b32" stroke-width="${round(stroke * 1.35)}"/>`;
   const buildableShapes = buildablePolylines.map((item) => `<polygon points="${points(item.points)}" fill="#fffdf8" fill-opacity=".2" stroke="#bb6e48" stroke-width="${round(stroke)}" data-layer="BUILDABLE_AREA"/>`).join("");
   const existingShapes = polylines.filter((item) => item.layer.toUpperCase() === "EXISTING_BUILDING").map((item) => {
     const center = item.points.reduce((sum, point) => ({ x: sum.x + point.x / item.points.length, y: sum.y + point.y / item.points.length }), { x: 0, y: 0 });
@@ -474,8 +478,15 @@ function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnaly
     + polylines.filter((item) => item.layer.toUpperCase() === "WATER").map((item) => `<polygon points="${points(item.points)}" fill="#9cc8d8" fill-opacity=".75" stroke="#39778c" stroke-width="${round(stroke)}" data-existing-object="water"/>`).join("")
     + lines.filter((item) => item.layer.toUpperCase() === "WALL").map((item) => line(item, "#6b665f", stroke * 1.35).replace("/>", ` data-existing-object="wall"/>`)).join("")
     + circles.filter((item) => item.layer.toUpperCase() === "TREE" && !circles.some((other) => other !== item && other.layer.toUpperCase() === "TREE" && other.center.x === item.center.x && other.center.y === item.center.y && other.radius > item.radius)).map((item) => { const center = map(item.center); return `<circle cx="${center.x}" cy="${center.y}" r="${round(item.radius)}" fill="#7aa46b" fill-opacity=".6" stroke="#3f6f37" stroke-width="${round(stroke)}" data-existing-object="tree"/>`; }).join("");
-  const terrainShapes = contourPolylines.map((item, index) => `<polyline points="${points(item.points)}" fill="none" stroke="#9b7653" stroke-width="${round(stroke * .72)}" data-terrain="contour" data-contour-index="${index + 1}"/>`).join("")
-    + elevationTexts.map((item) => { const point = map(item.position); const value = item.text.match(/(-?\d+(?:\.\d+)?)\s*m/i)?.[1] ?? "?"; return `<g data-terrain="elevation-point"><circle cx="${point.x}" cy="${point.y}" r="${round(stroke * 1.8)}" fill="#9e5435"/><text x="${round(point.x + font * .45)}" y="${round(point.y - font * .35)}" fill="#613923" stroke="#f5f1e8" stroke-width="${round(stroke * .7)}" paint-order="stroke" font-size="${round(font * .55)}" font-family="Arial, sans-serif">${value} m</text></g>`; }).join("");
+  const sortedContours = [...contourPolylines].sort((a, b) => averageY(a.points) - averageY(b.points)).map((item) => ({ ...item, points: [...item.points].sort((a, b) => a.x - b.x) }));
+  const terrainPalette = ["#bfe0b8", "#c9dfa4", "#d8dd8c", "#e6d978", "#f0d064", "#f4c44f"];
+  const terrainBands = sortedContours.slice(0, -1).map((lower, index) => {
+    const upper = sortedContours[index + 1];
+    return `<polygon points="${points([...lower.points, ...[...upper.points].reverse()])}" fill="${terrainPalette[Math.min(index + 1, terrainPalette.length - 1)]}" fill-opacity=".72" stroke="none" data-terrain="elevation-band" data-band-index="${index + 1}"/>`;
+  }).join("");
+  const topBand = sortedContours.length ? `<polygon points="${points([...sortedContours.at(-1)!.points, { x: boundaryBox.maxX, y: boundaryBox.maxY }, { x: boundaryBox.minX, y: boundaryBox.maxY }])}" fill="${terrainPalette.at(-1)}" fill-opacity=".76" stroke="none" data-terrain="elevation-band" data-band-index="${sortedContours.length}"/>` : "";
+  const terrainShapes = terrainBands + topBand + contourPolylines.map((item, index) => `<polyline points="${points(item.points)}" fill="none" stroke="#77674e" stroke-width="${round(stroke * .72)}" data-terrain="contour" data-contour-index="${index + 1}"/>`).join("")
+    + elevationTexts.map((item) => { const point = map(item.position); const value = item.text.match(/(-?\d+(?:\.\d+)?)\s*m/i)?.[1] ?? "?"; const radius = stroke * 2.25; const triangle = `${round(point.x)},${round(point.y - radius)} ${round(point.x - radius * .866)},${round(point.y + radius * .5)} ${round(point.x + radius * .866)},${round(point.y + radius * .5)}`; return `<g data-terrain="elevation-point"><polygon points="${triangle}" fill="#8b4f31" data-elevation-symbol="triangle"/><text x="${point.x}" y="${round(point.y - radius - font * .28)}" text-anchor="middle" dominant-baseline="auto" fill="#613923" stroke="#f5f1e8" stroke-width="${round(stroke * .7)}" paint-order="stroke" font-size="${round(font * .55)}" font-family="Arial, sans-serif">${value} m</text></g>`; }).join("");
   const entranceShapes = [
     ...entranceLines.map((item) => line(item, "#bb6e48", stroke * 1.5)),
     ...entrancePolylines.map((item) => `<polyline points="${points(item.points)}" fill="${item.closed ? "#bb6e48" : "none"}" stroke="#9e5435" stroke-width="${round(stroke)}"/>`),

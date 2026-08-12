@@ -1,0 +1,432 @@
+{
+  "templateId": "HT-T001",
+  "status": "APPROVED",
+  "source": "resources\\house-templates\\HT-T001\\normalized\\HT_T001_V0.3_STANDARDIZED_AC1032.dxf",
+  "normalizedSource": "resources\\house-templates\\HT-T001\\normalized\\HT_T001_V0.2_NORMALIZED_AC1032.dxf",
+  "entityTypes": {
+    "LINE": 141,
+    "LWPOLYLINE": 3,
+    "DIMENSION": 18,
+    "INSERT": 44,
+    "ATTRIB": 30,
+    "SEQEND": 30,
+    "TEXT": 25,
+    "ARC": 1
+  },
+  "sourceLayers": {
+    "DOTE": 9,
+    "0": 2,
+    "AXIS": 72,
+    "WALL": 102,
+    "COLUMN": 14,
+    "WINDOW": 31,
+    "WINDOW_TEXT": 12,
+    "SPACE": 21,
+    "AXIS_TEXT": 18,
+    "DIM_ELEV": 6,
+    "PUB_TEXT": 4,
+    "DIM_SYMB": 1
+  },
+  "standardLayers": {
+    "HT-A-NOPLOT-F01-NEW": 9,
+    "0": 2,
+    "HT-A-AXIS-F01-NEW": 72,
+    "HT-A-WALL-F01-NEW": 102,
+    "HT-A-COLUMN-F01-NEW": 14,
+    "HT-A-WIND-F01-NEW": 31,
+    "HT-A-WIND-TEXT-F01-NEW": 12,
+    "HT-A-ROOM-F01-NEW": 21,
+    "HT-A-AXIS-TEXT-F01-NEW": 18,
+    "HT-A-DIMS-F01-NEW": 6,
+    "HT-A-TEXT-F01-NEW": 4,
+    "HT-A-DIMS-SYMB-F01-NEW": 1
+  },
+  "tchEntityCount": 0,
+  "buildingGridMm": [
+    11000.0,
+    8500.0
+  ],
+  "buildingGridAreaM2": 93.5,
+  "buildingFootprintBasis": "polygon_area_enclosed_by_exterior_faces_of_exterior_walls",
+  "buildingFootprintOutline": [
+    [
+      69224.38,
+      22339.01
+    ],
+    [
+      77424.38,
+      22339.01
+    ],
+    [
+      77424.38,
+      24339.01
+    ],
+    [
+      80424.38,
+      24339.01
+    ],
+    [
+      80424.38,
+      31039.01
+    ],
+    [
+      77224.38,
+      31039.01
+    ],
+    [
+      77224.38,
+      30039.01
+    ],
+    [
+      69224.38,
+      30039.01
+    ]
+  ],
+  "buildingBoundingDimensionsMm": [
+    11200.0,
+    8700.0
+  ],
+  "buildingAreaM2": 83.44,
+  "rooms": [
+    {
+      "id": "HT-T001-F01-RM-001",
+      "floorId": "HT-T001-F01",
+      "type": "BED-MASTER",
+      "name": "主卧室",
+      "area": 16.34,
+      "labelPoint": [
+        70928.91,
+        25160.27
+      ],
+      "boundary": [
+        [
+          69424.38,
+          22539.01
+        ],
+        [
+          73224.38,
+          22539.01
+        ],
+        [
+          73224.38,
+          26839.01
+        ],
+        [
+          69424.38,
+          26839.01
+        ]
+      ],
+      "boundaryAreaM2": 16.34,
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    },
+    {
+      "id": "HT-T001-F01-RM-002",
+      "floorId": "HT-T001-F01",
+      "type": "BAT-COMMON",
+      "name": "卫生间",
+      "area": 6.44,
+      "labelPoint": [
+        70105.88,
+        28723.63
+      ],
+      "boundary": [
+        [
+          69424.38,
+          27039.01
+        ],
+        [
+          71724.38,
+          27039.01
+        ],
+        [
+          71724.38,
+          29839.01
+        ],
+        [
+          69424.38,
+          29839.01
+        ]
+      ],
+      "boundaryAreaM2": 6.44,
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    },
+    {
+      "id": "HT-T001-F01-RM-003",
+      "floorId": "HT-T001-F01",
+      "type": "SER-UTILITY",
+      "name": "杂物间",
+      "area": 1.69,
+      "labelPoint": [
+        72068.37,
+        29217.53
+      ],
+      "boundary": [
+        [
+          71924.38,
+          28539.01
+        ],
+        [
+          73224.38,
+          28539.01
+        ],
+        [
+          73224.38,
+          29839.01
+        ],
+        [
+          71924.38,
+          29839.01
+        ]
+      ],
+      "boundaryAreaM2": 1.69,
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": false
+    },
+    {
+      "id": "HT-T001-F01-RM-004",
+      "floorId": "HT-T001-F01",
+      "type": "KIT-CLOSED",
+      "name": "厨房",
+      "area": 6.44,
+      "labelPoint": [
+        78530.39,
+        29676.97
+      ],
+      "boundary": [
+        [
+          77424.38,
+          28539.01
+        ],
+        [
+          80224.38,
+          28539.01
+        ],
+        [
+          80224.38,
+          30839.01
+        ],
+        [
+          77424.38,
+          30839.01
+        ]
+      ],
+      "boundaryAreaM2": 6.44,
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    },
+    {
+      "id": "HT-T001-F01-RM-005",
+      "floorId": "HT-T001-F01",
+      "type": "BED-ELDERLY",
+      "name": "老人房",
+      "area": 10.64,
+      "labelPoint": [
+        78286.92,
+        26529.38
+      ],
+      "boundary": [
+        [
+          77424.38,
+          24539.01
+        ],
+        [
+          80224.38,
+          24539.01
+        ],
+        [
+          80224.38,
+          28339.01
+        ],
+        [
+          77424.38,
+          28339.01
+        ]
+      ],
+      "boundaryAreaM2": 10.64,
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    },
+    {
+      "id": "HT-T001-F01-RM-006",
+      "floorId": "HT-T001-F01",
+      "type": "LIV-LIVING",
+      "name": "客厅",
+      "area": 16.72,
+      "labelPoint": [
+        74719.29,
+        25238.79
+      ],
+      "boundary": [
+        [
+          73424.38,
+          22539.01
+        ],
+        [
+          77224.38,
+          22539.01
+        ],
+        [
+          77224.38,
+          26939.01
+        ],
+        [
+          73424.38,
+          26939.01
+        ]
+      ],
+      "boundaryAreaM2": 16.72,
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    },
+    {
+      "id": "HT-T001-F01-RM-007",
+      "floorId": "HT-T001-F01",
+      "type": "DIN-DINING",
+      "name": "餐厅",
+      "area": 11.02,
+      "labelPoint": [
+        74884.9,
+        28547.65
+      ],
+      "boundary": [
+        [
+          73424.38,
+          26939.01
+        ],
+        [
+          77224.38,
+          26939.01
+        ],
+        [
+          77224.38,
+          29839.01
+        ],
+        [
+          73424.38,
+          29839.01
+        ]
+      ],
+      "boundaryAreaM2": 11.02,
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    }
+  ],
+  "objectCounts": {
+    "rooms": 7,
+    "wallSegments": 102,
+    "doors": 7,
+    "windows": 7,
+    "columns": 14
+  },
+  "relations": [
+    {
+      "id": "REL-001",
+      "sourceRoomId": "HT-T001-F01-RM-006",
+      "targetRoomId": "HT-T001-F01-RM-007",
+      "relationType": "adjacent",
+      "required": true,
+      "weight": 9
+    },
+    {
+      "id": "REL-002",
+      "sourceRoomId": "HT-T001-F01-RM-007",
+      "targetRoomId": "HT-T001-F01-RM-004",
+      "relationType": "adjacent",
+      "required": true,
+      "weight": 9
+    },
+    {
+      "id": "REL-003",
+      "sourceRoomId": "HT-T001-F01-RM-005",
+      "targetRoomId": "HT-T001-F01-RM-002",
+      "relationType": "near",
+      "required": true,
+      "weight": 8
+    },
+    {
+      "id": "REL-004",
+      "sourceRoomId": "HT-T001-F01-RM-001",
+      "targetRoomId": "HT-T001-F01-RM-002",
+      "relationType": "near",
+      "required": false,
+      "weight": 6
+    }
+  ],
+  "drawingBoundsMm": [
+    64324.38,
+    17439.01,
+    85324.38,
+    35939.01
+  ],
+  "checks": [
+    {
+      "ruleCode": "DAT-007",
+      "severity": "info",
+      "passed": true,
+      "message": "TCH proxy entity count: 0"
+    },
+    {
+      "ruleCode": "REQ-FLOOR",
+      "severity": "info",
+      "passed": true,
+      "message": "Confirmed one-storey template"
+    },
+    {
+      "ruleCode": "REQ-BEDROOM",
+      "severity": "info",
+      "passed": true,
+      "message": "Detected 2 bedrooms: 主卧室 and 老人房"
+    },
+    {
+      "ruleCode": "DAT-ROOM-TYPE",
+      "severity": "info",
+      "passed": true,
+      "message": "Mapped 7 named spaces to standard room codes"
+    },
+    {
+      "ruleCode": "GEO-ROOM-BOUNDARY",
+      "severity": "info",
+      "passed": true,
+      "message": "Architect-confirmed boundaries stored for 7 rooms; living/dining divider is semantic and is not a physical wall"
+    },
+    {
+      "ruleCode": "GEO-DOOR-WINDOW-COMBO",
+      "severity": "info",
+      "passed": true,
+      "message": "Architect-confirmed dining-side combination decomposed into left 1500mm window and right 900mm door"
+    },
+    {
+      "ruleCode": "GEO-WALL-TOPOLOGY",
+      "severity": "info",
+      "passed": true,
+      "message": "Recorded 4 authorized wall-junction repairs; confirmed openings are excluded from gap closure"
+    },
+    {
+      "ruleCode": "DAT-OBJECT-ID",
+      "severity": "info",
+      "passed": true,
+      "message": "Assigned unique stable IDs to 7 rooms, 102 wall segments, 7 doors, 7 windows and 14 columns"
+    },
+    {
+      "ruleCode": "GEO-OPENING-HOST",
+      "severity": "info",
+      "passed": true,
+      "reviewRequired": false,
+      "message": "Architect confirmed all 14 opening positions. Nearest-wall IDs are retained as reference associations; maximum block-base-point distance is 1200.0mm"
+    },
+    {
+      "ruleCode": "REQ-AREA",
+      "severity": "info",
+      "passed": true,
+      "message": "Building area is 83.44m2 from the reconstructed exterior-wall polygon; bounding dimensions 11200 x 8700mm are not multiplied to calculate area"
+    },
+    {
+      "ruleCode": "GEO-DRAWING",
+      "severity": "info",
+      "passed": true,
+      "message": "Drawing extents 21000.0 x 18500.0 mm include dimensions/annotations and are not building dimensions"
+    }
+  ]
+}

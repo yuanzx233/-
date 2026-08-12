@@ -26,6 +26,8 @@ test("parses layers, lines and closed polylines into millimeters", async () => {
   assert.deepEqual(model.boundary.majorDimensionsMeters, { width: 18, height: 24 });
   assert.equal(model.buildableArea, null);
   assert.match(model.previewSvg, /<polygon/);
+  assert.match(model.previewSvg, /fill="#d8e4d2"/);
+  assert.doesNotMatch(model.previewSvg, /data-terrain="elevation-band"/);
   assert.doesNotMatch(model.previewSvg, /data-layer="BUILDABLE_AREA"/);
 });
 
@@ -177,6 +179,7 @@ test("DXF-07 reads contours, elevation points and reports terrain review risks",
   assert.equal((model.previewSvg.match(/data-terrain="contour"/g) ?? []).length, 5);
   assert.equal((model.previewSvg.match(/data-terrain="elevation-point"/g) ?? []).length, 6);
   assert.equal((model.previewSvg.match(/data-elevation-symbol="triangle"/g) ?? []).length, 6);
+  assert.equal((model.previewSvg.match(/data-tip-direction="down"/g) ?? []).length, 6);
   assert.equal((model.previewSvg.match(/data-terrain="elevation-band"/g) ?? []).length, 5);
   assert.doesNotMatch(model.previewSvg, /data-terrain="elevation-point"><circle/);
   assert.match(model.previewSvg, /fill="#bfe0b8"/);

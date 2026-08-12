@@ -71,6 +71,17 @@ export type DxfModel = {
     warnings: string[];
     manualReviewRequired: boolean;
   };
+  diagnostics: {
+    warnings: string[];
+    requiresManualConfirmation: boolean;
+    blockDownstreamGeneration: boolean;
+    boundaryCandidates: Array<{ layer: string; areaSquareMeters: number }>;
+    unclosedPolylineCount: number;
+    duplicateLinePairs: number;
+    zeroLengthLineCount: number;
+    selfIntersectingPolylineCount: number;
+    titleblockPresent: boolean;
+  };
   previewSvg: string;
 };
 
@@ -190,9 +201,10 @@ export function parseDxf(source: string, options: { unit?: Exclude<DxfUnit, "unk
   const texts = rawTexts.map((item) => ({ ...item, position: normalize(item.position) }));
   const closed = polylines.filter((polyline) => polyline.closed && polyline.points.length >= 3);
   const namedBoundaries = closed.filter((polyline) => polyline.layer.toUpperCase() === "SITE_BOUNDARY");
-  const candidates = namedBoundaries.length ? namedBoundaries : closed;
+  const ambiguousBoundaryCandidates = closed.filter((polyline) => /^(JZD|REDLINE)/i.test(polyline.layer));
+  const candidates = namedBoundaries.length ? namedBoundaries : ambiguousBoundaryCandidates.length ? ambiguousBoundaryCandidates : closed.filter((polyline) => !/BORDER|TITLEBLOCK|BAD_GEOMETRY/i.test(polyline.layer));
   if (!candidates.length) throw new Error("DXF_BOUNDARY_NOT_CLOSED");
-  if (candidates.length > 1) throw new Error("DXF_MULTIPLE_BOUNDARIES");
+  if (namedBoundaries.length > 1) throw new Error("DXF_MULTIPLE_BOUNDARIES");
   const boundaryPolyline = candidates[0];
   const areaMm2 = polygonArea(boundaryPolyline.points);
   const sideLengthsMm = polygonSideLengths(boundaryPolyline.points);
@@ -227,6 +239,7 @@ export function parseDxf(source: string, options: { unit?: Exclude<DxfUnit, "unk
   const siteAnalysis = analyzeSite(lines, polylines, boundary);
   const existingObjects = analyzeExistingObjects(lines, polylines, circles);
   const terrainAnalysis = analyzeTerrain(polylines, texts);
+  const diagnostics = analyzeDiagnostics(rawLines, rawPolylines, candidates, minX, minY, siteAnalysis);
   const layerMap = new Map<string, number>();
   for (const entity of [...lines, ...polylines, ...circles]) {
     layerMap.set(entity.layer, (layerMap.get(entity.layer) ?? 0) + 1);
@@ -259,6 +272,7 @@ export function parseDxf(source: string, options: { unit?: Exclude<DxfUnit, "unk
     buildableArea,
     siteAnalysis,
     terrainAnalysis,
+    diagnostics,
     previewSvg: renderBoundarySvg(boundary, siteAnalysis, lines, polylines, circles, texts),
   };
 }
@@ -403,6 +417,52 @@ function analyzeTerrain(polylines: Polyline2D[], texts: Text2D[]): DxfModel["ter
     warnings: sloped ? ["SLOPED_SITE", "RETAINING_WALL_REVIEW", "DRAINAGE_REVIEW", "MANUAL_TERRAIN_REVIEW"] : [],
     manualReviewRequired: sloped,
   };
+}
+
+function analyzeDiagnostics(rawLines: Line2D[], rawPolylines: Polyline2D[], candidates: Polyline2D[], minX: number, minY: number, site: DxfModel["siteAnalysis"]): DxfModel["diagnostics"] {
+  const unclosedPolylineCount = rawPolylines.filter((item) => !item.closed && item.points.length >= 3 && /BOUNDARY/i.test(item.layer)).length;
+  const zeroLengthLineCount = rawLines.filter((line) => lineLength(line) <= .001).length;
+  const keys = new Map<string, number>();
+  for (const line of rawLines.filter((item) => lineLength(item) > .001)) {
+    const a = `${round(line.start.x)},${round(line.start.y)}`;
+    const b = `${round(line.end.x)},${round(line.end.y)}`;
+    const key = a < b ? `${a}|${b}` : `${b}|${a}`;
+    keys.set(key, (keys.get(key) ?? 0) + 1);
+  }
+  const duplicateLinePairs = [...keys.values()].reduce((sum, count) => sum + Math.max(0, count - 1), 0);
+  const selfIntersectingPolylineCount = rawPolylines.filter((item) => item.closed && polygonSelfIntersects(item.points)).length;
+  const titleblockPresent = rawPolylines.some((item) => /BORDER|TITLEBLOCK/i.test(item.layer));
+  const nonstandardLayers = candidates.length > 0 && candidates.every((item) => item.layer.toUpperCase() !== "SITE_BOUNDARY");
+  const warnings: string[] = [];
+  if (candidates.length > 1) warnings.push("MULTIPLE_SITE_BOUNDARIES");
+  if (unclosedPolylineCount) warnings.push("UNCLOSED_POLYLINE");
+  if (duplicateLinePairs) warnings.push("DUPLICATE_GEOMETRY");
+  if (zeroLengthLineCount) warnings.push("ZERO_LENGTH_GEOMETRY");
+  if (selfIntersectingPolylineCount) warnings.push("SELF_INTERSECTING_POLYLINE");
+  if (!site.northDetected) warnings.push("NORTH_NOT_FOUND");
+  if (!site.entranceSide) warnings.push("ENTRANCE_NOT_FOUND");
+  if (nonstandardLayers) warnings.push("NONSTANDARD_LAYERS");
+  if (Math.abs(minX) > 500_000 || Math.abs(minY) > 500_000) warnings.push("FAR_FROM_ORIGIN");
+  if (titleblockPresent) warnings.push("TITLEBLOCK_IGNORED");
+  return {
+    warnings,
+    requiresManualConfirmation: warnings.length > 0,
+    blockDownstreamGeneration: warnings.length > 0,
+    boundaryCandidates: candidates.map((item) => ({ layer: item.layer, areaSquareMeters: round(polygonArea(item.points) / 1_000_000) })),
+    unclosedPolylineCount,
+    duplicateLinePairs,
+    zeroLengthLineCount,
+    selfIntersectingPolylineCount,
+    titleblockPresent,
+  };
+}
+
+function polygonSelfIntersects(points: Point2D[]): boolean {
+  const edges = segments(points, true);
+  return edges.some(([a, b], index) => edges.some(([c, d], other) => {
+    if (other <= index || other === index + 1 || (index === 0 && other === edges.length - 1)) return false;
+    return segmentsIntersect(a, b, c, d);
+  }));
 }
 
 function segments(points: Point2D[], closed: boolean): Array<[Point2D, Point2D]> {

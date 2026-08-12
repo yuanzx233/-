@@ -204,6 +204,13 @@ footer { padding: 26px clamp(24px, 7vw, 108px); display: flex; justify-content: 
 .terrain-metrics strong { color: var(--ink); }
 .terrain-panel ul { margin: 14px 0 0; padding-left: 20px; color: #7b482f; line-height: 1.7; }
 @media (max-width: 720px) { .terrain-metrics { grid-template-columns: repeat(2, 1fr); } }
+.diagnostic-panel { margin-top: 18px; padding: 16px; border: 2px solid #a74332; background: #fff0ea; color: #6f2d24; }
+.diagnostic-panel > div:first-child { display: grid; gap: 5px; }
+.diagnostic-panel ul { margin: 14px 0; padding-left: 20px; line-height: 1.7; }
+.candidate-list { margin-top: 14px; padding: 12px; background: #fffdf8; border: 1px solid #d8b3a8; }
+.candidate-list label { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+.candidate-list label span { margin-left: auto; }
+.titleblock-confirm { display: block; padding: 10px; background: #fffdf8; border: 1px solid #d8b3a8; }
 .semantic-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 10px; }
 .semantic-metrics span { display: flex; flex-direction: column; gap: 4px; padding: 11px 12px; background: #f2f5ed; border: 1px solid rgba(21,59,50,.1); }
 .semantic-metrics small { color: var(--ink-soft); font-size: 9px; }

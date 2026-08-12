@@ -24,7 +24,8 @@ type SiteAnalysis = {
 };
 type ExistingObject = { id: string; type: "building" | "tree" | "water" | "wall"; label: string; defaultAction: "keep" | "remove" | "ignore"; areaSquareMeters?: number; widthMeters?: number };
 type TerrainAnalysis = { contourCount: number; contourElevationsMeters: number[]; elevationPoints: Array<{ elevationMeters: number }>; minimumElevationMeters: number | null; maximumElevationMeters: number | null; elevationDifferenceMeters: number | null; slopeDirection: "north_high_south_low" | "south_high_north_low" | "undetermined"; warnings: string[]; manualReviewRequired: boolean };
-type ParseResult = { model: { boundary: BoundaryResult; buildableArea: { areaSquareMeters: number; perimeterMeters: number; setbacksMeters: Record<"north" | "east" | "south" | "west", number> } | null; existingObjects: ExistingObject[]; terrainAnalysis: TerrainAnalysis; siteAnalysis: SiteAnalysis; previewSvg: string; sourceUnit: string } };
+type Diagnostics = { warnings: string[]; requiresManualConfirmation: boolean; blockDownstreamGeneration: boolean; boundaryCandidates: Array<{ layer: string; areaSquareMeters: number }>; unclosedPolylineCount: number; duplicateLinePairs: number; zeroLengthLineCount: number; selfIntersectingPolylineCount: number; titleblockPresent: boolean };
+type ParseResult = { model: { boundary: BoundaryResult; buildableArea: { areaSquareMeters: number; perimeterMeters: number; setbacksMeters: Record<"north" | "east" | "south" | "west", number> } | null; existingObjects: ExistingObject[]; terrainAnalysis: TerrainAnalysis; diagnostics: Diagnostics; siteAnalysis: SiteAnalysis; previewSvg: string; sourceUnit: string } };
 const sideChinese = { north: "北", east: "东", south: "南", west: "西" } as const;
 
 const errorMessages: Record<string, string> = {
@@ -158,7 +159,7 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
         </div>
       </div>
     </section>
-    {result && projectId ? <RequirementsWorkspace projectId={projectId} siteResult={{ areaSquareMeters: result.model.boundary.areaSquareMeters, perimeterMeters: result.model.boundary.perimeterMeters }} initialRoadDirection={result.model.siteAnalysis.roadSides[0] ? sideChinese[result.model.siteAnalysis.roadSides[0]] : roadDirection} authHeaders={authHeaders} onSaved={onProjectUpdated} /> : null}
+    {result && projectId && !result.model.diagnostics?.blockDownstreamGeneration ? <RequirementsWorkspace projectId={projectId} siteResult={{ areaSquareMeters: result.model.boundary.areaSquareMeters, perimeterMeters: result.model.boundary.perimeterMeters }} initialRoadDirection={result.model.siteAnalysis.roadSides[0] ? sideChinese[result.model.siteAnalysis.roadSides[0]] : roadDirection} authHeaders={authHeaders} onSaved={onProjectUpdated} /> : null}
   </>);
 }
 
@@ -217,12 +218,24 @@ function ResultView({ result }: { result: ParseResult }) {
       <div className="terrain-metrics"><span>等高线<strong>{result.model.terrainAnalysis.contourCount} 条</strong></span><span>高程点<strong>{result.model.terrainAnalysis.elevationPoints.length} 个</strong></span><span>总体高差<strong>{result.model.terrainAnalysis.elevationDifferenceMeters === null ? "待确认" : `${formatMetric(result.model.terrainAnalysis.elevationDifferenceMeters)} m`}</strong></span><span>高程范围<strong>{result.model.terrainAnalysis.minimumElevationMeters === null ? "待确认" : `${formatMetric(result.model.terrainAnalysis.minimumElevationMeters)}–${formatMetric(result.model.terrainAnalysis.maximumElevationMeters!)} m`}</strong></span></div>
       <ul><li>南侧入口位于相对低点，需复核雨水倒灌与入口排水组织。</li><li>约 4 m 高差可能涉及挡墙、分台地或基础高差，需专项结构复核。</li><li>当前仅完成二维等高线与高程点识别，尚不支持精确坡地自动设计，建议人工复核。</li></ul>
     </section>}
+    {result.model.diagnostics?.requiresManualConfirmation && <section className="diagnostic-panel" role="alert">
+      <div><small>解析存在歧义</small><strong>必须人工确认，已阻止进入平面方案生成</strong></div>
+      {result.model.diagnostics.boundaryCandidates.length > 1 && <div className="candidate-list"><p>检测到多个疑似地块，请选择正确边界：</p>{result.model.diagnostics.boundaryCandidates.map((candidate) => <label key={candidate.layer}><input type="radio" name="boundary-candidate" /> <strong>{candidate.layer}</strong><span>{formatMetric(candidate.areaSquareMeters)} m²</span></label>)}</div>}
+      <ul>{result.model.diagnostics.warnings.map((warning) => <li key={warning}>{diagnosticMessage(warning)}</li>)}</ul>
+      {result.model.diagnostics.titleblockPresent && <label className="titleblock-confirm"><input type="checkbox" /> 确认忽略图框和图签</label>}
+      <p>完成边界、北向、入口及异常几何人工确认后，方可继续生成方案。</p>
+    </section>}
     <div className="side-list"><small>逐边尺寸</small><div>{boundary.sideLengthsMeters.map((length, index) => <span key={`${index}-${length}`}>边 {index + 1}<strong>{formatMetric(length)} m</strong></span>)}</div></div>
   </>;
 }
 
 function unitName(unit: "mm" | "cm" | "m"): string {
   return unit === "mm" ? "毫米（mm）" : unit === "cm" ? "厘米（cm）" : "米（m）";
+}
+
+function diagnosticMessage(code: string): string {
+  const messages: Record<string, string> = { MULTIPLE_SITE_BOUNDARIES: "检测到多个疑似地块，无法自动选择。", UNCLOSED_POLYLINE: "部分疑似边界未闭合。", DUPLICATE_GEOMETRY: "存在重复几何。", ZERO_LENGTH_GEOMETRY: "存在零长度异常几何。", SELF_INTERSECTING_POLYLINE: "存在自相交多段线。", NORTH_NOT_FOUND: "无法自动确认北向。", ENTRANCE_NOT_FOUND: "未找到入口。", NONSTANDARD_LAYERS: "地块使用非标准图层命名。", FAR_FROM_ORIGIN: "图形远离坐标原点，请复核坐标基准。", TITLEBLOCK_IGNORED: "检测到图框或图签，请确认是否忽略。" };
+  return messages[code] ?? code;
 }
 
 function formatMetric(value: number): string {

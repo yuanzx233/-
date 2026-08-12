@@ -1,0 +1,47 @@
+{
+  "drawing_unit": "mm",
+  "autocad_insunits_code": 4,
+  "dxf_version": "AC1009",
+  "far_from_origin": true,
+  "base_coordinate_mm": [
+    1000000,
+    2000000
+  ],
+  "site_boundary_candidates": [
+    {
+      "id": "A",
+      "layer": "JZD_A",
+      "area_m2": 500.0
+    },
+    {
+      "id": "B",
+      "layer": "REDLINE_B",
+      "area_m2": 494.0
+    }
+  ],
+  "site_boundary_count": 2,
+  "unclosed_polyline_count": 1,
+  "unclosed_gap_mm": 600,
+  "exact_duplicate_line_pairs": 1,
+  "zero_length_line_count": 1,
+  "self_intersecting_polyline_count": 1,
+  "north_angle_deg": null,
+  "entrance_side": null,
+  "nonstandard_layers": true,
+  "titleblock_present": true,
+  "requires_manual_confirmation": true,
+  "block_downstream_generation": true,
+  "expected_result": "manual_confirmation",
+  "expected_warnings": [
+    "MULTIPLE_SITE_BOUNDARIES",
+    "UNCLOSED_POLYLINE",
+    "DUPLICATE_GEOMETRY",
+    "ZERO_LENGTH_GEOMETRY",
+    "SELF_INTERSECTING_POLYLINE",
+    "NORTH_NOT_FOUND",
+    "ENTRANCE_NOT_FOUND",
+    "NONSTANDARD_LAYERS",
+    "FAR_FROM_ORIGIN",
+    "TITLEBLOCK_IGNORED"
+  ]
+}

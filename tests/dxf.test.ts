@@ -186,6 +186,24 @@ test("DXF-07 reads contours, elevation points and reports terrain review risks",
   assert.match(model.previewSvg, /fill="#f4c44f"/);
 });
 
+test("DXF-08 reports all ambiguities and blocks downstream generation", async () => {
+  const source = await readFile("tests/fixtures/dxf/16_ambiguous_invalid_geometry.dxf", "utf8");
+  const expected = JSON.parse(await readFile("tests/fixtures/dxf/16_ambiguous_invalid_geometry.expected.json", "utf8"));
+  const model = parseDxf(source);
+  assert.equal(model.diagnostics.requiresManualConfirmation, true);
+  assert.equal(model.diagnostics.blockDownstreamGeneration, true);
+  assert.equal(model.diagnostics.boundaryCandidates.length, expected.site_boundary_count);
+  assert.deepEqual(model.diagnostics.boundaryCandidates.map((candidate) => candidate.layer), expected.site_boundary_candidates.map((candidate: { layer: string }) => candidate.layer));
+  assert.equal(model.diagnostics.unclosedPolylineCount, expected.unclosed_polyline_count);
+  assert.equal(model.diagnostics.duplicateLinePairs, expected.exact_duplicate_line_pairs);
+  assert.equal(model.diagnostics.zeroLengthLineCount, expected.zero_length_line_count);
+  assert.equal(model.diagnostics.selfIntersectingPolylineCount, expected.self_intersecting_polyline_count);
+  assert.equal(model.diagnostics.titleblockPresent, expected.titleblock_present);
+  assert.deepEqual(model.diagnostics.warnings, expected.expected_warnings);
+  assert.equal(model.siteAnalysis.northDetected, false);
+  assert.equal(model.siteAnalysis.entranceSide, null);
+});
+
 test("rejects files without supported entities", () => {
   assert.throws(
     () => parseDxf("0\nSECTION\n2\nENTITIES\n0\nENDSEC\n0\nEOF\n", { unit: "mm" }),

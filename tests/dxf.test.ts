@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { isFootprintWithinBuildableArea, parseDxf } from "../lib/dxf";
+import { isFootprintClearOfRetainedObjects, isFootprintWithinBuildableArea, parseDxf } from "../lib/dxf";
 
 test("parses layers, lines and closed polylines into millimeters", async () => {
   const source = await readFile("tests/fixtures/dxf/01_rectangle_18x24m.dxf", "utf8");
@@ -136,6 +136,26 @@ test("DXF-05 keeps site and buildable areas separate and enforces setbacks", asy
   assert.equal(isFootprintWithinBuildableArea(model.buildableArea, [
     { x: 5000, y: 11000 }, { x: 23000, y: 11000 }, { x: 23000, y: 30000 }, { x: 5000, y: 30000 },
   ]), false);
+});
+
+test("DXF-06 distinguishes existing objects and enforces retained-object avoidance", async () => {
+  const source = await readFile("tests/fixtures/dxf/14_existing_objects.dxf", "utf8");
+  const model = parseDxf(source);
+  assert.equal(model.boundary.layer, "SITE_BOUNDARY");
+  assert.equal(model.boundary.areaSquareMeters, 660);
+  assert.equal(model.boundary.perimeterMeters, 104);
+  assert.ok(model.stats.circleCount >= 4);
+  assert.deepEqual(model.existingObjects.map((object) => object.type).sort(), ["building", "tree", "tree", "wall", "water"]);
+  assert.equal(model.existingObjects.find((object) => object.type === "building")?.areaSquareMeters, 56);
+  assert.equal(model.existingObjects.find((object) => object.type === "water")?.widthMeters, 1.2);
+  assert.ok(model.existingObjects.every((object) => object.defaultAction === "keep"));
+  assert.match(model.previewSvg, /data-existing-object="building"/);
+  assert.match(model.previewSvg, /data-existing-object="tree"/);
+  assert.match(model.previewSvg, /data-existing-object="water"/);
+  assert.match(model.previewSvg, /data-existing-object="wall"/);
+  const footprint = [{ x: 4000, y: 27000 }, { x: 9000, y: 27000 }, { x: 9000, y: 33000 }, { x: 4000, y: 33000 }];
+  assert.equal(isFootprintClearOfRetainedObjects(footprint, model.existingObjects), false);
+  assert.equal(isFootprintClearOfRetainedObjects(footprint, model.existingObjects, { "building-1": "remove" }), true);
 });
 
 test("rejects files without supported entities", () => {

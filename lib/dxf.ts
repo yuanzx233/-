@@ -1,6 +1,19 @@
 export type Point2D = { x: number; y: number };
 export type Line2D = { type: "LINE"; layer: string; start: Point2D; end: Point2D };
 export type Polyline2D = { type: "LWPOLYLINE" | "POLYLINE"; layer: string; closed: boolean; points: Point2D[] };
+export type Circle2D = { type: "CIRCLE"; layer: string; center: Point2D; radius: number };
+export type ExistingObjectAction = "keep" | "remove" | "ignore";
+export type ExistingObject = {
+  id: string;
+  type: "building" | "tree" | "water" | "wall";
+  label: string;
+  defaultAction: ExistingObjectAction;
+  points?: Point2D[];
+  center?: Point2D;
+  radius?: number;
+  areaSquareMeters?: number;
+  widthMeters?: number;
+};
 export type DxfUnit = "mm" | "cm" | "m" | "unknown";
 export type CardinalSide = "north" | "east" | "south" | "west";
 export type SiteBoundary = {
@@ -30,7 +43,9 @@ export type DxfModel = {
   layers: Array<{ name: string; entityCount: number }>;
   lines: Line2D[];
   polylines: Polyline2D[];
-  stats: { entityCount: number; lineCount: number; polylineCount: number };
+  circles: Circle2D[];
+  existingObjects: ExistingObject[];
+  stats: { entityCount: number; lineCount: number; polylineCount: number; circleCount: number };
   boundary: SiteBoundary;
   buildableArea: BuildableArea | null;
   siteAnalysis: {
@@ -59,6 +74,7 @@ export function parseDxf(source: string, options: { unit?: Exclude<DxfUnit, "unk
   const scale = sourceUnit === "m" ? 1000 : sourceUnit === "cm" ? 10 : 1;
   const rawLines: Line2D[] = [];
   const rawPolylines: Polyline2D[] = [];
+  const rawCircles: Circle2D[] = [];
   let inEntities = false;
 
   for (let index = 0; index < pairs.length;) {
@@ -110,6 +126,17 @@ export function parseDxf(source: string, options: { unit?: Exclude<DxfUnit, "unk
       index = entity.next;
       continue;
     }
+    if (value === "CIRCLE") {
+      const entity = collectEntity(pairs, index + 1);
+      rawCircles.push({
+        type: "CIRCLE",
+        layer: findString(entity.pairs, 8) ?? "0",
+        center: { x: findNumber(entity.pairs, 10) ?? 0, y: findNumber(entity.pairs, 20) ?? 0 },
+        radius: findNumber(entity.pairs, 40) ?? 0,
+      });
+      index = entity.next;
+      continue;
+    }
     if (value === "POLYLINE") {
       const entity = collectLegacyPolyline(pairs, index);
       rawPolylines.push(entity.polyline);
@@ -119,10 +146,14 @@ export function parseDxf(source: string, options: { unit?: Exclude<DxfUnit, "unk
     index += 1;
   }
 
-  if (!rawLines.length && !rawPolylines.length) throw new Error("DXF_NO_SUPPORTED_ENTITIES");
+  if (!rawLines.length && !rawPolylines.length && !rawCircles.length) throw new Error("DXF_NO_SUPPORTED_ENTITIES");
   const allPoints = [
     ...rawLines.flatMap((line) => [line.start, line.end]),
     ...rawPolylines.flatMap((polyline) => polyline.points),
+    ...rawCircles.flatMap((circle) => [
+      { x: circle.center.x - circle.radius, y: circle.center.y - circle.radius },
+      { x: circle.center.x + circle.radius, y: circle.center.y + circle.radius },
+    ]),
   ];
   const minX = Math.min(...allPoints.map((point) => point.x));
   const minY = Math.min(...allPoints.map((point) => point.y));
@@ -134,6 +165,7 @@ export function parseDxf(source: string, options: { unit?: Exclude<DxfUnit, "unk
   });
   const lines = rawLines.map((line) => ({ ...line, start: normalize(line.start), end: normalize(line.end) }));
   const polylines = rawPolylines.map((polyline) => ({ ...polyline, points: polyline.points.map(normalize) }));
+  const circles = rawCircles.map((circle) => ({ ...circle, center: normalize(circle.center), radius: round(circle.radius * scale) }));
   const closed = polylines.filter((polyline) => polyline.closed && polyline.points.length >= 3);
   const namedBoundaries = closed.filter((polyline) => polyline.layer.toUpperCase() === "SITE_BOUNDARY");
   const candidates = namedBoundaries.length ? namedBoundaries : closed;
@@ -171,8 +203,9 @@ export function parseDxf(source: string, options: { unit?: Exclude<DxfUnit, "unk
     setbacksMeters: calculateSetbacks(boundaryPolyline.points, buildablePolyline.points),
   } : null;
   const siteAnalysis = analyzeSite(lines, polylines, boundary);
+  const existingObjects = analyzeExistingObjects(lines, polylines, circles);
   const layerMap = new Map<string, number>();
-  for (const entity of [...lines, ...polylines]) {
+  for (const entity of [...lines, ...polylines, ...circles]) {
     layerMap.set(entity.layer, (layerMap.get(entity.layer) ?? 0) + 1);
   }
 
@@ -190,15 +223,18 @@ export function parseDxf(source: string, options: { unit?: Exclude<DxfUnit, "unk
     layers: [...layerMap].map(([name, entityCount]) => ({ name, entityCount })),
     lines,
     polylines,
+    circles,
+    existingObjects,
     stats: {
-      entityCount: lines.length + polylines.length,
+      entityCount: lines.length + polylines.length + circles.length,
       lineCount: lines.length,
       polylineCount: polylines.length,
+      circleCount: circles.length,
     },
     boundary,
     buildableArea,
     siteAnalysis,
-    previewSvg: renderBoundarySvg(boundary, siteAnalysis, lines, polylines),
+    previewSvg: renderBoundarySvg(boundary, siteAnalysis, lines, polylines, circles),
   };
 }
 
@@ -268,6 +304,59 @@ export function isFootprintWithinBuildableArea(buildableArea: BuildableArea | nu
   return footprint.every((point) => pointInPolygonOrBoundary(point, buildableArea.points));
 }
 
+export function isFootprintClearOfRetainedObjects(
+  footprint: Point2D[], objects: ExistingObject[], actions: Partial<Record<string, ExistingObjectAction>> = {},
+): boolean {
+  if (footprint.length < 3) return false;
+  return objects.every((object) => {
+    if ((actions[object.id] ?? object.defaultAction) !== "keep") return true;
+    if (object.center && object.radius !== undefined) {
+      if (pointInPolygonOrBoundary(object.center, footprint)) return false;
+      return segments(footprint, true).every(([a, b]) => projectToSegment(object.center!, a, b).distance > object.radius!);
+    }
+    if (!object.points?.length) return true;
+    if (object.points.some((point) => pointInPolygonOrBoundary(point, footprint))) return false;
+    if (footprint.some((point) => pointInPolygonOrBoundary(point, object.points!))) return false;
+    return !segments(object.points, object.type !== "wall").some(([a, b]) => segments(footprint, true).some(([c, d]) => segmentsIntersect(a, b, c, d)));
+  });
+}
+
+function analyzeExistingObjects(lines: Line2D[], polylines: Polyline2D[], circles: Circle2D[]): ExistingObject[] {
+  const objects: ExistingObject[] = [];
+  const addPolygons = (layer: string, type: ExistingObject["type"], label: string) => {
+    polylines.filter((item) => item.layer.toUpperCase() === layer && item.closed && item.points.length >= 3).forEach((item, index) => {
+      const bounds = getBounds(item.points);
+      objects.push({ id: `${type}-${index + 1}`, type, label: `${label} ${index + 1}`, defaultAction: "keep", points: item.points,
+        areaSquareMeters: round(polygonArea(item.points) / 1_000_000),
+        widthMeters: type === "water" ? round(Math.min(bounds.width, bounds.height) / 1000) : undefined });
+    });
+  };
+  addPolygons("EXISTING_BUILDING", "building", "现状建筑");
+  addPolygons("WATER", "water", "水沟");
+  const groupedTrees = new Map<string, Circle2D>();
+  for (const tree of circles.filter((item) => item.layer.toUpperCase() === "TREE")) {
+    const key = `${round(tree.center.x)}:${round(tree.center.y)}`;
+    const current = groupedTrees.get(key);
+    if (!current || tree.radius > current.radius) groupedTrees.set(key, tree);
+  }
+  [...groupedTrees.values()].forEach((tree, index) => objects.push({ id: `tree-${index + 1}`, type: "tree", label: `树木 ${index + 1}`, defaultAction: "keep", center: tree.center, radius: tree.radius }));
+  const wallLines = lines.filter((item) => item.layer.toUpperCase() === "WALL");
+  if (wallLines.length) objects.push({ id: "wall-1", type: "wall", label: "围墙 1", defaultAction: "keep", points: wallLines.flatMap((item) => [item.start, item.end]) });
+  return objects;
+}
+
+function segments(points: Point2D[], closed: boolean): Array<[Point2D, Point2D]> {
+  const result: Array<[Point2D, Point2D]> = [];
+  for (let index = 0; index < points.length - 1; index += 1) result.push([points[index], points[index + 1]]);
+  if (closed && points.length > 2) result.push([points.at(-1)!, points[0]]);
+  return result;
+}
+
+function segmentsIntersect(a: Point2D, b: Point2D, c: Point2D, d: Point2D): boolean {
+  const cross = (p: Point2D, q: Point2D, r: Point2D) => (q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x);
+  return cross(a, b, c) * cross(a, b, d) <= 0 && cross(c, d, a) * cross(c, d, b) <= 0;
+}
+
 function pointInPolygonOrBoundary(point: Point2D, polygon: Point2D[]): boolean {
   let inside = false;
   for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index++) {
@@ -281,7 +370,7 @@ function pointInPolygonOrBoundary(point: Point2D, polygon: Point2D[]): boolean {
   return inside;
 }
 
-function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnalysis"], lines: Line2D[], polylines: Polyline2D[]): string {
+function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnalysis"], lines: Line2D[], polylines: Polyline2D[], circles: Circle2D[]): string {
   const roads = polylines.filter((item) => item.layer.toUpperCase() === "ROAD");
   const entranceLines = lines.filter((item) => item.layer.toUpperCase() === "ENTRANCE");
   const entrancePolylines = polylines.filter((item) => item.layer.toUpperCase() === "ENTRANCE");
@@ -296,6 +385,9 @@ function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnaly
     ...northLines.flatMap((item) => [item.start, item.end]),
     ...northPolylines.flatMap((item) => item.points),
     ...buildablePolylines.flatMap((item) => item.points),
+    ...polylines.filter((item) => ["EXISTING_BUILDING", "WATER"].includes(item.layer.toUpperCase())).flatMap((item) => item.points),
+    ...lines.filter((item) => item.layer.toUpperCase() === "WALL").flatMap((item) => [item.start, item.end]),
+    ...circles.filter((item) => item.layer.toUpperCase() === "TREE").flatMap((item) => [{ x: item.center.x - item.radius, y: item.center.y - item.radius }, { x: item.center.x + item.radius, y: item.center.y + item.radius }]),
   ];
   const content = getBounds(featurePoints);
   const boundaryBox = getBounds(boundary.points);
@@ -315,6 +407,10 @@ function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnaly
   const roadShapes = roads.map((item) => `<polygon points="${points(item.points)}" fill="#c98962" fill-opacity=".78" stroke="#9e5435" stroke-width="${round(stroke)}"/>`).join("");
   const boundaryShape = `<polygon points="${points(boundary.points)}" fill="#d8e4d2" fill-opacity=".88" stroke="#153b32" stroke-width="${round(stroke * 1.35)}"/>`;
   const buildableShapes = buildablePolylines.map((item) => `<polygon points="${points(item.points)}" fill="#fffdf8" fill-opacity=".2" stroke="#bb6e48" stroke-width="${round(stroke)}" data-layer="BUILDABLE_AREA"/>`).join("");
+  const existingShapes = polylines.filter((item) => item.layer.toUpperCase() === "EXISTING_BUILDING").map((item) => `<polygon points="${points(item.points)}" fill="#c79b79" fill-opacity=".7" stroke="#8c4f32" stroke-width="${round(stroke)}" data-existing-object="building"/>`).join("")
+    + polylines.filter((item) => item.layer.toUpperCase() === "WATER").map((item) => `<polygon points="${points(item.points)}" fill="#9cc8d8" fill-opacity=".75" stroke="#39778c" stroke-width="${round(stroke)}" data-existing-object="water"/>`).join("")
+    + lines.filter((item) => item.layer.toUpperCase() === "WALL").map((item) => line(item, "#6b665f", stroke * 1.35).replace("/>", ` data-existing-object="wall"/>`)).join("")
+    + circles.filter((item) => item.layer.toUpperCase() === "TREE" && !circles.some((other) => other !== item && other.layer.toUpperCase() === "TREE" && other.center.x === item.center.x && other.center.y === item.center.y && other.radius > item.radius)).map((item) => { const center = map(item.center); return `<circle cx="${center.x}" cy="${center.y}" r="${round(item.radius)}" fill="#7aa46b" fill-opacity=".6" stroke="#3f6f37" stroke-width="${round(stroke)}" data-existing-object="tree"/>`; }).join("");
   const entranceShapes = [
     ...entranceLines.map((item) => line(item, "#bb6e48", stroke * 1.5)),
     ...entrancePolylines.map((item) => `<polyline points="${points(item.points)}" fill="${item.closed ? "#bb6e48" : "none"}" stroke="#9e5435" stroke-width="${round(stroke)}"/>`),
@@ -345,7 +441,7 @@ function renderBoundarySvg(boundary: SiteBoundary, analysis: DxfModel["siteAnaly
   const northTip = northLines[0]?.end;
   const northLabel = northTip ? labelAtCenter([northTip], `N ${analysis.northAngleDegrees ?? "?"}°`, map, font, "#153b32", -font * .55) : "";
   const edgeDimensions = renderEdgeDimensions(boundary, analysis, map, font, stroke);
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${round(viewWidth)} ${round(viewHeight)}" role="img" aria-label="场地边界、建筑控制线、临路、入口、北向和尺寸预览"><rect width="100%" height="100%" fill="#f5f1e8"/>${roadShapes}${roadLabels}${boundaryShape}${buildableShapes}${entranceGap}${entranceShapes}${entranceLabel}${northShapes}${northLabel}${edgeDimensions}${dimensions}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${round(viewWidth)} ${round(viewHeight)}" role="img" aria-label="场地边界、建筑控制线、临路、入口、北向和尺寸预览；含现状对象"><rect width="100%" height="100%" fill="#f5f1e8"/>${roadShapes}${roadLabels}${boundaryShape}${buildableShapes}${existingShapes}${entranceGap}${entranceShapes}${entranceLabel}${northShapes}${northLabel}${edgeDimensions}${dimensions}</svg>`;
 }
 
 function renderEdgeDimensions(boundary: SiteBoundary, analysis: DxfModel["siteAnalysis"], map: (point: Point2D) => Point2D, font: number, stroke: number): string {

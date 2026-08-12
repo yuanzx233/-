@@ -22,7 +22,8 @@ type SiteAnalysis = {
   northAngleDegrees: number | null;
   northDetected: boolean;
 };
-type ParseResult = { model: { boundary: BoundaryResult; buildableArea: { areaSquareMeters: number; perimeterMeters: number; setbacksMeters: Record<"north" | "east" | "south" | "west", number> } | null; siteAnalysis: SiteAnalysis; previewSvg: string; sourceUnit: string } };
+type ExistingObject = { id: string; type: "building" | "tree" | "water" | "wall"; label: string; defaultAction: "keep" | "remove" | "ignore"; areaSquareMeters?: number; widthMeters?: number };
+type ParseResult = { model: { boundary: BoundaryResult; buildableArea: { areaSquareMeters: number; perimeterMeters: number; setbacksMeters: Record<"north" | "east" | "south" | "west", number> } | null; existingObjects: ExistingObject[]; siteAnalysis: SiteAnalysis; previewSvg: string; sourceUnit: string } };
 const sideChinese = { north: "北", east: "东", south: "南", west: "西" } as const;
 
 const errorMessages: Record<string, string> = {
@@ -164,6 +165,10 @@ function ResultView({ result }: { result: ParseResult }) {
   const boundary = result.model.boundary;
   const analysis = result.model.siteAnalysis;
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [objectActions, setObjectActions] = useState<Record<string, "keep" | "remove" | "ignore">>({});
+  useEffect(() => {
+    setObjectActions(Object.fromEntries((result.model.existingObjects ?? []).map((object) => [object.id, object.defaultAction])));
+  }, [result.model.existingObjects]);
   useEffect(() => {
     if (!isPreviewOpen) return;
     const previousOverflow = document.body.style.overflow;
@@ -198,6 +203,14 @@ function ResultView({ result }: { result: ParseResult }) {
       {result.model.buildableArea && <span><small>可建设范围</small><strong>{formatMetric(result.model.buildableArea.areaSquareMeters)} m²</strong><em>控制线内 · 周长 {formatMetric(result.model.buildableArea.perimeterMeters)} m</em></span>}
     </div>
     {result.model.buildableArea && <div className="side-list setback-list"><small>各方向退界距离</small><div>{(["south", "north", "west", "east"] as const).map((side) => <span key={side}>{sideChinese[side]}侧<strong>{formatMetric(result.model.buildableArea!.setbacksMeters[side])} m</strong></span>)}</div></div>}
+    {!!result.model.existingObjects?.length && <section className="existing-object-panel">
+      <div><small>场地限制条件</small><strong>现状对象需逐项确认</strong><p>标记为“保留”的对象将作为后续平面方案不可占用的避让范围。</p></div>
+      <div className="existing-object-list">{result.model.existingObjects.map((object) => <label key={object.id}>
+        <span><strong>{object.label}</strong><small>{object.type === "building" && object.areaSquareMeters !== undefined ? `${formatMetric(object.areaSquareMeters)} m²` : object.type === "water" && object.widthMeters !== undefined ? `宽 ${formatMetric(object.widthMeters)} m` : object.type === "tree" ? "树冠范围" : "线性障碍"}</small></span>
+        <select aria-label={`${object.label}处置方式`} value={objectActions[object.id] ?? object.defaultAction} onChange={(event) => setObjectActions((current) => ({ ...current, [object.id]: event.target.value as "keep" | "remove" | "ignore" }))}><option value="keep">保留</option><option value="remove">拆除</option><option value="ignore">忽略</option></select>
+      </label>)}</div>
+      <p className="constraint-summary">当前保留 {result.model.existingObjects.filter((object) => (objectActions[object.id] ?? object.defaultAction) === "keep").length} 项；提交户型需求前请确认处置方式。</p>
+    </section>}
     <div className="side-list"><small>逐边尺寸</small><div>{boundary.sideLengthsMeters.map((length, index) => <span key={`${index}-${length}`}>边 {index + 1}<strong>{formatMetric(length)} m</strong></span>)}</div></div>
   </>;
 }

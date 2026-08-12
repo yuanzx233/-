@@ -1,0 +1,66 @@
+{
+  "drawing_unit": "mm",
+  "autocad_insunits_code": 4,
+  "dxf_version": "AC1009",
+  "site_boundary_count": 1,
+  "site_dimensions_m": {
+    "width": 22.0,
+    "depth": 30.0
+  },
+  "site_area_m2": 660.0,
+  "site_perimeter_m": 104.0,
+  "existing_buildings": [
+    {
+      "location": "northwest",
+      "dimensions_m": [
+        7.0,
+        8.0
+      ],
+      "area_m2": 56.0,
+      "default_action": "keep"
+    }
+  ],
+  "trees": [
+    {
+      "id": 1,
+      "position_m": [
+        18.5,
+        10.5
+      ],
+      "default_action": "keep"
+    },
+    {
+      "id": 2,
+      "position_m": [
+        18.5,
+        18.5
+      ],
+      "default_action": "keep"
+    }
+  ],
+  "water": {
+    "type": "ditch",
+    "side": "north",
+    "width_m": 1.2,
+    "default_action": "keep"
+  },
+  "wall": {
+    "side": "west",
+    "default_action": "keep"
+  },
+  "road_sides": [
+    "south"
+  ],
+  "road_width_m": 6.0,
+  "entrance_side": "south",
+  "entrance_width_m": 4.0,
+  "north_angle_deg": 0.0,
+  "requires_manual_confirmation": true,
+  "manual_confirmation_fields": [
+    "existing_building_action",
+    "tree_actions",
+    "water_action",
+    "wall_action"
+  ],
+  "expected_result": "success_with_object_confirmation"
+}

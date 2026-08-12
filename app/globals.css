@@ -185,6 +185,18 @@ footer { padding: 26px clamp(24px, 7vw, 108px); display: flex; justify-content: 
 .site-metrics div:last-child { border: 0; }
 .site-metrics small { color: var(--ink-soft); font-size: 10px; }
 .site-metrics strong { font-size: 17px; }
+.existing-object-panel { margin-top: 18px; padding: 16px; border: 1px solid var(--line); background: #f7f8f2; }
+.existing-object-panel > div:first-child { display: grid; gap: 5px; }
+.existing-object-panel > div:first-child small { color: var(--accent); }
+.existing-object-panel > div:first-child strong { font-size: 18px; }
+.existing-object-panel p { margin: 0; color: var(--ink-soft); }
+.existing-object-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+.existing-object-list label { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); background: var(--paper); }
+.existing-object-list label span { display: grid; gap: 3px; }
+.existing-object-list label small { color: var(--ink-soft); }
+.existing-object-list select { min-width: 82px; padding: 8px; border: 1px solid var(--line); background: white; color: var(--ink); }
+.existing-object-panel .constraint-summary { margin-top: 12px; color: var(--accent); }
+@media (max-width: 720px) { .existing-object-list { grid-template-columns: 1fr; } }
 .semantic-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 10px; }
 .semantic-metrics span { display: flex; flex-direction: column; gap: 4px; padding: 11px 12px; background: #f2f5ed; border: 1px solid rgba(21,59,50,.1); }
 .semantic-metrics small { color: var(--ink-soft); font-size: 9px; }

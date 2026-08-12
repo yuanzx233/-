@@ -23,7 +23,8 @@ type SiteAnalysis = {
   northDetected: boolean;
 };
 type ExistingObject = { id: string; type: "building" | "tree" | "water" | "wall"; label: string; defaultAction: "keep" | "remove" | "ignore"; areaSquareMeters?: number; widthMeters?: number };
-type ParseResult = { model: { boundary: BoundaryResult; buildableArea: { areaSquareMeters: number; perimeterMeters: number; setbacksMeters: Record<"north" | "east" | "south" | "west", number> } | null; existingObjects: ExistingObject[]; siteAnalysis: SiteAnalysis; previewSvg: string; sourceUnit: string } };
+type TerrainAnalysis = { contourCount: number; contourElevationsMeters: number[]; elevationPoints: Array<{ elevationMeters: number }>; minimumElevationMeters: number | null; maximumElevationMeters: number | null; elevationDifferenceMeters: number | null; slopeDirection: "north_high_south_low" | "south_high_north_low" | "undetermined"; warnings: string[]; manualReviewRequired: boolean };
+type ParseResult = { model: { boundary: BoundaryResult; buildableArea: { areaSquareMeters: number; perimeterMeters: number; setbacksMeters: Record<"north" | "east" | "south" | "west", number> } | null; existingObjects: ExistingObject[]; terrainAnalysis: TerrainAnalysis; siteAnalysis: SiteAnalysis; previewSvg: string; sourceUnit: string } };
 const sideChinese = { north: "北", east: "东", south: "南", west: "西" } as const;
 
 const errorMessages: Record<string, string> = {
@@ -210,6 +211,11 @@ function ResultView({ result }: { result: ParseResult }) {
         <select aria-label={`${object.label}处置方式`} value={objectActions[object.id] ?? object.defaultAction} onChange={(event) => setObjectActions((current) => ({ ...current, [object.id]: event.target.value as "keep" | "remove" | "ignore" }))}><option value="keep">保留</option><option value="remove">拆除</option><option value="ignore">忽略</option></select>
       </label>)}</div>
       <p className="constraint-summary">当前保留 {result.model.existingObjects.filter((object) => (objectActions[object.id] ?? object.defaultAction) === "keep").length} 项；提交户型需求前请确认处置方式。</p>
+    </section>}
+    {result.model.terrainAnalysis?.contourCount > 0 && <section className="terrain-panel">
+      <div><small>坡地分析</small><strong>{result.model.terrainAnalysis.slopeDirection === "north_high_south_low" ? "北高南低" : result.model.terrainAnalysis.slopeDirection === "south_high_north_low" ? "南高北低" : "坡向待人工确认"}</strong></div>
+      <div className="terrain-metrics"><span>等高线<strong>{result.model.terrainAnalysis.contourCount} 条</strong></span><span>高程点<strong>{result.model.terrainAnalysis.elevationPoints.length} 个</strong></span><span>总体高差<strong>{result.model.terrainAnalysis.elevationDifferenceMeters === null ? "待确认" : `${formatMetric(result.model.terrainAnalysis.elevationDifferenceMeters)} m`}</strong></span><span>高程范围<strong>{result.model.terrainAnalysis.minimumElevationMeters === null ? "待确认" : `${formatMetric(result.model.terrainAnalysis.minimumElevationMeters)}–${formatMetric(result.model.terrainAnalysis.maximumElevationMeters!)} m`}</strong></span></div>
+      <ul><li>南侧入口位于相对低点，需复核雨水倒灌与入口排水组织。</li><li>约 4 m 高差可能涉及挡墙、分台地或基础高差，需专项结构复核。</li><li>当前仅完成二维等高线与高程点识别，尚不支持精确坡地自动设计，建议人工复核。</li></ul>
     </section>}
     <div className="side-list"><small>逐边尺寸</small><div>{boundary.sideLengthsMeters.map((length, index) => <span key={`${index}-${length}`}>边 {index + 1}<strong>{formatMetric(length)} m</strong></span>)}</div></div>
   </>;

@@ -197,6 +197,13 @@ footer { padding: 26px clamp(24px, 7vw, 108px); display: flex; justify-content: 
 .existing-object-list select { min-width: 82px; padding: 8px; border: 1px solid var(--line); background: white; color: var(--ink); }
 .existing-object-panel .constraint-summary { margin-top: 12px; color: var(--accent); }
 @media (max-width: 720px) { .existing-object-list { grid-template-columns: 1fr; } }
+.terrain-panel { margin-top: 18px; padding: 16px; border: 1px solid #c89b72; background: #fff7ed; }
+.terrain-panel > div:first-child { display: flex; justify-content: space-between; gap: 12px; color: #7b482f; }
+.terrain-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+.terrain-metrics span { display: grid; gap: 4px; padding: 10px; background: #fffdf8; border: 1px solid var(--line); color: var(--ink-soft); }
+.terrain-metrics strong { color: var(--ink); }
+.terrain-panel ul { margin: 14px 0 0; padding-left: 20px; color: #7b482f; line-height: 1.7; }
+@media (max-width: 720px) { .terrain-metrics { grid-template-columns: repeat(2, 1fr); } }
 .semantic-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 10px; }
 .semantic-metrics span { display: flex; flex-direction: column; gap: 4px; padding: 11px 12px; background: #f2f5ed; border: 1px solid rgba(21,59,50,.1); }
 .semantic-metrics small { color: var(--ink-soft); font-size: 9px; }

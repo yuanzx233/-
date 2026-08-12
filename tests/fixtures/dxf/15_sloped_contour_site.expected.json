@@ -1,0 +1,40 @@
+{
+  "drawing_unit": "mm",
+  "autocad_insunits_code": 4,
+  "dxf_version": "AC1009",
+  "site_boundary_count": 1,
+  "site_dimensions_m": {
+    "width": 20.0,
+    "depth": 30.0
+  },
+  "site_area_m2": 600.0,
+  "contour_count": 5,
+  "contour_elevations_m": [
+    100.0,
+    101.0,
+    102.0,
+    103.0,
+    104.0
+  ],
+  "contour_interval_m": 1.0,
+  "elevation_point_count": 6,
+  "minimum_elevation_m": 100.0,
+  "maximum_elevation_m": 104.0,
+  "site_elevation_difference_m": 4.0,
+  "slope_direction": "north_high_south_low",
+  "road_sides": [
+    "south"
+  ],
+  "road_width_m": 6.0,
+  "entrance_side": "south",
+  "entrance_width_m": 4.0,
+  "north_angle_deg": 0.0,
+  "requires_manual_confirmation": true,
+  "expected_warnings": [
+    "SLOPED_SITE",
+    "RETAINING_WALL_REVIEW",
+    "DRAINAGE_REVIEW",
+    "MANUAL_TERRAIN_REVIEW"
+  ],
+  "expected_result": "success_with_terrain_review"
+}

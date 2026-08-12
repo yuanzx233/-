@@ -160,6 +160,24 @@ test("DXF-06 distinguishes existing objects and enforces retained-object avoidan
   assert.equal(isFootprintClearOfRetainedObjects(footprint, model.existingObjects, { "building-1": "remove" }), true);
 });
 
+test("DXF-07 reads contours, elevation points and reports terrain review risks", async () => {
+  const source = await readFile("tests/fixtures/dxf/15_sloped_contour_site.dxf", "utf8");
+  const expected = JSON.parse(await readFile("tests/fixtures/dxf/15_sloped_contour_site.expected.json", "utf8"));
+  const model = parseDxf(source);
+  assert.equal(model.boundary.areaSquareMeters, expected.site_area_m2);
+  assert.equal(model.terrainAnalysis.contourCount, expected.contour_count);
+  assert.deepEqual(model.terrainAnalysis.contourElevationsMeters, expected.contour_elevations_m);
+  assert.equal(model.terrainAnalysis.elevationPoints.length, expected.elevation_point_count);
+  assert.equal(model.terrainAnalysis.minimumElevationMeters, expected.minimum_elevation_m);
+  assert.equal(model.terrainAnalysis.maximumElevationMeters, expected.maximum_elevation_m);
+  assert.equal(model.terrainAnalysis.elevationDifferenceMeters, expected.site_elevation_difference_m);
+  assert.equal(model.terrainAnalysis.slopeDirection, expected.slope_direction);
+  assert.equal(model.terrainAnalysis.manualReviewRequired, true);
+  assert.deepEqual(model.terrainAnalysis.warnings, expected.expected_warnings);
+  assert.equal((model.previewSvg.match(/data-terrain="contour"/g) ?? []).length, 5);
+  assert.equal((model.previewSvg.match(/data-terrain="elevation-point"/g) ?? []).length, 6);
+});
+
 test("rejects files without supported entities", () => {
   assert.throws(
     () => parseDxf("0\nSECTION\n2\nENTITIES\n0\nENDSEC\n0\nEOF\n", { unit: "mm" }),

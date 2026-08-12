@@ -57,7 +57,7 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
   const [phase, setPhase] = useState<"idle" | "uploading" | "parsing" | "done" | "error">("idle");
   const [message, setMessage] = useState("");
   const [result, setResult] = useState<ParseResult | null>(null);
-  const [manualDiagnosticsConfirmed, setManualDiagnosticsConfirmed] = useState(false);
+  const [showCorrectionDialog, setShowCorrectionDialog] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -68,7 +68,7 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
   function chooseFile(event: ChangeEvent<HTMLInputElement>) {
     const next = event.target.files?.[0] ?? null;
     setResult(null);
-    setManualDiagnosticsConfirmed(false);
+    setShowCorrectionDialog(false);
     setDetectedUnit(null);
     setMessage("");
     setProgress(0);
@@ -91,7 +91,7 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
     if (!projectId) return fail("请先创建并选择一个项目。");
     if (!file) return fail("请选择要解析的 DXF 文件。");
     setResult(null);
-    setManualDiagnosticsConfirmed(false);
+    setShowCorrectionDialog(false);
     setMessage("");
     setProgress(0);
     setPhase("uploading");
@@ -158,11 +158,24 @@ export function SiteUploadWorkspace({ projects, authHeaders, onProjectUpdated }:
           <button className="submit-button" type="button" disabled={phase === "uploading" || phase === "parsing" || !projects.length} onClick={() => void startUpload()}>{phase === "error" ? "重新上传并解析" : phase === "uploading" || phase === "parsing" ? "处理中…" : "上传并解析场地"}</button>
         </div>
         <div className="preview-card">
-          {result ? <ResultView result={result} onManualConfirmed={() => setManualDiagnosticsConfirmed(true)} /> : <div className="preview-empty"><span>⌗</span><strong>等待场地文件</strong><p>解析后将在这里显示闭合轮廓、面积、周长和每条边的长度。</p></div>}
+          {result ? <ResultView result={result} onManualConfirmed={() => setShowCorrectionDialog(true)} /> : <div className="preview-empty"><span>⌗</span><strong>等待场地文件</strong><p>解析后将在这里显示闭合轮廓、面积、周长和每条边的长度。</p></div>}
         </div>
       </div>
     </section>
-    {result && projectId && (!result.model.diagnostics?.blockDownstreamGeneration || manualDiagnosticsConfirmed) ? <RequirementsWorkspace projectId={projectId} siteResult={{ areaSquareMeters: result.model.boundary.areaSquareMeters, perimeterMeters: result.model.boundary.perimeterMeters }} initialRoadDirection={result.model.siteAnalysis.roadSides[0] ? sideChinese[result.model.siteAnalysis.roadSides[0]] : roadDirection} authHeaders={authHeaders} onSaved={onProjectUpdated} /> : null}
+    {showCorrectionDialog && <div className="correction-dialog-backdrop" role="presentation">
+      <section className="correction-dialog" role="dialog" aria-modal="true" aria-labelledby="correction-dialog-title">
+        <span className="correction-dialog-icon" aria-hidden="true">DXF</span>
+        <p className="eyebrow">需要修正图纸</p>
+        <h3 id="correction-dialog-title">请重新上传更正后的 DXF 图纸</h3>
+        <p>当前图纸仍存在边界、北向、入口或异常几何歧义。人工确认仅表示您已知悉问题，不能替代图纸修正，也不会解锁方案生成。</p>
+        <ol><li>在 CAD 中修正已确认的问题并保存为 ASCII DXF。</li><li>确保地块边界唯一且闭合，并补充明确的北向和入口。</li><li>重新上传后，系统将再次解析并校验。</li></ol>
+        <div className="correction-dialog-actions">
+          <button className="quiet-button" type="button" onClick={() => setShowCorrectionDialog(false)}>返回查看问题</button>
+          <button className="submit-button" type="button" onClick={() => { setShowCorrectionDialog(false); if (inputRef.current) { inputRef.current.value = ""; inputRef.current.click(); } }}>选择更正后的图纸</button>
+        </div>
+      </section>
+    </div>}
+    {result && projectId && !result.model.diagnostics?.blockDownstreamGeneration ? <RequirementsWorkspace projectId={projectId} siteResult={{ areaSquareMeters: result.model.boundary.areaSquareMeters, perimeterMeters: result.model.boundary.perimeterMeters }} initialRoadDirection={result.model.siteAnalysis.roadSides[0] ? sideChinese[result.model.siteAnalysis.roadSides[0]] : roadDirection} authHeaders={authHeaders} onSaved={onProjectUpdated} /> : null}
   </>);
 }
 
@@ -233,13 +246,14 @@ function ResultView({ result, onManualConfirmed }: { result: ParseResult; onManu
       <ul><li>南侧入口位于相对低点，需复核雨水倒灌与入口排水组织。</li><li>约 4 m 高差可能涉及挡墙、分台地或基础高差，需专项结构复核。</li><li>当前仅完成二维等高线与高程点识别，尚不支持精确坡地自动设计，建议人工复核。</li></ul>
     </section>}
     {result.model.diagnostics?.requiresManualConfirmation && <section className={`diagnostic-panel ${diagnosticsConfirmed ? "confirmed" : ""}`} role="alert">
-      <div><small>解析存在歧义</small><strong>{diagnosticsConfirmed ? "人工确认已完成，可继续填写户型需求" : "必须人工确认，已阻止进入平面方案生成"}</strong></div>
+      <div><small>解析存在歧义</small><strong>{diagnosticsConfirmed ? "问题已确认，请上传更正后的图纸" : "必须人工确认，已阻止进入平面方案生成"}</strong></div>
       {!diagnosticsConfirmed && <>
         {result.model.diagnostics.boundaryCandidates.length > 1 && <div className="candidate-list"><p>检测到多个疑似地块，请选择正确边界：</p>{result.model.diagnostics.boundaryCandidates.map((candidate) => <label key={candidate.layer}><input type="radio" name="boundary-candidate" value={candidate.layer} checked={selectedBoundary === candidate.layer} onChange={() => setSelectedBoundary(candidate.layer)} /> <strong>{candidate.layer}</strong><span>{formatMetric(candidate.areaSquareMeters)} m²</span></label>)}</div>}
         <div className="diagnostic-checklist">{warningsToAcknowledge.map((warning) => <label key={warning}><input type="checkbox" checked={Boolean(acknowledgedWarnings[warning])} onChange={(event) => setAcknowledgedWarnings((current) => ({ ...current, [warning]: event.target.checked }))} /><span>{diagnosticMessage(warning)}</span></label>)}</div>
-        <button className="diagnostic-continue" type="button" disabled={!allDiagnosticsAcknowledged} onClick={() => { setDiagnosticsConfirmed(true); onManualConfirmed(); }}>确认以上事项并继续</button>
-        <p>{allDiagnosticsAcknowledged ? "确认后将解锁户型需求填写。" : "请先选择边界，并逐项确认北向、入口、异常几何及图框图签处理。"}</p>
+        <button className="diagnostic-continue" type="button" disabled={!allDiagnosticsAcknowledged} onClick={() => { setDiagnosticsConfirmed(true); onManualConfirmed(); }}>确认以上事项并上传更正图纸</button>
+        <p>{allDiagnosticsAcknowledged ? "确认后将提示您上传更正后的 DXF，并再次解析。" : "请先选择边界，并逐项确认北向、入口、异常几何及图框图签处理。"}</p>
       </>}
+      {diagnosticsConfirmed && <button className="diagnostic-continue" type="button" onClick={onManualConfirmed}>重新选择更正后的图纸</button>}
     </section>}
     <div className="side-list"><small>逐边尺寸</small><div>{boundary.sideLengthsMeters.map((length, index) => <span key={`${index}-${length}`}>边 {index + 1}<strong>{formatMetric(length)} m</strong></span>)}</div></div>
   </>;

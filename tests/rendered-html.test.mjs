@@ -45,6 +45,10 @@ test("Day 4 site confirmation and structured requirements are present", async ()
   assert.match(workspace, /临路方向/);
   assert.match(uploadWorkspace, /siteAnalysis/);
   assert.match(uploadWorkspace, /RequirementsWorkspace/);
+  assert.match(uploadWorkspace, /请重新上传更正后的 DXF 图纸/);
+  assert.match(uploadWorkspace, /确认以上事项并上传更正图纸/);
+  assert.match(uploadWorkspace, /!result\.model\.diagnostics\?\.blockDownstreamGeneration/);
+  assert.doesNotMatch(uploadWorkspace, /manualDiagnosticsConfirmed/);
   assert.match(uploadWorkspace, /preview-lightbox/);
   assert.match(uploadWorkspace, /event\.key === "Escape"/);
   assert.match(uploadWorkspace, /aria-label="放大查看场地轮廓图"/);

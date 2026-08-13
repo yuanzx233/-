@@ -9,6 +9,15 @@
       "manifest": "HT-T001/import-manifest.json",
       "searchable": true,
       "publishable": true
+    },
+    {
+      "id": "HT-T002",
+      "name": "单层两房（二）",
+      "version": "1.0.0",
+      "status": "APPROVED",
+      "manifest": "HT-T002/import-manifest.json",
+      "searchable": true,
+      "publishable": true
     }
   ]
 }

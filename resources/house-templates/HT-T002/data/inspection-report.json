@@ -1,0 +1,221 @@
+{
+  "source": "resources\\house-templates\\HT-T002\\source\\HT_T002_V0.1_T3_SOURCE.dxf",
+  "acadVersion": "AC1032",
+  "entityTypes": {
+    "LINE": 134,
+    "LWPOLYLINE": 5,
+    "DIMENSION": 14,
+    "INSERT": 26,
+    "ATTRIB": 26,
+    "SEQEND": 26,
+    "TEXT": 21
+  },
+  "layers": {
+    "DOTE": 7,
+    "0": 5,
+    "AXIS": 56,
+    "WALL": 113,
+    "WINDOW": 24,
+    "WINDOW_TEXT": 12,
+    "SPACE": 21,
+    "AXIS_TEXT": 14
+  },
+  "tchEntityCount": 0,
+  "drawingBoundsMm": [
+    56475.84,
+    20535.4,
+    77075.84,
+    38535.4
+  ],
+  "spaceTexts": [
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "卧室",
+      "position": [
+        62956.42,
+        27834.52
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "11.78m",
+      "position": [
+        62672.59,
+        27322.65
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "2",
+      "position": [
+        63792.59,
+        27497.65
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "卧室",
+      "position": [
+        70193.71,
+        29329.23
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "12.40m",
+      "position": [
+        69889.88,
+        28817.35
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "2",
+      "position": [
+        71049.88,
+        28992.35
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "厨房",
+      "position": [
+        70595.58,
+        32623.76
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "4.83m",
+      "position": [
+        70387.71,
+        32111.88
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "2",
+      "position": [
+        71387.71,
+        32286.88
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "卫生间",
+      "position": [
+        61757.48,
+        30809.31
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "3.24m",
+      "position": [
+        61701.2,
+        30297.43
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "2",
+      "position": [
+        62701.2,
+        30472.43
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "客厅",
+      "position": [
+        66476.61,
+        28493.67
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "15.96m",
+      "position": [
+        66186.08,
+        27981.8
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "2",
+      "position": [
+        67346.08,
+        28156.8
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "餐厅",
+      "position": [
+        66728.81,
+        32623.76
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "10.92m",
+      "position": [
+        66446.26,
+        32111.88
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "2",
+      "position": [
+        67606.26,
+        32286.88
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "储藏间",
+      "position": [
+        62082.24,
+        32622.78
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "4.73m",
+      "position": [
+        62028.63,
+        32110.91
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "2",
+      "position": [
+        63028.63,
+        32285.91
+      ]
+    }
+  ]
+}

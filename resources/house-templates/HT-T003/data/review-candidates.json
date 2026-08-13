@@ -1,0 +1,47 @@
+{
+  "templateId": "HT-T003",
+  "wallTopologyCandidates": [
+    {
+      "id": "TC-01",
+      "node": [
+        73796.75,
+        -12312.43
+      ],
+      "description": "客厅/餐厅西墙与卧室一、卫生间分隔墙交接",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "TC-02",
+      "node": [
+        73796.75,
+        -10112.43
+      ],
+      "description": "餐厅/厨房西墙与卧室二、卫生间分隔墙交接",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "TC-03",
+      "node": [
+        69796.75,
+        -12312.43
+      ],
+      "description": "卧室一外墙与卫生间分隔墙交接",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "TC-04",
+      "node": [
+        69796.75,
+        -10112.43
+      ],
+      "description": "卧室二外墙与卫生间分隔墙交接",
+      "status": "REVIEW_REQUIRED"
+    }
+  ],
+  "openingReview": {
+    "doors": 4,
+    "windows": 5,
+    "doorWindowCombination": "REVIEW_REQUIRED"
+  },
+  "canopyAreaRule": "EXCLUDED_FROM_BUILDING_AREA_REVIEW_REQUIRED"
+}

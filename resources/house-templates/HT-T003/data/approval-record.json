@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0.0",
+  "templateId": "HT-T003",
+  "templateVersion": "1.0.0",
+  "status": "APPROVED",
+  "approvedAt": "2026-08-13",
+  "approvedBy": "user_architect_review",
+  "confirmedItems": [
+    "外墙围合轮廓及85.28平方米建筑面积",
+    "入口雨棚不计入建筑面积",
+    "6个房间的位置、边界和面积",
+    "TC-01至TC-04墙段连接全部自动补齐",
+    "4樘门和5樘窗的位置",
+    "不存在门联窗"
+  ],
+  "remainingBlockingItems": []
+}

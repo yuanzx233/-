@@ -1,0 +1,38 @@
+{
+  "templateId": "HT-T001",
+  "sourceFile": "source/HT_T001_V0.1_AUTOCAD2021.dxf",
+  "acadVersion": "AC1032",
+  "codePage": "ANSI_936",
+  "groupPairCount": 18777,
+  "entityCount": 83,
+  "entityTypes": {
+    "TCH_WALL": 25,
+    "TCH_COLUMN": 14,
+    "TCH_OPENING": 13,
+    "TCH_DIMENSION2": 8,
+    "TCH_SPACE": 7,
+    "LINE": 9,
+    "TCH_AXIS_LABEL": 2,
+    "LWPOLYLINE": 2,
+    "TCH_ELEVATION": 2,
+    "TCH_ARROW": 1
+  },
+  "sourceLayers": {
+    "WALL": 25,
+    "COLUMN": 14,
+    "WINDOW": 13,
+    "AXIS": 10,
+    "DOTE": 9,
+    "SPACE": 7,
+    "0": 2,
+    "DIM_ELEV": 2,
+    "DIM_SYMB": 1
+  },
+  "standardization": {
+    "required": true,
+    "proxyEntityConversionRequired": true,
+    "targetFormat": "AutoCAD 2021 compatible DXF / AC1032",
+    "targetEntityTypes": ["LINE", "LWPOLYLINE", "TEXT", "MTEXT", "INSERT", "DIMENSION"],
+    "status": "PENDING_TIANZHENG_EXPLODE"
+  }
+}

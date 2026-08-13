@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0.0",
+  "templates": [
+    {
+      "id": "HT-T001",
+      "name": "单层两房（面宽大于进深）",
+      "version": "1.0.0",
+      "status": "APPROVED",
+      "manifest": "HT-T001/import-manifest.json",
+      "searchable": true,
+      "publishable": true
+    }
+  ]
+}

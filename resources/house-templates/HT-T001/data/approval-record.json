@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0.0",
+  "templateId": "HT-T001",
+  "templateVersion": "1.0.0",
+  "status": "APPROVED",
+  "approvedAt": "2026-08-12",
+  "approvedBy": "user_architect_review",
+  "confirmedItems": [
+    "外墙围合轮廓及83.44平方米建筑面积",
+    "7个房间的位置、边界和面积",
+    "客厅与餐厅之间为非实体墙的虚拟功能分界",
+    "4处墙段连接修复规则",
+    "全部门窗位置",
+    "餐厅北侧门联窗：左侧1500毫米窗、右侧900毫米门"
+  ],
+  "remainingBlockingItems": []
+}

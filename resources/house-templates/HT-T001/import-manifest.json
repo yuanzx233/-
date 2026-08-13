@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0.0",
+  "templateId": "HT-T001",
+  "templateCode": "HT-F1-W4-LV-001",
+  "name": "单层两房（面宽大于进深）",
+  "version": "1.0.0",
+  "status": "APPROVED",
+  "source": {
+    "file": "source/HT_T001_V0.1_AUTOCAD2021.dxf",
+    "originalName": "单层两房（面宽大于进深）.dxf",
+    "dwgVersion": "AC1032",
+    "providedBy": "user",
+    "copyrightStatus": "user_provided_project_use_only"
+  },
+  "declaredRequirements": {
+    "floorType": "F1",
+    "bedroomCount": 2,
+    "maximumBuildingAreaM2": 90,
+    "widthGreaterThanDepth": true
+  },
+  "classification": {
+    "primaryWidthType": "W4",
+    "compatibleWidthTypes": [
+      "W4"
+    ],
+    "depthType": "D1",
+    "areaType": "A1",
+    "layoutType": "LV"
+  },
+  "verification": {
+    "geometryParsed": true,
+    "layersNormalized": true,
+    "objectIdsAssigned": true,
+    "jsonGenerated": true,
+    "previewGenerated": true,
+    "validationStatus": "APPROVED"
+  },
+  "importedAt": "2026-08-12T00:00:00+08:00"
+}

@@ -1,13 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFile } from "node:fs/promises";
 import { generatePlanCandidates, planTemplates } from "../lib/plan-generator";
 
 const input = {
   site: { northDirection: "北", entranceDirection: "南", roadDirections: ["南"], boundaryConfirmed: true, areaSquareMeters: 432, perimeterMeters: 84, boundaryPoints: [{ x: 0, y: 0 }, { x: 18000, y: 0 }, { x: 18000, y: 24000 }, { x: 0, y: 24000 }] },
-  requirements: { floors: 2, householdSize: 5, areaMin: 160, areaMax: 220, bedroomCount: 4, bathroomCount: 2, stairCount: 1, elderRoomCount: 1, elderRoomFirstFloor: true, minBedroomArea: 10, minElderRoomArea: 12, minLivingArea: 24, minKitchenArea: 8, minBathroomArea: 4, priorities: ["采光", "通风"], notes: "" },
+  requirements: { floors: 1, householdSize: 3, areaMin: 75, areaMax: 95, bedroomCount: 2, bathroomCount: 1, stairCount: 0, elderRoomCount: 1, elderRoomFirstFloor: true, minBedroomArea: 8, minElderRoomArea: 10, minLivingArea: 15, minKitchenArea: 5, minBathroomArea: 3, priorities: ["适老", "动静分区"], notes: "" },
 } as const;
 
-test("provides 16 base templates", () => assert.equal(planTemplates.length, 16));
-test("loads templates from the project resource library", () => { for (const template of planTemplates) { assert.match(template.id, /^LIB-/); assert.match(template.resourcePath, /^\/plan-library\//); assert.equal(template.adjustable.rotate, true); } });
-test("returns three ranked plans only after site fit passes", () => { const plans = generatePlanCandidates(input as never); assert.equal(plans.length, 3); assert.ok(plans[0].score >= plans[1].score); for (const plan of plans) { assert.equal(plan.siteFit.fits, true); assert.match(plan.templateSource, /^\/plan-library\//); assert.ok([0, 90].includes(plan.adjustment.rotationDegrees)); assert.ok(plan.adjustment.scale >= .88); assert.match(plan.svg, /^<svg/); assert.ok(plan.rooms.length >= 6); assert.ok(plan.satisfaction.length >= 4); assert.ok(plan.totalArea >= 160 && plan.totalArea <= 220); } });
-test("rejects candidates that cannot fit the parsed buildable polygon", () => { const constrained = structuredClone(input) as any; constrained.site.buildablePoints = [{ x: 0, y: 0 }, { x: 4000, y: 0 }, { x: 4000, y: 4000 }, { x: 0, y: 4000 }]; constrained.site.buildableAreaSquareMeters = 16; assert.equal(generatePlanCandidates(constrained).length, 0); });
+test("loads only three approved mature templates", () => { assert.deepEqual(planTemplates.map(x => x.id), ["HT-T001", "HT-T002", "HT-T003"]); assert.ok(planTemplates.every(x => x.status === "APPROVED")); });
+test("each mature template references a real standardized DXF", async () => { for (const template of planTemplates) { const source = await readFile(`resources/house-templates/${template.source.dxfPath}`, "utf8"); assert.match(source, /SECTION/); assert.match(source, /ENTITIES/); assert.ok(template.rooms.length >= 6); assert.ok(template.walls.length > 20); } });
+test("returns candidates rendered from mature template geometry", () => { const plans = generatePlanCandidates(input as never); assert.equal(plans.length, 3); for (const plan of plans) { assert.match(plan.templateId, /^HT-T00[1-3]$/); assert.match(plan.templateSource, /STANDARDIZED_AC1032\.dxf/); assert.match(plan.svg, /成熟DXF户型/); assert.ok(plan.rooms.length >= 6); assert.equal(plan.siteFit.fits, true); } });
+test("does not synthesize a plan when mature templates do not satisfy requirements", () => { const unmatched = structuredClone(input) as any; unmatched.requirements.floors = 2; unmatched.requirements.bedroomCount = 4; assert.equal(generatePlanCandidates(unmatched).length, 0); });
+test("rejects mature candidates that cannot fit the buildable polygon", () => { const constrained = structuredClone(input) as any; constrained.site.buildablePoints = [{ x: 0, y: 0 }, { x: 4000, y: 0 }, { x: 4000, y: 4000 }, { x: 0, y: 4000 }]; constrained.site.buildableAreaSquareMeters = 16; assert.equal(generatePlanCandidates(constrained).length, 0); });

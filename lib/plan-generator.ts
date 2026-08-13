@@ -1,81 +1,94 @@
 import type { RequirementSubmission } from "./requirements";
-import { projectPlanTemplateLibrary, type PlanTemplateResource } from "./plan-template-library";
+import { projectPlanTemplateLibrary, type MaturePlanTemplate } from "./plan-template-library";
 
+type Point = { x: number; y: number };
 export type PlanRoom = { id: string; name: string; floor: number; area: number; x: number; y: number; width: number; height: number };
-export type PlanCandidate = { id: string; name: string; templateId: string; templateSource: string; adjustment: { rotationDegrees: 0 | 90; scale: number }; score: number; totalArea: number; floors: number; footprint: Array<{ x: number; y: number }>; siteFit: { fits: boolean; basis: "buildable" | "boundary"; coveragePercent: number; clearanceNote: string }; rooms: PlanRoom[]; strengths: string[]; tradeoffs: string[]; satisfaction: Array<{ label: string; met: boolean; detail: string }>; svg: string };
+export type PlanCandidate = {
+  id: string; name: string; templateId: string; templateSource: string;
+  adjustment: { rotationDegrees: 0 | 90; scale: number }; score: number; totalArea: number; floors: number;
+  footprint: Point[]; siteFit: { fits: boolean; basis: "buildable" | "boundary"; coveragePercent: number; clearanceNote: string };
+  rooms: PlanRoom[]; strengths: string[]; tradeoffs: string[];
+  satisfaction: Array<{ label: string; met: boolean; detail: string }>; svg: string;
+};
 
 export const planTemplates = projectPlanTemplateLibrary;
 
 export function generatePlanCandidates(input: RequirementSubmission): PlanCandidate[] {
-  const r = input.requirements;
-  const targetArea = (r.areaMin + r.areaMax) / 2;
-  const siteAspect = Math.max(.55, Math.min(1.8, input.site.areaSquareMeters / Math.max(1, input.site.perimeterMeters ** 2) * 16));
   const available = input.site.buildablePoints?.length ? input.site.buildablePoints : input.site.boundaryPoints;
   if (!available?.length) throw new Error("SITE_GEOMETRY_REQUIRED");
   const bounds = polygonBounds(available);
   const availableArea = input.site.buildableAreaSquareMeters ?? input.site.areaSquareMeters;
-  return planTemplates.flatMap((template) => {
-    const floorFit = 1 - Math.min(1, Math.abs(template.floors - r.floors) / 2);
-    const bedroomFit = 1 - Math.min(1, Math.abs(template.bedrooms - r.bedroomCount) / Math.max(1, r.bedroomCount));
-    const aspectFit = 1 - Math.min(1, Math.abs(template.aspect - siteAspect) / 1.2);
-    const priorityFit = r.priorities.filter((item) => template.tags.includes(item)).length / Math.max(1, r.priorities.length);
-    const score = Math.round((floorFit * 35 + bedroomFit * 30 + aspectFit * 20 + priorityFit * 15) * 10) / 10;
-    return findBestAdjustedCandidate(template, input, targetArea, score, available, bounds, availableArea);
-  }).filter((plan) => plan.siteFit.fits).sort((a, b) => b.score - a.score).slice(0, 3).map((plan, index) => ({ ...plan, id: `P${index + 1}`, name: `方案 ${String.fromCharCode(65 + index)} · ${plan.name}` }));
+  return planTemplates
+    .filter(template => template.status === "APPROVED" && template.floors === input.requirements.floors && template.bedrooms >= input.requirements.bedroomCount)
+    .flatMap(template => bestPlacement(template, input, available, bounds, availableArea))
+    .filter(plan => plan.siteFit.fits && plan.totalArea >= input.requirements.areaMin && plan.totalArea <= input.requirements.areaMax)
+    .sort((a, b) => b.score - a.score).slice(0, 3)
+    .map((plan, index) => ({ ...plan, id: `P${index + 1}`, name: `方案 ${String.fromCharCode(65 + index)} · ${plan.name}` }));
 }
 
-function findBestAdjustedCandidate(template: PlanTemplateResource, input: RequirementSubmission, targetArea: number, score: number, available: Array<{ x: number; y: number }>, bounds: ReturnType<typeof polygonBounds>, availableArea: number): PlanCandidate[] {
-  const scales = [1, .94, .88].filter(scale => scale >= template.adjustable.minScale && scale <= template.adjustable.maxScale);
-  const rotations: Array<0 | 90> = template.adjustable.rotate ? [0, 90] : [0];
-  const variants = rotations.flatMap(rotation => scales.map(scale => buildCandidate(template, input, targetArea, score, available, bounds, availableArea, rotation, scale)));
+function bestPlacement(template: MaturePlanTemplate, input: RequirementSubmission, available: Point[], bounds: ReturnType<typeof polygonBounds>, availableArea: number): PlanCandidate[] {
+  const variants = ([0, 90] as const).flatMap(rotation => [.95, 1, 1.05].map(scale => buildCandidate(template, input, available, bounds, availableArea, rotation, scale)));
   const best = variants.filter(item => item.siteFit.fits).sort((a, b) => b.score - a.score)[0];
   return best ? [best] : [];
 }
 
-function buildCandidate(template: PlanTemplateResource, input: RequirementSubmission, targetArea: number, score: number, available: Array<{ x: number; y: number }>, bounds: ReturnType<typeof polygonBounds>, availableArea: number, rotationDegrees: 0 | 90, scale: number): PlanCandidate {
+function buildCandidate(template: MaturePlanTemplate, input: RequirementSubmission, available: Point[], siteBounds: ReturnType<typeof polygonBounds>, availableArea: number, rotationDegrees: 0 | 90, scale: number): PlanCandidate {
   const r = input.requirements;
-  const templateSequence = Number(template.id.match(/(\d+)$/)?.[1] ?? 1);
-  const totalArea = round(Math.min(r.areaMax, Math.max(r.areaMin, targetArea * (0.94 + (templateSequence % 3) * .04))));
-  const perFloor = totalArea / r.floors;
-  const rawWidth = Math.sqrt(perFloor * template.aspect) * 1000 * scale, rawHeight = perFloor / (rawWidth / 1000) * 1000 * scale;
-  const footprintWidth = rotationDegrees === 90 ? rawHeight : rawWidth, footprintHeight = rotationDegrees === 90 ? rawWidth : rawHeight;
-  const cx = (bounds.minX + bounds.maxX) / 2, cy = (bounds.minY + bounds.maxY) / 2;
-  const footprint = [{ x: cx - footprintWidth / 2, y: cy - footprintHeight / 2 }, { x: cx + footprintWidth / 2, y: cy - footprintHeight / 2 }, { x: cx + footprintWidth / 2, y: cy + footprintHeight / 2 }, { x: cx - footprintWidth / 2, y: cy + footprintHeight / 2 }];
-  const within = footprint.every((point) => pointInPolygon(point, available)), avoids = avoidsRetainedObjects(footprint, input.site.retainedObjects ?? []), capacity = perFloor <= availableArea * .8;
-  const siteFit = { fits: within && avoids && capacity, basis: input.site.buildablePoints?.length ? "buildable" as const : "boundary" as const, coveragePercent: round(perFloor / availableArea * 100), clearanceNote: !within ? "建筑轮廓超出可建设边界" : !avoids ? "建筑轮廓占用保留对象" : !capacity ? "首层占地超过可建设面积 80%" : "建筑轮廓完整位于可建设范围内" };
-  const living = Math.max(r.minLivingArea, round(perFloor * .24));
-  const kitchen = Math.max(r.minKitchenArea, round(perFloor * .1));
-  const bathArea = Math.max(r.minBathroomArea, round(perFloor * .055));
-  const bedroomArea = Math.max(r.minBedroomArea, round((totalArea - living - kitchen - bathArea * r.bathroomCount) / Math.max(3, r.bedroomCount + 2)));
-  const rooms: PlanRoom[] = [];
-  for (let floor = 1; floor <= r.floors; floor++) {
-    const floorBedrooms = Math.floor(r.bedroomCount / r.floors) + (floor <= r.bedroomCount % r.floors ? 1 : 0);
-    const baseY = (floor - 1) * 250;
-    if (floor === 1) rooms.push(room(`living-${floor}`, "客厅", floor, living, 10, baseY + 10, 210, 105), room(`kitchen-${floor}`, "餐厨", floor, kitchen, 225, baseY + 10, 105, 105));
-    for (let i = 0; i < floorBedrooms; i++) rooms.push(room(`bed-${floor}-${i}`, floor === 1 && i < r.elderRoomCount ? "老人房" : `卧室 ${rooms.filter(x => x.name.includes("卧室")).length + 1}`, floor, floor === 1 && i < r.elderRoomCount ? Math.max(bedroomArea, r.minElderRoomArea) : bedroomArea, 10 + i * 108, baseY + 120, 103, 90));
-    rooms.push(room(`bath-${floor}`, "卫生间", floor, bathArea, 225, baseY + 120, 50, 90));
-    if (r.floors > 1) rooms.push(room(`stair-${floor}`, "楼梯", floor, 8, 280, baseY + 120, 50, 90));
-  }
+  const footprint = placePolygon(template.footprint, siteBounds, rotationDegrees, scale);
+  const totalArea = round(template.area * scale * scale);
+  const within = footprint.every(point => pointInPolygon(point, available));
+  const avoids = avoidsRetainedObjects(footprint, input.site.retainedObjects ?? []);
+  const coveragePercent = round(totalArea / availableArea * 100);
+  const capacity = coveragePercent <= 80;
+  const areaFit = totalArea >= r.areaMin && totalArea <= r.areaMax;
+  const priorityFit = r.priorities.filter(item => template.tags.includes(item)).length / Math.max(1, r.priorities.length);
+  const score = round(55 + priorityFit * 15 + (areaFit ? 20 : 0) + (scale === 1 ? 10 : 7));
+  const siteFit = {
+    fits: within && avoids && capacity,
+    basis: input.site.buildablePoints?.length ? "buildable" as const : "boundary" as const,
+    coveragePercent,
+    clearanceNote: !within ? "成熟模板轮廓超出可建设边界" : !avoids ? "成熟模板轮廓占用保留对象" : !capacity ? "首层占地超过可建设面积 80%" : "成熟模板完整位于可建设范围内",
+  };
+  const rooms: PlanRoom[] = template.rooms.map(room => {
+    const box = pairBounds(room.boundary);
+    return { id: room.id, name: room.name, floor: 1, area: round(room.area * scale * scale), x: box.minX, y: box.minY, width: box.maxX - box.minX, height: box.maxY - box.minY };
+  });
   const satisfaction = [
-    { label: "层数与面积", met: template.floors === r.floors && totalArea >= r.areaMin && totalArea <= r.areaMax, detail: `${r.floors} 层 · ${totalArea.toFixed(1)} ㎡` },
-    { label: "卧室与卫浴", met: template.bedrooms >= r.bedroomCount, detail: `${r.bedroomCount} 室 · ${r.bathroomCount} 卫` },
-    { label: "老人房首层", met: r.elderRoomCount === 0 || r.elderRoomFirstFloor, detail: r.elderRoomCount ? `${r.elderRoomCount} 间首层老人房` : "无老人房要求" },
-    { label: "优先需求", met: template.tags.some(tag => r.priorities.includes(tag)), detail: template.tags.join("、") },
+    { label: "成熟模板来源", met: true, detail: `${template.id} · v${template.version}` },
+    { label: "层数与面积", met: areaFit, detail: `${template.floors} 层 · ${totalArea.toFixed(1)} ㎡` },
+    { label: "卧室数量", met: template.bedrooms >= r.bedroomCount, detail: `${template.bedrooms} 间卧室` },
+    { label: "场地硬约束", met: siteFit.fits, detail: siteFit.clearanceNote },
   ];
-  const adjustedScore = round(score - Math.abs(1 - scale) * 8 + (rotationDegrees === 0 ? 1 : 0));
-  const plan = { id: template.id, name: template.name, templateId: template.id, templateSource: template.resourcePath, adjustment: { rotationDegrees, scale: round(scale) }, score: adjustedScore, totalArea, floors: r.floors, footprint, siteFit, rooms, strengths: [`来自项目资源库，匹配 ${template.tags.join("、")} 偏好`, `已按场地完成 ${rotationDegrees}° 旋转与 ${(scale * 100).toFixed(0)}% 等比调正`, "主要房间沿外墙布置"], tradeoffs: template.layout === "courtyard" ? ["庭院界面增加造价", "需复核场地退界"] : ["次卧尺度较紧凑", "门窗位置需结合立面深化"], satisfaction, svg: "" } satisfies Omit<PlanCandidate, "svg"> & { svg: string };
-  return { ...plan, svg: renderPlanSvg(plan) };
+  const base = {
+    id: template.id, name: template.name, templateId: template.id,
+    templateSource: `${template.source.dxfPath} + ${template.source.jsonPath}`,
+    adjustment: { rotationDegrees, scale: round(scale) }, score, totalArea, floors: template.floors,
+    footprint, siteFit, rooms,
+    strengths: ["直接采用已审核标准化 DXF", "保留原始墙体、门窗与房间关系", `整体调正：旋转 ${rotationDegrees}°、比例 ${(scale * 100).toFixed(0)}%`],
+    tradeoffs: scale === 1 ? ["未改变成熟模板内部布局"] : ["进行了有限整体比例调整，施工前需复核构造尺寸"],
+    satisfaction, svg: "",
+  } satisfies Omit<PlanCandidate, "svg"> & { svg: string };
+  return { ...base, svg: renderTemplateSvg(template, base.name) };
 }
 
-function room(id: string, name: string, floor: number, area: number, x: number, y: number, width: number, height: number): PlanRoom { return { id, name, floor, area: round(area), x, y, width, height }; }
-function polygonBounds(points: Array<{ x: number; y: number }>) { const xs = points.map(p => p.x), ys = points.map(p => p.y); return { minX: Math.min(...xs), maxX: Math.max(...xs), minY: Math.min(...ys), maxY: Math.max(...ys) }; }
-function pointInPolygon(point: { x: number; y: number }, polygon: Array<{ x: number; y: number }>) { let inside = false; for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) { const a = polygon[i], b = polygon[j]; if (((a.y > point.y) !== (b.y > point.y)) && point.x < (b.x - a.x) * (point.y - a.y) / ((b.y - a.y) || 1) + a.x) inside = !inside; } return inside; }
-function avoidsRetainedObjects(footprint: Array<{ x: number; y: number }>, objects: NonNullable<RequirementSubmission["site"]["retainedObjects"]>) { return objects.every(object => { if (object.center && object.radius) return footprint.every(point => Math.hypot(point.x - object.center!.x, point.y - object.center!.y) > object.radius!); if (object.points?.length) return object.points.every(point => !pointInPolygon(point, footprint)) && footprint.every(point => !pointInPolygon(point, object.points!)); return true; }); }
+function placePolygon(points: number[][], site: ReturnType<typeof polygonBounds>, rotation: 0 | 90, scale: number): Point[] {
+  const source = pairBounds(points); const scx = (source.minX + source.maxX) / 2; const scy = (source.minY + source.maxY) / 2;
+  const tcx = (site.minX + site.maxX) / 2; const tcy = (site.minY + site.maxY) / 2;
+  return points.map(([x, y]) => { const dx = (x - scx) * scale, dy = (y - scy) * scale; return rotation === 90 ? { x: tcx - dy, y: tcy + dx } : { x: tcx + dx, y: tcy + dy }; });
+}
+
+function renderTemplateSvg(template: MaturePlanTemplate, name: string): string {
+  const all = template.footprint; const b = pairBounds(all); const pad = 500; const width = b.maxX - b.minX + pad * 2; const height = b.maxY - b.minY + pad * 2;
+  const point = ([x, y]: number[]) => `${x - b.minX + pad},${b.maxY - y + pad}`;
+  const rooms = template.rooms.map((room, index) => `<g><polygon points="${room.boundary.map(point).join(" ")}" fill="${["#e3eadb", "#f1e2cf", "#e4ded3", "#dce8d5"][index % 4]}" stroke="#8ca099" stroke-width="24"/><text x="${room.labelPoint[0] - b.minX + pad}" y="${b.maxY - room.labelPoint[1] + pad}" text-anchor="middle" font-size="260" fill="#173d34">${escapeXml(room.name)}</text><text x="${room.labelPoint[0] - b.minX + pad}" y="${b.maxY - room.labelPoint[1] + pad + 300}" text-anchor="middle" font-size="190" fill="#657872">${room.area.toFixed(1)} ㎡</text></g>`).join("");
+  const walls = template.walls.map(wall => `<line x1="${wall.start[0] - b.minX + pad}" y1="${b.maxY - wall.start[1] + pad}" x2="${wall.end[0] - b.minX + pad}" y2="${b.maxY - wall.end[1] + pad}" stroke="#173d34" stroke-width="70" stroke-linecap="square"/>`).join("");
+  const openings = template.openings.map(opening => opening.start && opening.end ? `<line x1="${opening.start[0] - b.minX + pad}" y1="${b.maxY - opening.start[1] + pad}" x2="${opening.end[0] - b.minX + pad}" y2="${b.maxY - opening.end[1] + pad}" stroke="${opening.type?.includes("WINDOW") ? "#4e8ca0" : "#b87550"}" stroke-width="100"/>` : "").join("");
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(name)}成熟DXF户型"><rect width="100%" height="100%" fill="#f5f1e8"/>${rooms}${walls}${openings}<polygon points="${template.footprint.map(point).join(" ")}" fill="none" stroke="#173d34" stroke-width="90"/></svg>`;
+}
+
+function pairBounds(points: number[][]) { const xs = points.map(p => p[0]), ys = points.map(p => p[1]); return { minX: Math.min(...xs), maxX: Math.max(...xs), minY: Math.min(...ys), maxY: Math.max(...ys) }; }
+function polygonBounds(points: Point[]) { const xs = points.map(p => p.x), ys = points.map(p => p.y); return { minX: Math.min(...xs), maxX: Math.max(...xs), minY: Math.min(...ys), maxY: Math.max(...ys) }; }
+function pointInPolygon(point: Point, polygon: Point[]) { let inside = false; for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) { const a = polygon[i], b = polygon[j]; if (((a.y > point.y) !== (b.y > point.y)) && point.x < (b.x - a.x) * (point.y - a.y) / ((b.y - a.y) || 1) + a.x) inside = !inside; } return inside; }
+function avoidsRetainedObjects(footprint: Point[], objects: NonNullable<RequirementSubmission["site"]["retainedObjects"]>) { return objects.every(object => { if (object.center && object.radius) return footprint.every(point => Math.hypot(point.x - object.center!.x, point.y - object.center!.y) > object.radius!); if (object.points?.length) return object.points.every(point => !pointInPolygon(point, footprint)) && footprint.every(point => !pointInPolygon(point, object.points!)); return true; }); }
 function round(value: number) { return Math.round(value * 10) / 10; }
 function escapeXml(value: string) { return value.replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" }[char]!)); }
-function renderPlanSvg(plan: Omit<PlanCandidate, "svg">): string {
-  const height = plan.floors * 250 + 40;
-  const rooms = plan.rooms.map(r => `<g><rect x="${r.x}" y="${r.y + 20}" width="${r.width}" height="${r.height}" fill="${r.name === "客厅" ? "#dce8d5" : r.name === "餐厨" ? "#f2ddc5" : r.name === "老人房" ? "#e8dfcf" : "#f7f4ec"}" stroke="#173d34" stroke-width="2"/><text x="${r.x + r.width / 2}" y="${r.y + 58}" text-anchor="middle" font-size="13" fill="#173d34">${escapeXml(r.name)}</text><text x="${r.x + r.width / 2}" y="${r.y + 77}" text-anchor="middle" font-size="10" fill="#6a7c76">${r.area.toFixed(1)} ㎡</text></g>`).join("");
-  const floors = Array.from({ length: plan.floors }, (_, i) => `<text x="345" y="${55 + i * 250}" font-size="12" fill="#a35d3c">${i + 1}F</text>`).join("");
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 370 ${height}" role="img" aria-label="${escapeXml(plan.name)}平面图"><rect width="370" height="${height}" fill="#f5f1e8"/>${rooms}${floors}<path d="M350 58v-28m0 0-7 10m7-10 7 10" stroke="#173d34" stroke-width="3" fill="none"/><text x="350" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#173d34">N</text></svg>`;
-}

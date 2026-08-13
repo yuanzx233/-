@@ -1,30 +1,45 @@
-export type PlanTemplateResource = {
-  id: string;
-  resourcePath: string;
-  name: string;
-  aspect: number;
-  floors: number;
-  bedrooms: number;
-  layout: "central" | "side" | "courtyard";
-  tags: string[];
-  adjustable: { rotate: boolean; minScale: number; maxScale: number };
+import t001 from "../resources/house-templates/HT-T001/data/template.json";
+import t002 from "../resources/house-templates/HT-T002/data/template.json";
+import t003 from "../resources/house-templates/HT-T003/data/template.json";
+
+type Pair = [number, number];
+type RawRoom = { id: string; name: string; type: string; area: number; boundary: Pair[]; labelPoint: Pair[] };
+type RawWall = { id: string; start: Pair; end: Pair };
+type RawOpening = { id: string; type: string; start?: Pair; end?: Pair; position?: Pair; width?: number };
+type RawTemplate = {
+  template: { id: string; name: string; status: string; version: string };
+  classification: { primaryWidthType: string; depthType: string; layoutType: string };
+  geometry: { buildingFootprint: { outline: Pair[]; boundingWidth: number; boundingDepth: number; areaM2: number } };
+  floors: Array<{ number: number; rooms: RawRoom[]; walls: RawWall[]; openings: RawOpening[] }>;
+  approval: { status?: string };
 };
 
-const names = ["南向通厅", "中央楼梯", "侧厅紧凑", "双面采光", "适老首层", "庭院联动", "动静分层", "方正经济"];
-const tags = [
-  ["采光", "通风"], ["动静分区", "适老"], ["收纳", "经济"], ["采光", "通风"],
-  ["适老", "动静分区"], ["庭院", "采光"], ["动静分区", "收纳"], ["经济", "收纳"],
-];
+export type MaturePlanTemplate = {
+  id: string; name: string; version: string; status: "APPROVED"; floors: number; bedrooms: number;
+  width: number; depth: number; area: number; footprint: Pair[]; rooms: RawRoom[]; walls: RawWall[]; openings: RawOpening[];
+  source: { dxfPath: string; jsonPath: string }; tags: string[];
+  adjustable: { rotate: true; minScale: number; maxScale: number };
+};
 
-/** 项目内置户型资源库；每个条目代表一份可检索、可调正的既有模板。 */
-export const projectPlanTemplateLibrary: PlanTemplateResource[] = Array.from({ length: 16 }, (_, index) => ({
-  id: `LIB-${String(index + 1).padStart(2, "0")}`,
-  resourcePath: `/plan-library/base-${String(index + 1).padStart(2, "0")}.json`,
-  name: names[index % names.length],
-  aspect: [0.72, 0.8, 0.9, 1, 1.12, 1.25, 1.38, 1.5][index % 8],
-  floors: index < 5 ? 1 : index < 12 ? 2 : 3,
-  bedrooms: 2 + (index % 5),
-  layout: (["central", "side", "courtyard"] as const)[index % 3],
-  tags: tags[index % tags.length],
-  adjustable: { rotate: true, minScale: 0.88, maxScale: 1.12 },
-}));
+function load(raw: unknown, folder: string, dxfFile: string): MaturePlanTemplate {
+  const item = raw as RawTemplate;
+  if (item.template.status !== "APPROVED") throw new Error(`INVALID_MATURE_TEMPLATE:${folder}`);
+  const rooms = item.floors.flatMap(floor => floor.rooms);
+  return {
+    id: item.template.id, name: item.template.name, version: item.template.version, status: "APPROVED",
+    floors: item.floors.length, bedrooms: rooms.filter(room => room.type.startsWith("BED-")).length,
+    width: item.geometry.buildingFootprint.boundingWidth, depth: item.geometry.buildingFootprint.boundingDepth,
+    area: item.geometry.buildingFootprint.areaM2, footprint: item.geometry.buildingFootprint.outline,
+    rooms, walls: item.floors.flatMap(floor => floor.walls), openings: item.floors.flatMap(floor => floor.openings),
+    source: { dxfPath: `${folder}/normalized/${dxfFile}`, jsonPath: `${folder}/data/template.json` },
+    tags: rooms.some(room => room.type === "BED-ELDERLY") ? ["适老", "动静分区"] : ["采光", "通风"],
+    adjustable: { rotate: true, minScale: .95, maxScale: 1.05 },
+  };
+}
+
+/** 仅包含经过审核、同时具有标准化 DXF 与 template.json 的成熟模板。 */
+export const projectPlanTemplateLibrary = [
+  load(t001, "HT-T001", "HT_T001_V0.3_STANDARDIZED_AC1032.dxf"),
+  load(t002, "HT-T002", "HT_T002_V0.3_STANDARDIZED_AC1032.dxf"),
+  load(t003, "HT-T003", "HT_T003_V0.3_STANDARDIZED_AC1032.dxf"),
+];

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "templateId": "HT-T003",
+  "templateCode": "HT-F1-W2-LV-003",
+  "name": "单层两房（窄面宽）",
+  "version": "1.0.0",
+  "status": "APPROVED",
+  "source": {
+    "file": "source/HT_T003_V0.1_SOURCE.dxf",
+    "originalName": "003.dxf",
+    "dwgVersion": "AC1032",
+    "providedBy": "user",
+    "copyrightStatus": "user_provided_project_use_only"
+  },
+  "declaredRequirements": {
+    "floorType": "F1",
+    "bedroomCount": 2,
+    "maximumBuildingAreaM2": 90,
+    "narrowWidth": true
+  },
+  "classification": {
+    "primaryWidthType": "W2",
+    "compatibleWidthTypes": ["W2"],
+    "depthType": "D2",
+    "areaType": "A1",
+    "layoutType": "LV"
+  },
+  "verification": {
+    "geometryParsed": true,
+    "layersNormalized": true,
+    "objectIdsAssigned": true,
+    "jsonGenerated": true,
+    "previewGenerated": true,
+    "validationStatus": "APPROVED"
+  },
+  "importedAt": "2026-08-13T00:00:00+08:00"
+}

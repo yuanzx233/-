@@ -78,13 +78,36 @@ function placePolygon(points: number[][], site: ReturnType<typeof polygonBounds>
 }
 
 function renderTemplateSvg(template: MaturePlanTemplate, name: string): string {
-  const all = template.footprint; const b = pairBounds(all); const pad = 500; const width = b.maxX - b.minX + pad * 2; const height = b.maxY - b.minY + pad * 2;
+  const all = template.footprint; const b = pairBounds(all); const pad = 1500; const width = b.maxX - b.minX + pad * 2; const height = b.maxY - b.minY + pad * 2;
   const point = ([x, y]: number[]) => `${x - b.minX + pad},${b.maxY - y + pad}`;
   const rooms = template.rooms.map((room, index) => `<g><polygon points="${room.boundary.map(point).join(" ")}" fill="${["#e3eadb", "#f1e2cf", "#e4ded3", "#dce8d5"][index % 4]}" stroke="#8ca099" stroke-width="24"/><text x="${room.labelPoint[0] - b.minX + pad}" y="${b.maxY - room.labelPoint[1] + pad}" text-anchor="middle" font-size="260" fill="#173d34">${escapeXml(room.name)}</text><text x="${room.labelPoint[0] - b.minX + pad}" y="${b.maxY - room.labelPoint[1] + pad + 300}" text-anchor="middle" font-size="190" fill="#657872">${room.area.toFixed(1)} ㎡</text></g>`).join("");
   const walls = template.walls.map(wall => `<line x1="${wall.start[0] - b.minX + pad}" y1="${b.maxY - wall.start[1] + pad}" x2="${wall.end[0] - b.minX + pad}" y2="${b.maxY - wall.end[1] + pad}" stroke="#173d34" stroke-width="70" stroke-linecap="square"/>`).join("");
   const openings = template.openings.map(opening => opening.start && opening.end ? `<line x1="${opening.start[0] - b.minX + pad}" y1="${b.maxY - opening.start[1] + pad}" x2="${opening.end[0] - b.minX + pad}" y2="${b.maxY - opening.end[1] + pad}" stroke="${opening.type?.includes("WINDOW") ? "#4e8ca0" : "#b87550"}" stroke-width="100"/>` : "").join("");
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(name)}成熟DXF户型"><rect width="100%" height="100%" fill="#f5f1e8"/>${rooms}${walls}${openings}<polygon points="${template.footprint.map(point).join(" ")}" fill="none" stroke="#173d34" stroke-width="90"/></svg>`;
+  const grid = renderAxisGrid(template, b, pad);
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(name)}成熟DXF户型及轴网尺寸"><rect width="100%" height="100%" fill="#f5f1e8"/>${grid}${rooms}${walls}${openings}<polygon points="${template.footprint.map(point).join(" ")}" fill="none" stroke="#173d34" stroke-width="90"/></svg>`;
 }
+
+function renderAxisGrid(template: MaturePlanTemplate, b: ReturnType<typeof pairBounds>, pad: number): string {
+  const xs = uniqueCoordinates(template.footprint.map(point => point[0]));
+  const ys = uniqueCoordinates(template.footprint.map(point => point[1]));
+  const xScreen = (x: number) => x - b.minX + pad;
+  const yScreen = (y: number) => b.maxY - y + pad;
+  const top = pad, bottom = b.maxY - b.minY + pad, left = pad, right = b.maxX - b.minX + pad;
+  const axisStyle = `stroke="#789089" stroke-width="22" stroke-dasharray="120 90"`;
+  const axesX = xs.map((x, i) => `<g data-axis="${i + 1}"><line x1="${xScreen(x)}" y1="${top - 450}" x2="${xScreen(x)}" y2="${bottom + 350}" ${axisStyle}/><circle cx="${xScreen(x)}" cy="${top - 650}" r="190" fill="#fffdf8" stroke="#173d34" stroke-width="28"/><text x="${xScreen(x)}" y="${top - 585}" text-anchor="middle" font-size="210" font-weight="700" fill="#173d34">${i + 1}</text></g>`).join("");
+  const axesY = ys.slice().reverse().map((y, i) => { const label = String.fromCharCode(65 + i); return `<g data-axis="${label}"><line x1="${left - 350}" y1="${yScreen(y)}" x2="${right + 350}" y2="${yScreen(y)}" ${axisStyle}/><circle cx="${left - 650}" cy="${yScreen(y)}" r="190" fill="#fffdf8" stroke="#173d34" stroke-width="28"/><text x="${left - 650}" y="${yScreen(y) + 70}" text-anchor="middle" font-size="210" font-weight="700" fill="#173d34">${label}</text></g>`; }).join("");
+  const xDims = xs.slice(1).map((x, i) => dimensionHorizontal(xScreen(xs[i]), xScreen(x), top - 1050, formatMillimeters(x - xs[i]))).join("");
+  const yAscending = ys.slice().sort((a, b) => a - b);
+  const yDims = yAscending.slice(1).map((y, i) => dimensionVertical(right + 720, yScreen(yAscending[i]), yScreen(y), formatMillimeters(y - yAscending[i]))).join("");
+  const overallX = dimensionHorizontal(left, right, top - 1370, `总宽 ${formatMillimeters(b.maxX - b.minX)}`);
+  const overallY = dimensionVertical(right + 1120, bottom, top, `总深 ${formatMillimeters(b.maxY - b.minY)}`);
+  return `<g data-layer="AXIS_GRID">${axesX}${axesY}</g><g data-layer="GRID_DIMENSIONS">${xDims}${yDims}${overallX}${overallY}</g>`;
+}
+
+function dimensionHorizontal(x1: number, x2: number, y: number, label: string) { return `<g><line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#536b64" stroke-width="24"/><line x1="${x1}" y1="${y - 90}" x2="${x1}" y2="${y + 90}" stroke="#536b64" stroke-width="24"/><line x1="${x2}" y1="${y - 90}" x2="${x2}" y2="${y + 90}" stroke="#536b64" stroke-width="24"/><text x="${(x1 + x2) / 2}" y="${y - 110}" text-anchor="middle" font-size="190" fill="#173d34">${label}</text></g>`; }
+function dimensionVertical(x: number, y1: number, y2: number, label: string) { const top = Math.min(y1, y2), bottom = Math.max(y1, y2); return `<g><line x1="${x}" y1="${top}" x2="${x}" y2="${bottom}" stroke="#536b64" stroke-width="24"/><line x1="${x - 90}" y1="${top}" x2="${x + 90}" y2="${top}" stroke="#536b64" stroke-width="24"/><line x1="${x - 90}" y1="${bottom}" x2="${x + 90}" y2="${bottom}" stroke="#536b64" stroke-width="24"/><text x="${x + 150}" y="${(top + bottom) / 2}" transform="rotate(90 ${x + 150} ${(top + bottom) / 2})" text-anchor="middle" font-size="190" fill="#173d34">${label}</text></g>`; }
+function uniqueCoordinates(values: number[]) { return [...new Set(values.map(value => Math.round(value)))].sort((a, b) => a - b); }
+function formatMillimeters(value: number) { return `${(value / 1000).toFixed(1)} m`; }
 
 function pairBounds(points: number[][]) { const xs = points.map(p => p[0]), ys = points.map(p => p[1]); return { minX: Math.min(...xs), maxX: Math.max(...xs), minY: Math.min(...ys), maxY: Math.max(...ys) }; }
 function polygonBounds(points: Point[]) { const xs = points.map(p => p.x), ys = points.map(p => p.y); return { minX: Math.min(...xs), maxX: Math.max(...xs), minY: Math.min(...ys), maxY: Math.max(...ys) }; }

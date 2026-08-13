@@ -1,0 +1,402 @@
+{
+  "templateId": "HT-T002",
+  "status": "APPROVED",
+  "source": "resources\\house-templates\\HT-T002\\normalized\\HT_T002_V0.3_STANDARDIZED_AC1032.dxf",
+  "entityTypes": {
+    "LINE": 134,
+    "LWPOLYLINE": 5,
+    "DIMENSION": 14,
+    "INSERT": 26,
+    "ATTRIB": 26,
+    "SEQEND": 26,
+    "TEXT": 21
+  },
+  "sourceLayers": {
+    "DOTE": 7,
+    "0": 5,
+    "AXIS": 56,
+    "WALL": 113,
+    "WINDOW": 24,
+    "WINDOW_TEXT": 12,
+    "SPACE": 21,
+    "AXIS_TEXT": 14
+  },
+  "tchEntityCount": 0,
+  "buildingFootprintOutline": [
+    [
+      61375.84,
+      25435.4
+    ],
+    [
+      64675.84,
+      25435.4
+    ],
+    [
+      64675.84,
+      24935.4
+    ],
+    [
+      68875.84,
+      24935.4
+    ],
+    [
+      68875.84,
+      26735.4
+    ],
+    [
+      72175.84,
+      26735.4
+    ],
+    [
+      72175.84,
+      33635.4
+    ],
+    [
+      61375.84,
+      33635.4
+    ]
+  ],
+  "buildingAreaM2": 86.37,
+  "rooms": [
+    {
+      "id": "HT-T002-F01-RM-001",
+      "floorId": "HT-T002-F01",
+      "type": "BED-SECONDARY",
+      "name": "卧室一",
+      "area": 11.78,
+      "labelPoint": [
+        62956.42,
+        27834.52
+      ],
+      "geometryStatus": "AUTO_CLOSED_MATCHED",
+      "required": true,
+      "boundary": [
+        [
+          61575.84,
+          25635.4
+        ],
+        [
+          64675.84,
+          25635.4
+        ],
+        [
+          64675.84,
+          29435.4
+        ],
+        [
+          61575.84,
+          29435.4
+        ]
+      ],
+      "boundaryAreaM2": 11.78
+    },
+    {
+      "id": "HT-T002-F01-RM-002",
+      "floorId": "HT-T002-F01",
+      "type": "LIV-LIVING",
+      "name": "客厅",
+      "area": 15.96,
+      "labelPoint": [
+        66476.61,
+        28493.67
+      ],
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true,
+      "boundary": [
+        [
+          64875.84,
+          26935.4
+        ],
+        [
+          68675.84,
+          26935.4
+        ],
+        [
+          68675.84,
+          31135.4
+        ],
+        [
+          64875.84,
+          31135.4
+        ]
+      ],
+      "boundaryAreaM2": 15.96
+    },
+    {
+      "id": "HT-T002-F01-RM-003",
+      "floorId": "HT-T002-F01",
+      "type": "BED-SECONDARY",
+      "name": "卧室二",
+      "area": 12.4,
+      "labelPoint": [
+        70193.71,
+        29329.23
+      ],
+      "geometryStatus": "AUTO_CLOSED_MATCHED",
+      "required": true,
+      "boundary": [
+        [
+          68875.84,
+          26935.4
+        ],
+        [
+          71975.84,
+          26935.4
+        ],
+        [
+          71975.84,
+          30935.4
+        ],
+        [
+          68875.84,
+          30935.4
+        ]
+      ],
+      "boundaryAreaM2": 12.4
+    },
+    {
+      "id": "HT-T002-F01-RM-004",
+      "floorId": "HT-T002-F01",
+      "type": "KIT-CLOSED",
+      "name": "厨房",
+      "area": 4.83,
+      "labelPoint": [
+        70595.58,
+        32623.76
+      ],
+      "geometryStatus": "AUTO_CLOSED_MATCHED",
+      "required": true,
+      "boundary": [
+        [
+          69875.84,
+          31135.4
+        ],
+        [
+          71975.84,
+          31135.4
+        ],
+        [
+          71975.84,
+          33435.4
+        ],
+        [
+          69875.84,
+          33435.4
+        ]
+      ],
+      "boundaryAreaM2": 4.83
+    },
+    {
+      "id": "HT-T002-F01-RM-005",
+      "floorId": "HT-T002-F01",
+      "type": "BAT-COMMON",
+      "name": "卫生间",
+      "area": 3.24,
+      "labelPoint": [
+        61757.48,
+        30809.31
+      ],
+      "geometryStatus": "AUTO_CLOSED_MATCHED",
+      "required": true,
+      "boundary": [
+        [
+          61575.84,
+          29635.4
+        ],
+        [
+          63375.84,
+          29635.4
+        ],
+        [
+          63375.84,
+          31435.4
+        ],
+        [
+          61575.84,
+          31435.4
+        ]
+      ],
+      "boundaryAreaM2": 3.24
+    },
+    {
+      "id": "HT-T002-F01-RM-006",
+      "floorId": "HT-T002-F01",
+      "type": "DIN-DINING",
+      "name": "餐厅",
+      "area": 10.92,
+      "labelPoint": [
+        66728.81,
+        32623.76
+      ],
+      "geometryStatus": "ARCHITECT_CONFIRMED_ANNOTATED_AREA",
+      "required": true,
+      "boundary": [
+        [
+          64875.84,
+          31135.4
+        ],
+        [
+          69675.84,
+          31135.4
+        ],
+        [
+          69675.84,
+          33435.4
+        ],
+        [
+          64875.84,
+          33435.4
+        ]
+      ],
+      "boundaryAreaM2": 11.04
+    },
+    {
+      "id": "HT-T002-F01-RM-007",
+      "floorId": "HT-T002-F01",
+      "type": "SER-STORAGE",
+      "name": "储藏室",
+      "area": 4.73,
+      "labelPoint": [
+        62082.24,
+        32622.78
+      ],
+      "geometryStatus": "ARCHITECT_CONFIRMED_ANNOTATED_AREA",
+      "required": false,
+      "boundary": [
+        [
+          61575.84,
+          31635.4
+        ],
+        [
+          63375.84,
+          31635.4
+        ],
+        [
+          63375.84,
+          32285.4
+        ],
+        [
+          64675.84,
+          32285.4
+        ],
+        [
+          64675.84,
+          33435.4
+        ],
+        [
+          61575.84,
+          33435.4
+        ]
+      ],
+      "boundaryAreaM2": 4.74
+    }
+  ],
+  "objectCounts": {
+    "rooms": 7,
+    "wallSegments": 113,
+    "doors": 6,
+    "windows": 6
+  },
+  "wallTopologyRepairs": [
+    {
+      "id": "TC-01",
+      "node": [
+        64775.84,
+        29535.4
+      ],
+      "description": "客厅西墙与卫生间/卧室分隔墙交接处",
+      "action": "AUTO_JOIN_WALL_FACES",
+      "status": "ARCHITECT_AUTHORIZED_REPAIR",
+      "repairId": "HT-T002-F01-WR-001"
+    },
+    {
+      "id": "TC-03",
+      "node": [
+        68775.84,
+        31035.4
+      ],
+      "description": "客厅东墙与卧室二/餐厅分隔墙交接处",
+      "action": "AUTO_JOIN_WALL_FACES",
+      "status": "ARCHITECT_AUTHORIZED_REPAIR",
+      "repairId": "HT-T002-F01-WR-002"
+    },
+    {
+      "id": "TC-04",
+      "node": [
+        69775.84,
+        31035.4
+      ],
+      "description": "餐厅东侧与厨房/卧室二分隔墙交接处",
+      "action": "AUTO_JOIN_WALL_FACES",
+      "status": "ARCHITECT_AUTHORIZED_REPAIR",
+      "repairId": "HT-T002-F01-WR-003"
+    }
+  ],
+  "retainedWallBreaks": [
+    {
+      "id": "TC-02",
+      "node": [
+        64775.84,
+        31535.4
+      ],
+      "description": "餐厅西墙与卫生间/储藏室分隔墙交接处",
+      "action": "KEEP_WALL_BREAK",
+      "status": "ARCHITECT_CONFIRMED_DESIGN_BREAK",
+      "breakId": "HT-T002-F01-WB-001",
+      "physicalOpening": false
+    }
+  ],
+  "drawingBoundsMm": [
+    56475.84,
+    20535.4,
+    77075.84,
+    38535.4
+  ],
+  "checks": [
+    {
+      "ruleCode": "DAT-007",
+      "severity": "info",
+      "passed": true,
+      "message": "TCH proxy entity count: 0"
+    },
+    {
+      "ruleCode": "REQ-FLOOR",
+      "severity": "info",
+      "passed": true,
+      "message": "One-storey template detected"
+    },
+    {
+      "ruleCode": "REQ-BEDROOM",
+      "severity": "info",
+      "passed": true,
+      "message": "Detected 2 bedrooms"
+    },
+    {
+      "ruleCode": "REQ-AREA",
+      "severity": "info",
+      "passed": true,
+      "message": "Exterior-wall polygon area is 86.37m2; bounding rectangle is not used"
+    },
+    {
+      "ruleCode": "GEO-ROOM-BOUNDARY",
+      "severity": "info",
+      "passed": true,
+      "reviewRequired": false,
+      "message": "Architect confirmed all 7 room locations and annotated boundaries; declared room areas remain authoritative for irregular boundaries"
+    },
+    {
+      "ruleCode": "GEO-WALL-TOPOLOGY",
+      "severity": "info",
+      "passed": true,
+      "reviewRequired": false,
+      "message": "Architect authorized repairs at TC-01, TC-03 and TC-04; TC-02 is retained as a confirmed design wall break"
+    },
+    {
+      "ruleCode": "GEO-OPENINGS",
+      "severity": "info",
+      "passed": true,
+      "reviewRequired": false,
+      "message": "Architect confirmed 6 door and 6 window positions; no door-window combination exists"
+    }
+  ]
+}

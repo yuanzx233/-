@@ -5,7 +5,7 @@ import t003 from "../resources/house-templates/HT-T003/data/template.json";
 type Pair = [number, number];
 type RawRoom = { id: string; name: string; type: string; area: number; boundary: Pair[]; labelPoint: Pair[] };
 type RawWall = { id: string; start: Pair; end: Pair };
-type RawOpening = { id: string; type: string; start?: Pair; end?: Pair; position?: Pair; width?: number };
+type RawOpening = { id: string; type: string; start?: Pair; end?: Pair; position?: Pair; insertionPoint?: Pair; width?: number };
 type RawTemplate = {
   template: { id: string; name: string; status: string; version: string };
   classification: { primaryWidthType: string; depthType: string; layoutType: string };

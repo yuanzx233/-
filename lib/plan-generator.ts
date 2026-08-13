@@ -1,18 +1,10 @@
 import type { RequirementSubmission } from "./requirements";
+import { projectPlanTemplateLibrary, type PlanTemplateResource } from "./plan-template-library";
 
 export type PlanRoom = { id: string; name: string; floor: number; area: number; x: number; y: number; width: number; height: number };
-export type PlanCandidate = { id: string; name: string; templateId: string; score: number; totalArea: number; floors: number; footprint: Array<{ x: number; y: number }>; siteFit: { fits: boolean; basis: "buildable" | "boundary"; coveragePercent: number; clearanceNote: string }; rooms: PlanRoom[]; strengths: string[]; tradeoffs: string[]; satisfaction: Array<{ label: string; met: boolean; detail: string }>; svg: string };
-type Template = { id: string; name: string; aspect: number; floors: number; bedrooms: number; layout: "central" | "side" | "courtyard"; tags: string[] };
+export type PlanCandidate = { id: string; name: string; templateId: string; templateSource: string; adjustment: { rotationDegrees: 0 | 90; scale: number }; score: number; totalArea: number; floors: number; footprint: Array<{ x: number; y: number }>; siteFit: { fits: boolean; basis: "buildable" | "boundary"; coveragePercent: number; clearanceNote: string }; rooms: PlanRoom[]; strengths: string[]; tradeoffs: string[]; satisfaction: Array<{ label: string; met: boolean; detail: string }>; svg: string };
 
-export const planTemplates: Template[] = Array.from({ length: 16 }, (_, index) => ({
-  id: `T${String(index + 1).padStart(2, "0")}`,
-  name: ["南向通厅", "中央楼梯", "侧厅紧凑", "双面采光", "适老首层", "庭院联动", "动静分层", "方正经济"][index % 8],
-  aspect: [0.72, 0.8, 0.9, 1, 1.12, 1.25, 1.38, 1.5][index % 8],
-  floors: index < 5 ? 1 : index < 12 ? 2 : 3,
-  bedrooms: 2 + (index % 5),
-  layout: (["central", "side", "courtyard"] as const)[index % 3],
-  tags: index % 3 === 0 ? ["采光", "通风"] : index % 3 === 1 ? ["动静分区", "适老"] : ["庭院", "收纳"],
-}));
+export const planTemplates = projectPlanTemplateLibrary;
 
 export function generatePlanCandidates(input: RequirementSubmission): PlanCandidate[] {
   const r = input.requirements;
@@ -22,21 +14,31 @@ export function generatePlanCandidates(input: RequirementSubmission): PlanCandid
   if (!available?.length) throw new Error("SITE_GEOMETRY_REQUIRED");
   const bounds = polygonBounds(available);
   const availableArea = input.site.buildableAreaSquareMeters ?? input.site.areaSquareMeters;
-  return planTemplates.map((template) => {
+  return planTemplates.flatMap((template) => {
     const floorFit = 1 - Math.min(1, Math.abs(template.floors - r.floors) / 2);
     const bedroomFit = 1 - Math.min(1, Math.abs(template.bedrooms - r.bedroomCount) / Math.max(1, r.bedroomCount));
     const aspectFit = 1 - Math.min(1, Math.abs(template.aspect - siteAspect) / 1.2);
     const priorityFit = r.priorities.filter((item) => template.tags.includes(item)).length / Math.max(1, r.priorities.length);
     const score = Math.round((floorFit * 35 + bedroomFit * 30 + aspectFit * 20 + priorityFit * 15) * 10) / 10;
-    return buildCandidate(template, input, targetArea, score, available, bounds, availableArea);
+    return findBestAdjustedCandidate(template, input, targetArea, score, available, bounds, availableArea);
   }).filter((plan) => plan.siteFit.fits).sort((a, b) => b.score - a.score).slice(0, 3).map((plan, index) => ({ ...plan, id: `P${index + 1}`, name: `方案 ${String.fromCharCode(65 + index)} · ${plan.name}` }));
 }
 
-function buildCandidate(template: Template, input: RequirementSubmission, targetArea: number, score: number, available: Array<{ x: number; y: number }>, bounds: ReturnType<typeof polygonBounds>, availableArea: number): PlanCandidate {
+function findBestAdjustedCandidate(template: PlanTemplateResource, input: RequirementSubmission, targetArea: number, score: number, available: Array<{ x: number; y: number }>, bounds: ReturnType<typeof polygonBounds>, availableArea: number): PlanCandidate[] {
+  const scales = [1, .94, .88].filter(scale => scale >= template.adjustable.minScale && scale <= template.adjustable.maxScale);
+  const rotations: Array<0 | 90> = template.adjustable.rotate ? [0, 90] : [0];
+  const variants = rotations.flatMap(rotation => scales.map(scale => buildCandidate(template, input, targetArea, score, available, bounds, availableArea, rotation, scale)));
+  const best = variants.filter(item => item.siteFit.fits).sort((a, b) => b.score - a.score)[0];
+  return best ? [best] : [];
+}
+
+function buildCandidate(template: PlanTemplateResource, input: RequirementSubmission, targetArea: number, score: number, available: Array<{ x: number; y: number }>, bounds: ReturnType<typeof polygonBounds>, availableArea: number, rotationDegrees: 0 | 90, scale: number): PlanCandidate {
   const r = input.requirements;
-  const totalArea = round(Math.min(r.areaMax, Math.max(r.areaMin, targetArea * (0.94 + (Number(template.id.slice(1)) % 3) * .04))));
+  const templateSequence = Number(template.id.match(/(\d+)$/)?.[1] ?? 1);
+  const totalArea = round(Math.min(r.areaMax, Math.max(r.areaMin, targetArea * (0.94 + (templateSequence % 3) * .04))));
   const perFloor = totalArea / r.floors;
-  const footprintWidth = Math.sqrt(perFloor * template.aspect) * 1000, footprintHeight = perFloor / (footprintWidth / 1000) * 1000;
+  const rawWidth = Math.sqrt(perFloor * template.aspect) * 1000 * scale, rawHeight = perFloor / (rawWidth / 1000) * 1000 * scale;
+  const footprintWidth = rotationDegrees === 90 ? rawHeight : rawWidth, footprintHeight = rotationDegrees === 90 ? rawWidth : rawHeight;
   const cx = (bounds.minX + bounds.maxX) / 2, cy = (bounds.minY + bounds.maxY) / 2;
   const footprint = [{ x: cx - footprintWidth / 2, y: cy - footprintHeight / 2 }, { x: cx + footprintWidth / 2, y: cy - footprintHeight / 2 }, { x: cx + footprintWidth / 2, y: cy + footprintHeight / 2 }, { x: cx - footprintWidth / 2, y: cy + footprintHeight / 2 }];
   const within = footprint.every((point) => pointInPolygon(point, available)), avoids = avoidsRetainedObjects(footprint, input.site.retainedObjects ?? []), capacity = perFloor <= availableArea * .8;
@@ -60,7 +62,8 @@ function buildCandidate(template: Template, input: RequirementSubmission, target
     { label: "老人房首层", met: r.elderRoomCount === 0 || r.elderRoomFirstFloor, detail: r.elderRoomCount ? `${r.elderRoomCount} 间首层老人房` : "无老人房要求" },
     { label: "优先需求", met: template.tags.some(tag => r.priorities.includes(tag)), detail: template.tags.join("、") },
   ];
-  const plan = { id: template.id, name: template.name, templateId: template.id, score, totalArea, floors: r.floors, footprint, siteFit, rooms, strengths: [`匹配 ${template.tags.join("、")} 偏好`, "主要房间沿外墙布置", "交通面积控制紧凑"], tradeoffs: template.layout === "courtyard" ? ["庭院界面增加造价", "需复核场地退界"] : ["次卧尺度较紧凑", "门窗位置需结合立面深化"], satisfaction, svg: "" };
+  const adjustedScore = round(score - Math.abs(1 - scale) * 8 + (rotationDegrees === 0 ? 1 : 0));
+  const plan = { id: template.id, name: template.name, templateId: template.id, templateSource: template.resourcePath, adjustment: { rotationDegrees, scale: round(scale) }, score: adjustedScore, totalArea, floors: r.floors, footprint, siteFit, rooms, strengths: [`来自项目资源库，匹配 ${template.tags.join("、")} 偏好`, `已按场地完成 ${rotationDegrees}° 旋转与 ${(scale * 100).toFixed(0)}% 等比调正`, "主要房间沿外墙布置"], tradeoffs: template.layout === "courtyard" ? ["庭院界面增加造价", "需复核场地退界"] : ["次卧尺度较紧凑", "门窗位置需结合立面深化"], satisfaction, svg: "" } satisfies Omit<PlanCandidate, "svg"> & { svg: string };
   return { ...plan, svg: renderPlanSvg(plan) };
 }
 

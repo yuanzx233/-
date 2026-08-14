@@ -1,0 +1,490 @@
+{
+  "templateId": "HT-T004",
+  "status": "APPROVED",
+  "source": "resources\\house-templates\\HT-T004\\normalized\\HT_T004_V0.3_STANDARDIZED_AC1032.dxf",
+  "entityTypes": {
+    "LINE": 180,
+    "DIMENSION": 20,
+    "TEXT": 31,
+    "INSERT": 39,
+    "ATTRIB": 39,
+    "SEQEND": 39
+  },
+  "sourceLayers": {
+    "DOTE": 10,
+    "AXIS": 80,
+    "WALL": 150,
+    "SPACE": 31,
+    "WINDOW": 38,
+    "WINDOW_TEXT": 19,
+    "AXIS_TEXT": 20
+  },
+  "tchEntityCount": 0,
+  "buildingFootprintOutline": [
+    [
+      37916.93,
+      18011.13
+    ],
+    [
+      56916.93,
+      18011.13
+    ],
+    [
+      56916.93,
+      25211.13
+    ],
+    [
+      37916.93,
+      25211.13
+    ]
+  ],
+  "buildingAreaM2": 136.8,
+  "rooms": [
+    {
+      "id": "HT-T004-F01-RM-001",
+      "floorId": "HT-T004-F01",
+      "type": "BED-MASTER",
+      "name": "主卧",
+      "area": 14.69,
+      "labelPoint": [
+        40016.93,
+        19611.13
+      ],
+      "geometryStatus": "ARCHITECT_CONFIRMED_ANNOTATED_AREA",
+      "required": true,
+      "boundary": [
+        [
+          38116.93,
+          18211.13
+        ],
+        [
+          41916.93,
+          18211.13
+        ],
+        [
+          41916.93,
+          21011.13
+        ],
+        [
+          38116.93,
+          21011.13
+        ]
+      ],
+      "boundaryAreaM2": 10.64,
+      "labelPlacement": "GEOMETRIC_CENTROID"
+    },
+    {
+      "id": "HT-T004-F01-RM-002",
+      "floorId": "HT-T004-F01",
+      "type": "BED-SECONDARY",
+      "name": "卧室一",
+      "area": 10.64,
+      "labelPoint": [
+        44016.93,
+        19611.13
+      ],
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true,
+      "boundary": [
+        [
+          42116.93,
+          18211.13
+        ],
+        [
+          45916.93,
+          18211.13
+        ],
+        [
+          45916.93,
+          21011.13
+        ],
+        [
+          42116.93,
+          21011.13
+        ]
+      ],
+      "boundaryAreaM2": 10.64,
+      "labelPlacement": "GEOMETRIC_CENTROID"
+    },
+    {
+      "id": "HT-T004-F01-RM-003",
+      "floorId": "HT-T004-F01",
+      "type": "BED-SECONDARY",
+      "name": "卧室二",
+      "area": 10.64,
+      "labelPoint": [
+        48016.93,
+        19611.13
+      ],
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true,
+      "boundary": [
+        [
+          46116.93,
+          18211.13
+        ],
+        [
+          49916.93,
+          18211.13
+        ],
+        [
+          49916.93,
+          21011.13
+        ],
+        [
+          46116.93,
+          21011.13
+        ]
+      ],
+      "boundaryAreaM2": 10.64,
+      "labelPlacement": "GEOMETRIC_CENTROID"
+    },
+    {
+      "id": "HT-T004-F01-RM-004",
+      "floorId": "HT-T004-F01",
+      "type": "LIV-DIN-COMBINED",
+      "name": "餐客厅",
+      "area": 36.63,
+      "labelPoint": [
+        53752.77,
+        21153.17
+      ],
+      "geometryStatus": "ARCHITECT_CONFIRMED_ANNOTATED_AREA",
+      "required": true,
+      "boundary": [
+        [
+          50116.93,
+          18211.13
+        ],
+        [
+          56716.93,
+          18211.13
+        ],
+        [
+          56716.93,
+          25011.13
+        ],
+        [
+          53416.93,
+          25011.13
+        ],
+        [
+          53416.93,
+          22711.13
+        ],
+        [
+          50116.93,
+          22711.13
+        ]
+      ],
+      "boundaryAreaM2": 37.29,
+      "labelPlacement": "GEOMETRIC_CENTROID"
+    },
+    {
+      "id": "HT-T004-F01-RM-005",
+      "floorId": "HT-T004-F01",
+      "type": "BAT-COMMON",
+      "name": "卫生间一",
+      "area": 6.21,
+      "labelPoint": [
+        39466.93,
+        23861.13
+      ],
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true,
+      "boundary": [
+        [
+          38116.93,
+          22711.13
+        ],
+        [
+          40816.93,
+          22711.13
+        ],
+        [
+          40816.93,
+          25011.13
+        ],
+        [
+          38116.93,
+          25011.13
+        ]
+      ],
+      "boundaryAreaM2": 6.21,
+      "labelPlacement": "GEOMETRIC_CENTROID"
+    },
+    {
+      "id": "HT-T004-F01-RM-006",
+      "floorId": "HT-T004-F01",
+      "type": "BAT-COMMON",
+      "name": "卫生间二",
+      "area": 8.51,
+      "labelPoint": [
+        42866.93,
+        23861.13
+      ],
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true,
+      "boundary": [
+        [
+          41016.93,
+          22711.13
+        ],
+        [
+          44716.93,
+          22711.13
+        ],
+        [
+          44716.93,
+          25011.13
+        ],
+        [
+          41016.93,
+          25011.13
+        ]
+      ],
+      "boundaryAreaM2": 8.51,
+      "labelPlacement": "GEOMETRIC_CENTROID"
+    },
+    {
+      "id": "HT-T004-F01-RM-007",
+      "floorId": "HT-T004-F01",
+      "type": "BAT-COMMON",
+      "name": "卫生间三",
+      "area": 2.53,
+      "labelPoint": [
+        45466.93,
+        23861.13
+      ],
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true,
+      "boundary": [
+        [
+          44916.93,
+          22711.13
+        ],
+        [
+          46016.93,
+          22711.13
+        ],
+        [
+          46016.93,
+          25011.13
+        ],
+        [
+          44916.93,
+          25011.13
+        ]
+      ],
+      "boundaryAreaM2": 2.53,
+      "labelPlacement": "GEOMETRIC_CENTROID"
+    },
+    {
+      "id": "HT-T004-F01-RM-008",
+      "floorId": "HT-T004-F01",
+      "type": "ENT-FOYER",
+      "name": "入口玄关",
+      "area": 5.75,
+      "labelPoint": [
+        47466.93,
+        23861.13
+      ],
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true,
+      "boundary": [
+        [
+          46216.93,
+          22711.13
+        ],
+        [
+          48716.93,
+          22711.13
+        ],
+        [
+          48716.93,
+          25011.13
+        ],
+        [
+          46216.93,
+          25011.13
+        ]
+      ],
+      "boundaryAreaM2": 5.75,
+      "labelPlacement": "GEOMETRIC_CENTROID"
+    },
+    {
+      "id": "HT-T004-F01-RM-009",
+      "floorId": "HT-T004-F01",
+      "type": "SER-STORAGE",
+      "name": "储藏室一",
+      "area": 2.53,
+      "labelPoint": [
+        49466.93,
+        23861.13
+      ],
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": false,
+      "boundary": [
+        [
+          48916.93,
+          22711.13
+        ],
+        [
+          50016.93,
+          22711.13
+        ],
+        [
+          50016.93,
+          25011.13
+        ],
+        [
+          48916.93,
+          25011.13
+        ]
+      ],
+      "boundaryAreaM2": 2.53,
+      "labelPlacement": "GEOMETRIC_CENTROID"
+    },
+    {
+      "id": "HT-T004-F01-RM-010",
+      "floorId": "HT-T004-F01",
+      "type": "KIT-CLOSED",
+      "name": "厨房",
+      "area": 7.13,
+      "labelPoint": [
+        51666.93,
+        23861.13
+      ],
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true,
+      "boundary": [
+        [
+          50116.93,
+          22711.13
+        ],
+        [
+          53216.93,
+          22711.13
+        ],
+        [
+          53216.93,
+          25011.13
+        ],
+        [
+          50116.93,
+          25011.13
+        ]
+      ],
+      "boundaryAreaM2": 7.13,
+      "labelPlacement": "GEOMETRIC_CENTROID"
+    },
+    {
+      "id": "HT-T004-F01-RM-011",
+      "floorId": "HT-T004-F01",
+      "type": "SER-STORAGE",
+      "name": "储藏室二",
+      "area": 1.76,
+      "labelPoint": [
+        38779.43,
+        21848.63
+      ],
+      "geometryStatus": "ARCHITECT_CONFIRMED_ANNOTATED_AREA",
+      "required": false,
+      "boundary": [
+        [
+          38116.93,
+          21186.13
+        ],
+        [
+          39441.93,
+          21186.13
+        ],
+        [
+          39441.93,
+          22511.13
+        ],
+        [
+          38116.93,
+          22511.13
+        ]
+      ],
+      "boundaryAreaM2": 1.76,
+      "labelPlacement": "GEOMETRIC_CENTROID"
+    }
+  ],
+  "objectCounts": {
+    "rooms": 11,
+    "wallSegments": 150,
+    "doors": 9,
+    "windows": 10
+  },
+  "drawingBoundsMm": [
+    33016.93,
+    13111.13,
+    61816.93,
+    30111.13
+  ],
+  "checks": [
+    {
+      "ruleCode": "DAT-007",
+      "severity": "info",
+      "passed": true,
+      "message": "TCH proxy entity count: 0"
+    },
+    {
+      "ruleCode": "REQ-FLOOR",
+      "severity": "info",
+      "passed": true,
+      "message": "One-storey template confirmed"
+    },
+    {
+      "ruleCode": "REQ-BEDROOM",
+      "severity": "info",
+      "passed": true,
+      "message": "Architect confirmed 3 bedrooms"
+    },
+    {
+      "ruleCode": "REQ-AREA",
+      "severity": "info",
+      "passed": true,
+      "message": "Architect confirmed exterior-wall polygon area 136.80m2"
+    },
+    {
+      "ruleCode": "GEO-ROOM-BOUNDARY",
+      "severity": "info",
+      "passed": true,
+      "reviewRequired": false,
+      "message": "Architect confirmed all room positions and boundaries; labels placed at polygon geometric centroids"
+    },
+    {
+      "ruleCode": "GEO-WALL-TOPOLOGY",
+      "severity": "info",
+      "passed": true,
+      "reviewRequired": false,
+      "message": "Architect confirmed no unintended wall breaks; topology retained as drawn"
+    },
+    {
+      "ruleCode": "GEO-OPENINGS",
+      "severity": "info",
+      "passed": true,
+      "reviewRequired": false,
+      "message": "Architect confirmed 9 doors and 10 windows; no door-window combination exists"
+    }
+  ],
+  "wallTopologyRepairs": [],
+  "retainedWallBreaks": [],
+  "doorWindowCombinations": [],
+  "approval": {
+    "status": "APPROVED",
+    "approvedAt": "2026-08-14",
+    "approvedBy": "user_architect_review",
+    "scope": [
+      "exterior_footprint_and_area",
+      "all_room_boundaries",
+      "wall_topology_no_unintended_breaks",
+      "door_and_window_positions",
+      "no_door_window_combinations",
+      "room_labels_at_geometric_centroids"
+    ]
+  }
+}

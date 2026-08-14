@@ -1,0 +1,19 @@
+{
+  "status": "APPROVED",
+  "approvedAt": "2026-08-14",
+  "approvedBy": "user_architect_review",
+  "scope": [
+    "primary_exterior_footprint",
+    "ancillary_areas",
+    "all_room_boundaries",
+    "wall_break_auto_repair",
+    "door_and_window_positions",
+    "no_door_window_combinations",
+    "room_labels_at_geometric_centroids"
+  ],
+  "defaultsForSubsequentTemplates": [
+    "ancillary_areas_separate",
+    "auto_repair_unintended_wall_breaks",
+    "labels_at_room_geometric_centroids"
+  ]
+}

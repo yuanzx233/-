@@ -96,8 +96,8 @@ function renderTemplateSvg(template: MaturePlanTemplate, name: string): string {
   }).join("");
   const walls = template.walls.map(wall => `<line x1="${wall.start[0] - b.minX + pad}" y1="${b.maxY - wall.start[1] + pad}" x2="${wall.end[0] - b.minX + pad}" y2="${b.maxY - wall.end[1] + pad}" stroke="#173d34" stroke-width="70" stroke-linecap="square"/>`).join("");
   const openings = template.openings.map(opening => opening.start && opening.end ? `<line x1="${opening.start[0] - b.minX + pad}" y1="${b.maxY - opening.start[1] + pad}" x2="${opening.end[0] - b.minX + pad}" y2="${b.maxY - opening.end[1] + pad}" stroke="${opening.type?.includes("WINDOW") ? "#4e8ca0" : "#b87550"}" stroke-width="100"/>` : "").join("");
-  const grid = renderAxisGrid(template, b, pad); const entrance = renderMainEntrance(template, b, pad);
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(name)}成熟DXF户型及轴网尺寸，含主入口"><rect width="100%" height="100%" fill="#f5f1e8"/>${grid}${rooms}${walls}${openings}<polygon points="${template.footprint.map(point).join(" ")}" fill="none" stroke="#173d34" stroke-width="90"/>${entrance}</svg>`;
+  const dimensions = renderAxisGrid(template, b, pad);
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(name)}成熟DXF户型及总尺寸"><rect width="100%" height="100%" fill="#f5f1e8"/>${dimensions}${rooms}${walls}${openings}<polygon points="${template.footprint.map(point).join(" ")}" fill="none" stroke="#173d34" stroke-width="90"/></svg>`;
 }
 
 function renderMainEntrance(template: MaturePlanTemplate, b: ReturnType<typeof pairBounds>, pad: number): string {
@@ -139,7 +139,7 @@ function renderAxisGrid(template: MaturePlanTemplate, b: ReturnType<typeof pairB
   const yDims = yAscending.slice(1).map((y, i) => dimensionVertical(right + 720, yScreen(yAscending[i]), yScreen(y), formatMillimeters(y - yAscending[i]))).join("");
   const overallX = dimensionHorizontal(left, right, top - 1370, `总宽 ${formatMillimeters(b.maxX - b.minX)}`);
   const overallY = dimensionVertical(right + 1120, bottom, top, `总深 ${formatMillimeters(b.maxY - b.minY)}`);
-  return `<g data-layer="AXIS_GRID">${axesX}${axesY}</g><g data-layer="GRID_DIMENSIONS">${xDims}${yDims}${overallX}${overallY}</g>`;
+  return `<g data-layer="OVERALL_DIMENSIONS">${overallX}${overallY}</g>`;
 }
 
 function dimensionHorizontal(x1: number, x2: number, y: number, label: string) { return `<g><line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#536b64" stroke-width="24"/><line x1="${x1}" y1="${y - 90}" x2="${x1}" y2="${y + 90}" stroke="#536b64" stroke-width="24"/><line x1="${x2}" y1="${y - 90}" x2="${x2}" y2="${y + 90}" stroke="#536b64" stroke-width="24"/><text x="${(x1 + x2) / 2}" y="${y - 110}" text-anchor="middle" font-size="190" fill="#173d34">${label}</text></g>`; }

@@ -8,18 +8,20 @@ import t006 from "../resources/house-templates/HT-T006/data/template.json";
 type Pair = [number, number];
 type RawRoom = { id: string; name: string; type: string; area: number; boundary: Pair[]; labelPoint: Pair[] };
 type RawWall = { id: string; start: Pair; end: Pair };
-type RawOpening = { id: string; type: string; start?: Pair; end?: Pair; position?: Pair; insertionPoint?: Pair; width?: number; rotationDeg?: number };
+type RawOpening = { id: string; type: string; sourceBlock?: string; start?: Pair; end?: Pair; position?: Pair; insertionPoint?: Pair; width?: number; widthMm?: number; rotationDeg?: number };
+type RawAncillaryArea = { id: string; type: "PORCH" | "OUTDOOR-TERRACE"; name: string; areaM2: number; includedInBuildingArea: false; geometry?: { kind: "POLYGON"; points: Pair[] } | { kind: "QUADRATIC_ARC_SEGMENT"; chordStart: Pair; chordEnd: Pair; controlPoint: Pair } };
+type RawExteriorStep = { id: string; name: string; kind: "LINEAR"; treadLines: Array<[Pair, Pair]>; sideLines: Array<[Pair, Pair]> } | { id: string; name: string; kind: "CURVED"; areaM2?: number; curves: Array<{ start: Pair; end: Pair; control: Pair }>; sideLines: Array<[Pair, Pair]> };
 type RawTemplate = {
   template: { id: string; name: string; status: string; version: string };
   classification: { primaryWidthType: string; depthType: string; layoutType: string };
-  geometry: { buildingFootprint: { outline: Pair[]; boundingWidth: number; boundingDepth: number; areaM2: number } };
+  geometry: { buildingFootprint: { outline: Pair[]; boundingWidth: number; boundingDepth: number; areaM2: number }; ancillaryAreas?: RawAncillaryArea[]; exteriorSteps?: RawExteriorStep[] };
   floors: Array<{ number: number; rooms: RawRoom[]; walls: RawWall[]; openings: RawOpening[] }>;
   approval: { status?: string };
 };
 
 export type MaturePlanTemplate = {
   id: string; name: string; version: string; status: "APPROVED"; floors: number; bedrooms: number;
-  width: number; depth: number; area: number; footprint: Pair[]; rooms: RawRoom[]; walls: RawWall[]; openings: RawOpening[];
+  width: number; depth: number; area: number; footprint: Pair[]; ancillaryAreas: RawAncillaryArea[]; exteriorSteps: RawExteriorStep[]; rooms: RawRoom[]; walls: RawWall[]; openings: RawOpening[];
   source: { dxfPath: string; jsonPath: string }; tags: string[];
   adjustable: { rotate: true; minScale: number; maxScale: number };
 };
@@ -32,7 +34,7 @@ function load(raw: unknown, folder: string, dxfFile: string): MaturePlanTemplate
     id: item.template.id, name: item.template.name, version: item.template.version, status: "APPROVED",
     floors: item.floors.length, bedrooms: rooms.filter(room => room.type.startsWith("BED-")).length,
     width: item.geometry.buildingFootprint.boundingWidth, depth: item.geometry.buildingFootprint.boundingDepth,
-    area: item.geometry.buildingFootprint.areaM2, footprint: item.geometry.buildingFootprint.outline,
+    area: item.geometry.buildingFootprint.areaM2, footprint: item.geometry.buildingFootprint.outline, ancillaryAreas: item.geometry.ancillaryAreas ?? [], exteriorSteps: item.geometry.exteriorSteps ?? [],
     rooms, walls: item.floors.flatMap(floor => floor.walls), openings: item.floors.flatMap(floor => floor.openings),
     source: { dxfPath: `${folder}/normalized/${dxfFile}`, jsonPath: `${folder}/data/template.json` },
     tags: rooms.some(room => room.type === "BED-ELDERLY") ? ["适老", "动静分区"] : ["采光", "通风"],

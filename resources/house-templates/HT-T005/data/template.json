@@ -84,9 +84,18 @@
         "id": "HT-T005-ANC-001",
         "type": "PORCH",
         "name": "门廊",
-        "areaM2": 0.86,
-        "calculationBasis": "outer_arc_segment_to_primary_wall_chord",
-        "includedInBuildingArea": false
+        "areaM2": 8.55,
+        "calculationBasis": "platform_between_primary_wall_and_porch_column_chord",
+        "includedInBuildingArea": false,
+        "geometry": {
+          "kind": "POLYGON",
+          "points": [
+            [137484.48, 4978.46],
+            [139384.48, 4978.46],
+            [139384.48, 478.46],
+            [137484.48, 478.46]
+          ]
+        }
       },
       {
         "id": "HT-T005-ANC-002",
@@ -94,7 +103,60 @@
         "name": "室外露台",
         "areaM2": 12.95,
         "calculationBasis": "outer_platform_projection_candidate",
-        "includedInBuildingArea": false
+        "includedInBuildingArea": false,
+        "geometry": {
+          "kind": "POLYGON",
+          "points": [
+            [126284.48, 578.46],
+            [122784.48, 578.46],
+            [122784.48, -3121.54],
+            [126284.48, -3121.54]
+          ]
+        }
+      }
+    ],
+    "exteriorSteps": [
+      {
+        "id": "HT-T005-STEP-001",
+        "name": "室外台阶",
+        "kind": "LINEAR",
+        "treadLines": [
+          [[124534.48, 578.46], [126284.48, 578.46]],
+          [[124534.48, 878.46], [126284.48, 878.46]],
+          [[124534.48, 1178.46], [126284.48, 1178.46]],
+          [[124534.48, 1478.46], [126284.48, 1478.46]]
+        ],
+        "sideLines": [
+          [[124534.48, 578.46], [124534.48, 1478.46]],
+          [[126284.48, 578.46], [126284.48, 1478.46]]
+        ]
+      },
+      {
+        "id": "HT-T005-STEP-002",
+        "name": "弧形台阶",
+        "kind": "CURVED",
+        "areaM2": 0.86,
+        "curves": [
+          {
+            "start": [139684.48, 4978.46],
+            "end": [139684.48, 478.46],
+            "control": [140257.81, 2728.46]
+          },
+          {
+            "start": [139984.48, 4978.46],
+            "end": [139984.48, 478.46],
+            "control": [140557.81, 2728.46]
+          },
+          {
+            "start": [140284.48, 4978.46],
+            "end": [140284.48, 478.46],
+            "control": [140857.81, 2728.46]
+          }
+        ],
+        "sideLines": [
+          [[139384.48, 4978.46], [140284.48, 4978.46]],
+          [[139384.48, 478.46], [140284.48, 478.46]]
+        ]
       }
     ],
     "drawingBounds": {

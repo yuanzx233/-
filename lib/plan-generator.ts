@@ -109,26 +109,56 @@ function placePolygon(points: number[][], site: ReturnType<typeof polygonBounds>
 }
 
 function renderTemplateSvgLegacy(template: MaturePlanTemplate, name: string): string {
-  const all = template.footprint; const b = pairBounds(all); const pad = 1500; const width = b.maxX - b.minX + pad * 2; const height = b.maxY - b.minY + pad * 2;
+  const all = [...template.footprint, ...ancillaryExtentPoints(template)]; const b = pairBounds(all); const pad = 1500; const width = b.maxX - b.minX + pad * 2; const height = b.maxY - b.minY + pad * 2;
   const point = ([x, y]: number[]) => `${x - b.minX + pad},${b.maxY - y + pad}`;
-  const rooms = template.rooms.map((room, index) => `<g><polygon points="${room.boundary.map(point).join(" ")}" fill="${["#e3eadb", "#f1e2cf", "#e4ded3", "#dce8d5"][index % 4]}" stroke="#8ca099" stroke-width="24"/><text x="${room.labelPoint[0] - b.minX + pad}" y="${b.maxY - room.labelPoint[1] + pad}" text-anchor="middle" font-size="260" fill="#173d34">${escapeXml(room.name)}</text><text x="${room.labelPoint[0] - b.minX + pad}" y="${b.maxY - room.labelPoint[1] + pad + 300}" text-anchor="middle" font-size="190" fill="#657872">${room.area.toFixed(1)} ㎡</text></g>`).join("");
-  const walls = template.walls.map(wall => `<line x1="${wall.start[0] - b.minX + pad}" y1="${b.maxY - wall.start[1] + pad}" x2="${wall.end[0] - b.minX + pad}" y2="${b.maxY - wall.end[1] + pad}" stroke="#173d34" stroke-width="70" stroke-linecap="square"/>`).join("");
-  const openings = template.openings.map(opening => renderOpeningSegment(opening, b, pad)).join("");
+  const rooms = template.rooms.map(room => { const style = roomColorStyle(room); return `<g data-room-category="${style.category}"><polygon points="${room.boundary.map(point).join(" ")}" fill="${style.fill}" stroke="${style.fill}" stroke-width="40" stroke-linejoin="miter"/><text x="${room.labelPoint[0] - b.minX + pad}" y="${b.maxY - room.labelPoint[1] + pad}" text-anchor="middle" font-size="260" fill="#173d34">${escapeXml(room.name)}</text><text x="${room.labelPoint[0] - b.minX + pad}" y="${b.maxY - room.labelPoint[1] + pad + 300}" text-anchor="middle" font-size="190" fill="#657872">${room.area.toFixed(1)} ㎡</text></g>`; }).join("");
+  const walls = template.walls.map(wall => `<line x1="${wall.start[0] - b.minX + pad}" y1="${b.maxY - wall.start[1] + pad}" x2="${wall.end[0] - b.minX + pad}" y2="${b.maxY - wall.end[1] + pad}" stroke="#454b49" stroke-width="70" stroke-linecap="square"/>`).join("");
+  const openings = template.openings.map(opening => renderOpeningSegment(opening, template.walls, template.rooms, b, pad)).join("");
   const grid = renderAxisGrid(template, b, pad);
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(name)}成熟DXF户型及轴网尺寸"><rect width="100%" height="100%" fill="#f5f1e8"/>${grid}${rooms}${walls}${openings}<polygon points="${template.footprint.map(point).join(" ")}" fill="none" stroke="#173d34" stroke-width="90"/></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(name)}成熟DXF户型及轴网尺寸"><rect width="100%" height="100%" fill="#f5f1e8"/>${grid}${renderAncillaryAreas(template, b, pad)}<polygon data-room-category="service-base" points="${template.footprint.map(point).join(" ")}" fill="#ddd9d0"/>${rooms}${walls}${openings}<polygon points="${template.footprint.map(point).join(" ")}" fill="none" stroke="#454b49" stroke-width="90"/></svg>`;
 }
 
 function renderTemplateSvg(template: MaturePlanTemplate, name: string): string {
-  const b = pairBounds(template.footprint); const pad = 1500; const width = b.maxX - b.minX + pad * 2; const height = b.maxY - b.minY + pad * 2;
+  const b = pairBounds([...template.footprint, ...ancillaryExtentPoints(template)]); const pad = 1500; const width = b.maxX - b.minX + pad * 2; const height = b.maxY - b.minY + pad * 2;
   const point = ([x, y]: number[]) => `${x - b.minX + pad},${b.maxY - y + pad}`;
-  const rooms = template.rooms.map((room, index) => {
+  const rooms = template.rooms.map(room => {
     const center = polygonVisualCenter(room.boundary); const x = center[0] - b.minX + pad; const y = b.maxY - center[1] + pad;
-    return `<g data-room-id="${room.id}" data-label-position="visual-center"><polygon points="${room.boundary.map(point).join(" ")}" fill="${["#e3eadb", "#f1e2cf", "#e4ded3", "#dce8d5"][index % 4]}" stroke="#8ca099" stroke-width="24"/><text x="${x}" y="${y - 90}" text-anchor="middle" dominant-baseline="middle" font-size="260" fill="#173d34">${escapeXml(room.name)}</text><text x="${x}" y="${y + 190}" text-anchor="middle" dominant-baseline="middle" font-size="190" fill="#657872">${room.area.toFixed(1)} m²</text></g>`;
+    const style = roomColorStyle(room);
+    return `<g data-room-id="${room.id}" data-room-category="${style.category}" data-label-position="visual-center"><polygon points="${room.boundary.map(point).join(" ")}" fill="${style.fill}" stroke="${style.fill}" stroke-width="40" stroke-linejoin="miter"/><text x="${x}" y="${y - 90}" text-anchor="middle" dominant-baseline="middle" font-size="260" fill="#173d34">${escapeXml(room.name)}</text><text x="${x}" y="${y + 190}" text-anchor="middle" dominant-baseline="middle" font-size="190" fill="#657872">${room.area.toFixed(1)} m²</text></g>`;
   }).join("");
-  const walls = template.walls.map(wall => `<line x1="${wall.start[0] - b.minX + pad}" y1="${b.maxY - wall.start[1] + pad}" x2="${wall.end[0] - b.minX + pad}" y2="${b.maxY - wall.end[1] + pad}" stroke="#173d34" stroke-width="70" stroke-linecap="square"/>`).join("");
-  const openings = template.openings.map(opening => renderOpeningSegment(opening, b, pad)).join("");
+  const walls = template.walls.map(wall => `<line x1="${wall.start[0] - b.minX + pad}" y1="${b.maxY - wall.start[1] + pad}" x2="${wall.end[0] - b.minX + pad}" y2="${b.maxY - wall.end[1] + pad}" stroke="#454b49" stroke-width="70" stroke-linecap="square"/>`).join("");
+  const openings = template.openings.map(opening => renderOpeningSegment(opening, template.walls, template.rooms, b, pad)).join("");
   const dimensions = renderAxisGrid(template, b, pad);
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(name)}成熟DXF户型及总尺寸"><rect width="100%" height="100%" fill="#f5f1e8"/>${dimensions}${rooms}${walls}<polygon points="${template.footprint.map(point).join(" ")}" fill="none" stroke="#173d34" stroke-width="90"/>${openings}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(name)}成熟DXF户型及总尺寸"><rect width="100%" height="100%" fill="#f5f1e8"/>${dimensions}${renderAncillaryAreas(template, b, pad)}<polygon data-room-category="service-base" points="${template.footprint.map(point).join(" ")}" fill="#ddd9d0"/>${rooms}${walls}<polygon points="${template.footprint.map(point).join(" ")}" fill="none" stroke="#454b49" stroke-width="90"/>${openings}</svg>`;
+}
+
+function ancillaryExtentPoints(template: MaturePlanTemplate): number[][] { return [...template.ancillaryAreas.flatMap(area => area.geometry?.kind === "POLYGON" ? area.geometry.points : area.geometry?.kind === "QUADRATIC_ARC_SEGMENT" ? [area.geometry.chordStart, area.geometry.chordEnd, area.geometry.controlPoint] : []), ...template.exteriorSteps.flatMap(step => step.kind === "LINEAR" ? [...step.treadLines.flat(), ...step.sideLines.flat()] : [...step.sideLines.flat(), ...step.curves.flatMap(curve => [curve.start, curve.end, [(curve.start[0] + curve.end[0] + curve.control[0] * 2) / 4, (curve.start[1] + curve.end[1] + curve.control[1] * 2) / 4] as [number, number]])])]; }
+
+function renderAncillaryAreas(template: MaturePlanTemplate, b: ReturnType<typeof pairBounds>, pad: number): string {
+  const screen = ([x, y]: number[]) => [x - b.minX + pad, b.maxY - y + pad] as const;
+  const ancillary = template.ancillaryAreas.map(area => {
+    if (!area.geometry) return "";
+    if (area.geometry.kind === "POLYGON") {
+      const center = polygonVisualCenter(area.geometry.points); const [tx, ty] = screen(center);
+      const porchColumns = area.type === "PORCH" ? area.geometry.points.slice(1, 3).map(point => { const [x, y] = screen(point); return `<rect x="${x - 100}" y="${y - 100}" width="200" height="200" fill="#454b49"/>`; }).join("") : "";
+      return `<g data-ancillary-type="${area.type}" data-area-square-meters="${area.areaM2.toFixed(2)}"><polygon points="${area.geometry.points.map(point => screen(point).join(",")).join(" ")}" fill="#e5dfd2" stroke="#8f826f" stroke-width="55"/>${porchColumns}<text x="${tx}" y="${ty - 70}" text-anchor="middle" font-size="250" fill="#564e43">${escapeXml(area.name)}</text><text x="${tx}" y="${ty + 210}" text-anchor="middle" font-size="180" fill="#746a5b">${area.areaM2.toFixed(2)} m²</text></g>`;
+    }
+    const start = screen(area.geometry.chordStart), end = screen(area.geometry.chordEnd), control = screen(area.geometry.controlPoint); const tx = (start[0] + end[0] + control[0] * 2) / 4, ty = (start[1] + end[1] + control[1] * 2) / 4;
+    const columns = area.type === "PORCH" ? `<rect x="${start[0] - 100}" y="${start[1] - 100}" width="200" height="200" fill="#454b49"/><rect x="${end[0] - 100}" y="${end[1] - 100}" width="200" height="200" fill="#454b49"/>` : "";
+    return `<g data-ancillary-type="${area.type}" data-area-square-meters="${area.areaM2.toFixed(2)}"><path d="M ${start[0]} ${start[1]} Q ${control[0]} ${control[1]} ${end[0]} ${end[1]} L ${start[0]} ${start[1]} Z" fill="#eadfc9" stroke="#8f826f" stroke-width="55"/>${columns}<text x="${tx}" y="${ty - 60}" text-anchor="middle" font-size="210" fill="#564e43">${escapeXml(area.name)}</text><text x="${tx}" y="${ty + 180}" text-anchor="middle" font-size="165" fill="#746a5b">${area.areaM2.toFixed(2)} m²</text></g>`;
+  }).join("");
+  const steps = template.exteriorSteps.map(step => {
+    if (step.kind === "CURVED") { const arcs = step.curves.map(curve => { const start = screen(curve.start), end = screen(curve.end), control = screen(curve.control); return `<path data-parallel-tread="true" d="M ${start[0]} ${start[1]} Q ${control[0]} ${control[1]} ${end[0]} ${end[1]}"/>`; }).join(""); const sides = step.sideLines.map(([a, c]) => { const start = screen(a), end = screen(c); return `<line x1="${start[0]}" y1="${start[1]}" x2="${end[0]}" y2="${end[1]}"/>`; }).join(""); return `<g data-ancillary-type="CURVED-EXTERIOR-STEPS" data-tread-layout="parallel" data-area-square-meters="${(step.areaM2 ?? 0).toFixed(2)}" stroke="#9b8d77" stroke-width="48" fill="none">${arcs}${sides}</g>`; }
+    const segments = [...step.treadLines, ...step.sideLines]; const lines = segments.map(([a, c]) => { const start = screen(a), end = screen(c); return `<line x1="${start[0]}" y1="${start[1]}" x2="${end[0]}" y2="${end[1]}"/>`; }).join(""); const all = step.treadLines.flat(); const center: [number, number] = [all.reduce((sum, point) => sum + point[0], 0) / all.length, all.reduce((sum, point) => sum + point[1], 0) / all.length]; const [tx, ty] = screen(center); return `<g data-ancillary-type="EXTERIOR-STEPS" data-side-closure="both" stroke="#9b8d77" stroke-width="48" fill="none">${lines}<text x="${tx}" y="${ty - 150}" text-anchor="middle" font-size="185" fill="#62594c" stroke="none">${escapeXml(step.name)}</text></g>`;
+  }).join("");
+  return ancillary + steps;
+}
+
+function roomColorStyle(room: MaturePlanTemplate["rooms"][number]): { category: "private" | "public" | "service"; fill: string } {
+  const type = room.type.toUpperCase(); const name = room.name;
+  if (type.includes("BED") || type.includes("STUDY") || /卧室|主卧|老人房|书房/.test(name)) return { category: "private", fill: "#dfe8d6" };
+  if (type.includes("LIVING") || type.includes("DINING") || type.includes("HALL") || /客厅|餐厅|起居|家庭厅/.test(name)) return { category: "public", fill: "#efe1cc" };
+  return { category: "service", fill: "#ddd9d0" };
 }
 
 function renderMainEntrance(template: MaturePlanTemplate, b: ReturnType<typeof pairBounds>, pad: number): string {
@@ -142,16 +172,66 @@ function renderMainEntrance(template: MaturePlanTemplate, b: ReturnType<typeof p
   return `<g data-layer="MAIN_ENTRANCE" data-opening-id="${ranked[0].opening.id}"><line x1="${lx}" y1="${ly}" x2="${sx}" y2="${sy}" stroke="#a35532" stroke-width="55"/><path d="M ${sx} ${sy} l -130 -85 l 20 155 z" fill="#a35532"/><text x="${lx}" y="${ly - 90}" text-anchor="middle" font-size="240" font-weight="700" fill="#a35532" paint-order="stroke" stroke="#f5f1e8" stroke-width="70">主入口</text></g>`;
 }
 
-function renderOpeningSegment(opening: MaturePlanTemplate["openings"][number], b: ReturnType<typeof pairBounds>, pad: number): string {
+function renderOpeningSegment(opening: MaturePlanTemplate["openings"][number], walls: MaturePlanTemplate["walls"], rooms: MaturePlanTemplate["rooms"], b: ReturnType<typeof pairBounds>, pad: number): string {
   let start = opening.start, end = opening.end;
   if ((!start || !end) && opening.insertionPoint) {
-    const length = opening.width ?? (opening.type.includes("WINDOW") ? 1200 : 900);
+    const length = opening.widthMm ?? opening.width ?? inferOpeningWidth(opening, walls) ?? (opening.type.includes("WINDOW") ? 1200 : 900);
     const angle = (opening.rotationDeg ?? 0) * Math.PI / 180; const dx = Math.cos(angle) * length / 2; const dy = Math.sin(angle) * length / 2;
     start = [opening.insertionPoint[0] - dx, opening.insertionPoint[1] - dy]; end = [opening.insertionPoint[0] + dx, opening.insertionPoint[1] + dy];
   }
   if (!start || !end) return "";
-  const isWindow = opening.type.includes("WINDOW"); const color = isWindow ? "#2f80ed" : "#f2c94c";
-  return `<line data-opening-type="${isWindow ? "window" : "door"}" data-opening-id="${opening.id}" x1="${start[0] - b.minX + pad}" y1="${b.maxY - start[1] + pad}" x2="${end[0] - b.minX + pad}" y2="${b.maxY - end[1] + pad}" stroke="${color}" stroke-width="180" stroke-linecap="square"/>`;
+  const isWindow = opening.type.includes("WINDOW");
+  const length = Math.hypot(end[0] - start[0], end[1] - start[1]);
+  const sx = start[0] - b.minX + pad, sy = b.maxY - start[1] + pad;
+  const ex = end[0] - b.minX + pad, ey = b.maxY - end[1] + pad;
+  if (isWindow) return `<line data-opening-type="window" data-opening-id="${opening.id}" data-opening-length-mm="${Math.round(length)}" x1="${sx}" y1="${sy}" x2="${ex}" y2="${ey}" stroke="#9ebdca" stroke-width="160" stroke-linecap="square"/>`;
+
+  const adjacentRooms = roomsBesideOpening(start, end, rooms);
+  const isSlidingDoor = opening.sourceBlock === "$DorLib2D$00000131";
+  if (isSlidingDoor) {
+    const nx = -(end[1] - start[1]) / length * 52, ny = (end[0] - start[0]) / length * 52;
+    const mx1 = sx + (ex - sx) * .58, my1 = sy + (ey - sy) * .58;
+    const mx2 = sx + (ex - sx) * .42, my2 = sy + (ey - sy) * .42;
+    return `<g data-opening-type="door" data-door-type="sliding" data-source-block="${escapeXml(opening.sourceBlock)}" data-opening-id="${opening.id}" data-opening-length-mm="${Math.round(length)}" stroke="#e2ca7a" fill="none" stroke-width="58" stroke-linecap="square"><line data-sliding-panel="1" x1="${sx + nx}" y1="${sy - ny}" x2="${mx1 + nx}" y2="${my1 - ny}"/><line data-sliding-panel="2" x1="${mx2 - nx}" y1="${my2 + ny}" x2="${ex - nx}" y2="${ey + ny}"/></g>`;
+  }
+
+  const swing = chooseInwardWallSide(start, end, adjacentRooms, walls);
+  const hinge = swing.hingeAtEnd ? end : start, closed = swing.hingeAtEnd ? start : end;
+  const alongX = (closed[0] - hinge[0]) / length, alongY = (closed[1] - hinge[1]) / length;
+  const openWorld: [number, number] = [hinge[0] - alongY * length * swing.side, hinge[1] + alongX * length * swing.side];
+  const hx = hinge[0] - b.minX + pad, hy = b.maxY - hinge[1] + pad;
+  const cx = closed[0] - b.minX + pad, cy = b.maxY - closed[1] + pad;
+  const ox = openWorld[0] - b.minX + pad, oy = b.maxY - openWorld[1] + pad;
+  const sweep = swing.side > 0 ? 0 : 1;
+  return `<g data-opening-type="door" data-door-type="single-swing-inward" data-source-block="${escapeXml(opening.sourceBlock ?? "")}" data-opening-id="${opening.id}" data-opening-length-mm="${Math.round(length)}" stroke="#e2ca7a" fill="none"><line data-door-leaf="true" x1="${hx}" y1="${hy}" x2="${ox}" y2="${oy}" stroke-width="58" stroke-linecap="square"/><path data-door-swing="true" d="M ${cx} ${cy} A ${length} ${length} 0 0 ${sweep} ${ox} ${oy}" stroke-width="38"/></g>`;
+}
+
+function roomsBesideOpening(start: number[], end: number[], rooms: MaturePlanTemplate["rooms"]): MaturePlanTemplate["rooms"] {
+  const length = Math.hypot(end[0] - start[0], end[1] - start[1]); const midpointX = (start[0] + end[0]) / 2, midpointY = (start[1] + end[1]) / 2;
+  const nx = -(end[1] - start[1]) / length, ny = (end[0] - start[0]) / length;
+  const samples = [180, 360, 600].flatMap(distance => [[midpointX + nx * distance, midpointY + ny * distance], [midpointX - nx * distance, midpointY - ny * distance]]);
+  return rooms.filter(room => samples.some(sample => pointInPairPolygon(sample, room.boundary)));
+}
+
+function chooseInwardWallSide(start: number[], end: number[], adjacentRooms: MaturePlanTemplate["rooms"], walls: MaturePlanTemplate["walls"]): { hingeAtEnd: boolean; side: 1 | -1 } {
+  const length = Math.hypot(end[0] - start[0], end[1] - start[1]);
+  const targetRooms = adjacentRooms.length > 1 ? adjacentRooms.slice().sort((a, b) => a.area - b.area).slice(0, 1) : adjacentRooms;
+  const options = ([false, true] as const).flatMap(hingeAtEnd => ([1, -1] as const).map(side => {
+    const hinge = hingeAtEnd ? end : start, closed = hingeAtEnd ? start : end; const ax = (closed[0] - hinge[0]) / length, ay = (closed[1] - hinge[1]) / length;
+    const open: [number, number] = [hinge[0] - ay * length * side, hinge[1] + ax * length * side]; const probe: [number, number] = [(hinge[0] + open[0]) / 2, (hinge[1] + open[1]) / 2];
+    const inward = targetRooms.length === 0 || targetRooms.some(room => pointInPairPolygon(probe, room.boundary));
+    const wallDistance = Math.min(...walls.map(wall => distanceToSegment(open, wall.start, wall.end)));
+    return { hingeAtEnd, side, score: (inward ? 100000 : 0) - wallDistance };
+  }));
+  return options.sort((a, b) => b.score - a.score)[0];
+}
+
+function inferOpeningWidth(opening: MaturePlanTemplate["openings"][number], walls: MaturePlanTemplate["walls"]): number | undefined {
+  if (!opening.insertionPoint) return undefined;
+  const angle = (opening.rotationDeg ?? 0) * Math.PI / 180; const along: [number, number] = [Math.cos(angle), Math.sin(angle)]; const normal: [number, number] = [-along[1], along[0]]; const origin = opening.insertionPoint;
+  const candidates = walls.map(wall => { const vx = wall.end[0] - wall.start[0], vy = wall.end[1] - wall.start[1], wallLength = Math.hypot(vx, vy); if (!wallLength || Math.abs((vx * along[0] + vy * along[1]) / wallLength) < .98) return undefined; const offset = Math.abs((wall.start[0] - origin[0]) * normal[0] + (wall.start[1] - origin[1]) * normal[1]); const projections = [wall.start, wall.end].map(point => (point[0] - origin[0]) * along[0] + (point[1] - origin[1]) * along[1]).sort((a, b) => a - b); return { offset, start: projections[0], end: projections[1] }; }).filter((item): item is NonNullable<typeof item> => Boolean(item));
+  const nearestOffset = Math.min(...candidates.map(item => item.offset)); const intervals = candidates.filter(item => item.offset <= nearestOffset + 40); const before = Math.max(...intervals.filter(item => item.end <= 50).map(item => item.end), -Infinity); const after = Math.min(...intervals.filter(item => item.start >= -50).map(item => item.start), Infinity); const gap = after - before;
+  return Number.isFinite(gap) && gap >= 500 && gap <= 3600 ? gap : undefined;
 }
 
 function polygonVisualCenter(polygon: number[][]): [number, number] {
@@ -173,7 +253,7 @@ function renderAxisGrid(template: MaturePlanTemplate, b: ReturnType<typeof pairB
   const ys = uniqueCoordinates(template.footprint.map(point => point[1]));
   const xScreen = (x: number) => x - b.minX + pad;
   const yScreen = (y: number) => b.maxY - y + pad;
-  const top = pad, bottom = b.maxY - b.minY + pad, left = pad, right = b.maxX - b.minX + pad;
+  const footprintBounds = pairBounds(template.footprint); const top = yScreen(footprintBounds.maxY), bottom = yScreen(footprintBounds.minY), left = xScreen(footprintBounds.minX), right = xScreen(footprintBounds.maxX);
   const axisStyle = `stroke="#789089" stroke-width="22" stroke-dasharray="120 90"`;
   const axesX = xs.map((x, i) => `<g data-axis="${i + 1}"><line x1="${xScreen(x)}" y1="${top - 450}" x2="${xScreen(x)}" y2="${bottom + 350}" ${axisStyle}/><circle cx="${xScreen(x)}" cy="${top - 650}" r="190" fill="#fffdf8" stroke="#173d34" stroke-width="28"/><text x="${xScreen(x)}" y="${top - 585}" text-anchor="middle" font-size="210" font-weight="700" fill="#173d34">${i + 1}</text></g>`).join("");
   const axesY = ys.slice().reverse().map((y, i) => { const label = String.fromCharCode(65 + i); return `<g data-axis="${label}"><line x1="${left - 350}" y1="${yScreen(y)}" x2="${right + 350}" y2="${yScreen(y)}" ${axisStyle}/><circle cx="${left - 650}" cy="${yScreen(y)}" r="190" fill="#fffdf8" stroke="#173d34" stroke-width="28"/><text x="${left - 650}" y="${yScreen(y) + 70}" text-anchor="middle" font-size="210" font-weight="700" fill="#173d34">${label}</text></g>`; }).join("");

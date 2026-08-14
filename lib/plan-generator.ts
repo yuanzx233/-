@@ -59,16 +59,47 @@ function buildCandidate(template: MaturePlanTemplate, input: RequirementSubmissi
     { label: "卧室数量", met: template.bedrooms >= r.bedroomCount, detail: `${template.bedrooms} 间卧室` },
     { label: "场地硬约束", met: siteFit.fits, detail: siteFit.clearanceNote },
   ];
+  const residentialAssessment = assessResidentialQualities(template, r, scale);
   const base = {
     id: template.id, name: template.name, templateId: template.id,
     templateSource: `${template.source.dxfPath} + ${template.source.jsonPath}`,
     adjustment: { rotationDegrees, scale: round(scale) }, score, totalArea, floors: template.floors,
     footprint, siteFit, rooms,
-    strengths: ["直接采用已审核标准化 DXF", "保留原始墙体、门窗与房间关系", `整体调正：旋转 ${rotationDegrees}°、比例 ${(scale * 100).toFixed(0)}%`],
-    tradeoffs: scale === 1 ? ["未改变成熟模板内部布局"] : ["进行了有限整体比例调整，施工前需复核构造尺寸"],
+    strengths: residentialAssessment.strengths,
+    tradeoffs: residentialAssessment.tradeoffs,
     satisfaction, svg: "",
   } satisfies Omit<PlanCandidate, "svg"> & { svg: string };
   return { ...base, svg: renderTemplateSvg(template, base.name) };
+}
+
+function assessResidentialQualities(template: MaturePlanTemplate, requirements: RequirementSubmission["requirements"], scale: number) {
+  const rooms = template.rooms.map(room => ({ ...room, adjustedArea: room.area * scale * scale }));
+  const count = (prefix: string) => rooms.filter(room => room.type.startsWith(prefix)).length;
+  const find = (...types: string[]) => rooms.find(room => types.some(type => room.type === type));
+  const bedrooms = count("BED-"); const bathrooms = count("BAT-");
+  const living = find("LIV-LIVING", "LIVING"); const dining = find("DIN-DINING", "DINING"); const combined = find("LIV-DIN-COMBINED");
+  const master = find("BED-MASTER"); const kitchen = find("KIT-CLOSED"); const study = find("STUDY"); const foyer = find("ENT-FOYER"); const storageCount = count("SER-STORAGE") + count("SER-UTILITY");
+  const strengths: string[] = [];
+  strengths.push(`${bedrooms}卧${bathrooms}卫配置，满足家庭成员分房与日常卫浴需求`);
+  if (combined) strengths.push(`约${combined.adjustedArea.toFixed(1)}㎡一体化客餐厅，公共活动空间开阔、家人互动方便`);
+  else if (living && dining) strengths.push(`客厅约${living.adjustedArea.toFixed(1)}㎡、餐厅约${dining.adjustedArea.toFixed(1)}㎡，会客与用餐功能分区明确`);
+  if (master && master.adjustedArea >= 16) strengths.push(`主卧约${master.adjustedArea.toFixed(1)}㎡，家具布置和收纳余量较充足`);
+  else if (study) strengths.push(`配置约${study.adjustedArea.toFixed(1)}㎡独立书房，可兼顾办公、学习或临时客房`);
+  else if (foyer) strengths.push(`设有约${foyer.adjustedArea.toFixed(1)}㎡入口玄关，入户缓冲和鞋物收纳更完整`);
+  else if (kitchen && kitchen.adjustedArea >= 8) strengths.push(`厨房约${kitchen.adjustedArea.toFixed(1)}㎡，操作台与储物布置空间较充足`);
+  else if (storageCount) strengths.push(`配置${storageCount}处储藏空间，有利于减少公共区域杂物堆放`);
+
+  const tradeoffs: string[] = [];
+  if (requirements.elderRoomCount > 0 && !rooms.some(room => room.type === "BED-ELDERLY")) tradeoffs.push("未设置明确的老人房，需结合采光、近卫生间和无障碍要求指定一间卧室");
+  if (bathrooms < requirements.bathroomCount) tradeoffs.push(`现有${bathrooms}卫少于需求的${requirements.bathroomCount}卫，需要调整湿区或压缩相邻空间增设`);
+  const compactBedroom = rooms.filter(room => room.type.startsWith("BED-")).sort((a, b) => a.adjustedArea - b.adjustedArea)[0];
+  if (compactBedroom && compactBedroom.adjustedArea < 11) tradeoffs.push(`最小卧室约${compactBedroom.adjustedArea.toFixed(1)}㎡，双人床、衣柜与通道同时布置会较紧凑`);
+  const compactBathroom = rooms.filter(room => room.type.startsWith("BAT-")).sort((a, b) => a.adjustedArea - b.adjustedArea)[0];
+  if (compactBathroom && compactBathroom.adjustedArea < 4) tradeoffs.push(`最小卫生间约${compactBathroom.adjustedArea.toFixed(1)}㎡，干湿分离和无障碍使用空间有限`);
+  if (!foyer) tradeoffs.push("缺少独立入户玄关，开门后的视线遮挡、鞋柜和换鞋区需要二次设计");
+  if (!rooms.some(room => /BALCONY|LAUNDRY/.test(room.type))) tradeoffs.push("未配置独立阳台或家政空间，洗衣、晾晒和设备位置需结合场地补充");
+  if (scale !== 1) tradeoffs.push(`方案按${(scale * 100).toFixed(0)}%整体缩放，家具、门洞和结构净尺寸需进一步复核`);
+  return { strengths: strengths.slice(0, 3), tradeoffs: tradeoffs.slice(0, 3) };
 }
 
 function placePolygon(points: number[][], site: ReturnType<typeof polygonBounds>, rotation: 0 | 90, scale: number): Point[] {

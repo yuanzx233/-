@@ -113,7 +113,7 @@ function renderTemplateSvgLegacy(template: MaturePlanTemplate, name: string): st
   const point = ([x, y]: number[]) => `${x - b.minX + pad},${b.maxY - y + pad}`;
   const rooms = template.rooms.map((room, index) => `<g><polygon points="${room.boundary.map(point).join(" ")}" fill="${["#e3eadb", "#f1e2cf", "#e4ded3", "#dce8d5"][index % 4]}" stroke="#8ca099" stroke-width="24"/><text x="${room.labelPoint[0] - b.minX + pad}" y="${b.maxY - room.labelPoint[1] + pad}" text-anchor="middle" font-size="260" fill="#173d34">${escapeXml(room.name)}</text><text x="${room.labelPoint[0] - b.minX + pad}" y="${b.maxY - room.labelPoint[1] + pad + 300}" text-anchor="middle" font-size="190" fill="#657872">${room.area.toFixed(1)} ㎡</text></g>`).join("");
   const walls = template.walls.map(wall => `<line x1="${wall.start[0] - b.minX + pad}" y1="${b.maxY - wall.start[1] + pad}" x2="${wall.end[0] - b.minX + pad}" y2="${b.maxY - wall.end[1] + pad}" stroke="#173d34" stroke-width="70" stroke-linecap="square"/>`).join("");
-  const openings = template.openings.map(opening => opening.start && opening.end ? `<line x1="${opening.start[0] - b.minX + pad}" y1="${b.maxY - opening.start[1] + pad}" x2="${opening.end[0] - b.minX + pad}" y2="${b.maxY - opening.end[1] + pad}" stroke="${opening.type?.includes("WINDOW") ? "#4e8ca0" : "#b87550"}" stroke-width="100"/>` : "").join("");
+  const openings = template.openings.map(opening => renderOpeningSegment(opening, b, pad)).join("");
   const grid = renderAxisGrid(template, b, pad);
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(name)}成熟DXF户型及轴网尺寸"><rect width="100%" height="100%" fill="#f5f1e8"/>${grid}${rooms}${walls}${openings}<polygon points="${template.footprint.map(point).join(" ")}" fill="none" stroke="#173d34" stroke-width="90"/></svg>`;
 }
@@ -126,9 +126,9 @@ function renderTemplateSvg(template: MaturePlanTemplate, name: string): string {
     return `<g data-room-id="${room.id}" data-label-position="visual-center"><polygon points="${room.boundary.map(point).join(" ")}" fill="${["#e3eadb", "#f1e2cf", "#e4ded3", "#dce8d5"][index % 4]}" stroke="#8ca099" stroke-width="24"/><text x="${x}" y="${y - 90}" text-anchor="middle" dominant-baseline="middle" font-size="260" fill="#173d34">${escapeXml(room.name)}</text><text x="${x}" y="${y + 190}" text-anchor="middle" dominant-baseline="middle" font-size="190" fill="#657872">${room.area.toFixed(1)} m²</text></g>`;
   }).join("");
   const walls = template.walls.map(wall => `<line x1="${wall.start[0] - b.minX + pad}" y1="${b.maxY - wall.start[1] + pad}" x2="${wall.end[0] - b.minX + pad}" y2="${b.maxY - wall.end[1] + pad}" stroke="#173d34" stroke-width="70" stroke-linecap="square"/>`).join("");
-  const openings = template.openings.map(opening => opening.start && opening.end ? `<line x1="${opening.start[0] - b.minX + pad}" y1="${b.maxY - opening.start[1] + pad}" x2="${opening.end[0] - b.minX + pad}" y2="${b.maxY - opening.end[1] + pad}" stroke="${opening.type?.includes("WINDOW") ? "#4e8ca0" : "#b87550"}" stroke-width="100"/>` : "").join("");
+  const openings = template.openings.map(opening => renderOpeningSegment(opening, b, pad)).join("");
   const dimensions = renderAxisGrid(template, b, pad);
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(name)}成熟DXF户型及总尺寸"><rect width="100%" height="100%" fill="#f5f1e8"/>${dimensions}${rooms}${walls}${openings}<polygon points="${template.footprint.map(point).join(" ")}" fill="none" stroke="#173d34" stroke-width="90"/></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(name)}成熟DXF户型及总尺寸"><rect width="100%" height="100%" fill="#f5f1e8"/>${dimensions}${rooms}${walls}<polygon points="${template.footprint.map(point).join(" ")}" fill="none" stroke="#173d34" stroke-width="90"/>${openings}</svg>`;
 }
 
 function renderMainEntrance(template: MaturePlanTemplate, b: ReturnType<typeof pairBounds>, pad: number): string {
@@ -140,6 +140,18 @@ function renderMainEntrance(template: MaturePlanTemplate, b: ReturnType<typeof p
   const [x, y] = ranked[0].location; const cx = (b.minX + b.maxX) / 2; const cy = (b.minY + b.maxY) / 2; const dx = x - cx; const dy = y - cy; const length = Math.hypot(dx, dy) || 1;
   const outside: [number, number] = [x + dx / length * 650, y + dy / length * 650]; const sx = x - b.minX + pad; const sy = b.maxY - y + pad; const lx = outside[0] - b.minX + pad; const ly = b.maxY - outside[1] + pad;
   return `<g data-layer="MAIN_ENTRANCE" data-opening-id="${ranked[0].opening.id}"><line x1="${lx}" y1="${ly}" x2="${sx}" y2="${sy}" stroke="#a35532" stroke-width="55"/><path d="M ${sx} ${sy} l -130 -85 l 20 155 z" fill="#a35532"/><text x="${lx}" y="${ly - 90}" text-anchor="middle" font-size="240" font-weight="700" fill="#a35532" paint-order="stroke" stroke="#f5f1e8" stroke-width="70">主入口</text></g>`;
+}
+
+function renderOpeningSegment(opening: MaturePlanTemplate["openings"][number], b: ReturnType<typeof pairBounds>, pad: number): string {
+  let start = opening.start, end = opening.end;
+  if ((!start || !end) && opening.insertionPoint) {
+    const length = opening.width ?? (opening.type.includes("WINDOW") ? 1200 : 900);
+    const angle = (opening.rotationDeg ?? 0) * Math.PI / 180; const dx = Math.cos(angle) * length / 2; const dy = Math.sin(angle) * length / 2;
+    start = [opening.insertionPoint[0] - dx, opening.insertionPoint[1] - dy]; end = [opening.insertionPoint[0] + dx, opening.insertionPoint[1] + dy];
+  }
+  if (!start || !end) return "";
+  const isWindow = opening.type.includes("WINDOW"); const color = isWindow ? "#2f80ed" : "#f2c94c";
+  return `<line data-opening-type="${isWindow ? "window" : "door"}" data-opening-id="${opening.id}" x1="${start[0] - b.minX + pad}" y1="${b.maxY - start[1] + pad}" x2="${end[0] - b.minX + pad}" y2="${b.maxY - end[1] + pad}" stroke="${color}" stroke-width="180" stroke-linecap="square"/>`;
 }
 
 function polygonVisualCenter(polygon: number[][]): [number, number] {

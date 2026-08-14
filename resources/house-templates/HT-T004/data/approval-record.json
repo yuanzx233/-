@@ -1,0 +1,13 @@
+{
+  "status": "APPROVED",
+  "approvedAt": "2026-08-14",
+  "approvedBy": "user_architect_review",
+  "scope": [
+    "exterior_footprint_and_area",
+    "all_room_boundaries",
+    "wall_topology_no_unintended_breaks",
+    "door_and_window_positions",
+    "no_door_window_combinations",
+    "room_labels_at_geometric_centroids"
+  ]
+}

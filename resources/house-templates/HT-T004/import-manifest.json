@@ -1,0 +1,13 @@
+{
+  "schemaVersion":"1.0.0",
+  "templateId":"HT-T004",
+  "templateCode":"HT-F1-W5-LX-004",
+  "name":"单层三房01",
+  "version":"1.0.0",
+  "status":"APPROVED",
+  "source":{"file":"source/HT_T004_V0.1_SOURCE.dxf","originalName":"01.dxf","dwgVersion":"AC1032","providedBy":"user","copyrightStatus":"user_provided_project_use_only"},
+  "declaredRequirements":{"floorType":"F1","bedroomCount":3},
+  "classification":{"primaryWidthType":"W5","compatibleWidthTypes":["W5"],"depthType":"D1","areaType":"A4","layoutType":"LX"},
+  "verification":{"geometryParsed":true,"layersNormalized":true,"objectIdsAssigned":true,"jsonGenerated":true,"previewGenerated":true,"architectReviewed":true,"validationStatus":"APPROVED"},
+  "importedAt":"2026-08-14T00:00:00+08:00"
+}

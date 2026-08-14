@@ -1,0 +1,248 @@
+{
+  "source": "resources\\house-templates\\HT-T006\\source\\HT_T006_V0.1_SOURCE.dxf",
+  "acadVersion": "AC1032",
+  "entityTypes": {
+    "LINE": 132,
+    "LWPOLYLINE": 2,
+    "DIMENSION": 16,
+    "INSERT": 30,
+    "ATTRIB": 30,
+    "SEQEND": 30,
+    "TEXT": 24
+  },
+  "layers": {
+    "DOTE": 8,
+    "0": 2,
+    "AXIS": 64,
+    "WALL": 108,
+    "WINDOW": 28,
+    "WINDOW_TEXT": 14,
+    "SPACE": 24,
+    "AXIS_TEXT": 16
+  },
+  "tchEntityCount": 0,
+  "drawingBoundsMm": [
+    37979.06,
+    7606.47,
+    58779.06,
+    25406.47
+  ],
+  "spaceTexts": [
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "卧室",
+      "position": [
+        44700.81,
+        14268.91
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "10.08m",
+      "position": [
+        44396.98,
+        13757.03
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "2",
+      "position": [
+        45556.98,
+        13932.03
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "厨房",
+      "position": [
+        44406.79,
+        18846.61
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "10.08m",
+      "position": [
+        44118.92,
+        18334.73
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "2",
+      "position": [
+        45278.92,
+        18509.73
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "卧室",
+      "position": [
+        52442.13,
+        19234.4
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "10.08m",
+      "position": [
+        52138.3,
+        18722.53
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "2",
+      "position": [
+        53298.3,
+        18897.53
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "卧室",
+      "position": [
+        52347.79,
+        14185.93
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "10.08m",
+      "position": [
+        52043.96,
+        13674.06
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "2",
+      "position": [
+        53203.96,
+        13849.06
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "卫生间",
+      "position": [
+        43560.71,
+        16650.22
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "3.68m",
+      "position": [
+        43504.44,
+        16138.35
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "2",
+      "position": [
+        44504.44,
+        16313.35
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "卫生间",
+      "position": [
+        52975.99,
+        16607.47
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "3.68m",
+      "position": [
+        52919.72,
+        16095.59
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "2",
+      "position": [
+        53919.72,
+        16270.59
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "客厅",
+      "position": [
+        48487.52,
+        15030.43
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "17.48m",
+      "position": [
+        48196.98,
+        14518.55
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "2",
+      "position": [
+        49356.98,
+        14693.55
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "餐厅",
+      "position": [
+        48620.85,
+        19234.4
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "11.40m",
+      "position": [
+        48358.3,
+        18722.53
+      ]
+    },
+    {
+      "type": "TEXT",
+      "layer": "SPACE",
+      "value": "2",
+      "position": [
+        49478.3,
+        18897.53
+      ]
+    }
+  ]
+}

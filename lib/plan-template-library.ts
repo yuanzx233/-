@@ -1,6 +1,9 @@
 import t001 from "../resources/house-templates/HT-T001/data/template.json";
 import t002 from "../resources/house-templates/HT-T002/data/template.json";
 import t003 from "../resources/house-templates/HT-T003/data/template.json";
+import t004 from "../resources/house-templates/HT-T004/data/template.json";
+import t005 from "../resources/house-templates/HT-T005/data/template.json";
+import t006 from "../resources/house-templates/HT-T006/data/template.json";
 
 type Pair = [number, number];
 type RawRoom = { id: string; name: string; type: string; area: number; boundary: Pair[]; labelPoint: Pair[] };
@@ -42,4 +45,7 @@ export const projectPlanTemplateLibrary = [
   load(t001, "HT-T001", "HT_T001_V0.3_STANDARDIZED_AC1032.dxf"),
   load(t002, "HT-T002", "HT_T002_V0.3_STANDARDIZED_AC1032.dxf"),
   load(t003, "HT-T003", "HT_T003_V0.3_STANDARDIZED_AC1032.dxf"),
+  load(t004, "HT-T004", "HT_T004_V0.3_STANDARDIZED_AC1032.dxf"),
+  load(t005, "HT-T005", "HT_T005_V0.3_STANDARDIZED_AC1032.dxf"),
+  load(t006, "HT-T006", "HT_T006_V0.3_STANDARDIZED_AC1032.dxf"),
 ];

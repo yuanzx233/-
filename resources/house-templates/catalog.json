@@ -54,6 +54,15 @@
       "manifest": "HT-T006/import-manifest.json",
       "searchable": true,
       "publishable": true
+    },
+    {
+      "id": "HT-T007",
+      "name": "单层三房04（庭院型）",
+      "version": "1.0.0",
+      "status": "APPROVED",
+      "manifest": "HT-T007/import-manifest.json",
+      "searchable": true,
+      "publishable": true
     }
   ]
 }

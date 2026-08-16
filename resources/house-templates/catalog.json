@@ -63,6 +63,15 @@
       "manifest": "HT-T007/import-manifest.json",
       "searchable": true,
       "publishable": true
+    },
+    {
+      "id": "HT-T008",
+      "name": "单层四房01（庭院泳池型）",
+      "version": "1.0.0",
+      "status": "APPROVED",
+      "manifest": "HT-T008/import-manifest.json",
+      "searchable": true,
+      "publishable": true
     }
   ]
 }

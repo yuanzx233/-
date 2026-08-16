@@ -1,0 +1,13 @@
+{
+  "status": "APPROVED",
+  "approvedAt": "2026-08-16",
+  "approvedBy": "user_architect_review",
+  "scope": [
+    "floor_1_exterior_footprint_excluding_porch",
+    "floor_2_exterior_footprint_excluding_terrace",
+    "all_chinese_room_names_and_boundaries",
+    "non_overlapping_stair_and_upper_hall",
+    "stair_correspondence",
+    "wall_break_auto_repair"
+  ]
+}

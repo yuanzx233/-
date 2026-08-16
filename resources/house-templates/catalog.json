@@ -72,6 +72,15 @@
       "manifest": "HT-T008/import-manifest.json",
       "searchable": true,
       "publishable": true
+    },
+    {
+      "id": "HT-T009",
+      "name": "单层四房02",
+      "version": "1.0.0",
+      "status": "APPROVED",
+      "manifest": "HT-T009/import-manifest.json",
+      "searchable": true,
+      "publishable": true
     }
   ]
 }

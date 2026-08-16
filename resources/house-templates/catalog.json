@@ -90,6 +90,15 @@
       "manifest": "HT-T010/import-manifest.json",
       "searchable": true,
       "publishable": true
+    },
+    {
+      "id": "HT-T011",
+      "name": "二层四房01",
+      "version": "1.0.0",
+      "status": "APPROVED",
+      "manifest": "HT-T011/import-manifest.json",
+      "searchable": true,
+      "publishable": true
     }
   ]
 }

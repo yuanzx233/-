@@ -1,0 +1,166 @@
+{
+  "templateId": "HT-T011",
+  "status": "APPROVED",
+  "source": "resources\\house-templates\\HT-T011\\normalized\\HT_T011_V0.3_STANDARDIZED_AC1032.dxf",
+  "entityTypes": {
+    "LINE": 288,
+    "LWPOLYLINE": 10,
+    "DIMENSION": 36,
+    "TEXT": 42,
+    "INSERT": 80,
+    "ATTRIB": 59,
+    "SEQEND": 59
+  },
+  "sourceLayers": {
+    "DOTE": 18,
+    "0": 6,
+    "PUB_TITLE": 2,
+    "AXIS": 144,
+    "WALL": 174,
+    "PUB_TEXT": 2,
+    "DIM_SYMB": 2,
+    "STAIR": 60,
+    "SPACE": 40,
+    "COLUMN": 21,
+    "AXIS_TEXT": 36,
+    "WINDOW": 46,
+    "WINDOW_TEXT": 23
+  },
+  "tchEntityCount": 0,
+  "floorFootprints": [
+    {
+      "floorId": "HT-T011-F01",
+      "outline": [
+        [
+          31606.44,
+          9430.62
+        ],
+        [
+          44306.44,
+          9430.62
+        ],
+        [
+          44306.44,
+          4030.62
+        ],
+        [
+          36006.44,
+          4030.62
+        ],
+        [
+          36006.44,
+          -2969.38
+        ],
+        [
+          31606.44,
+          -2969.38
+        ]
+      ],
+      "areaM2": 99.38,
+      "reviewStatus": "architect_confirmed"
+    },
+    {
+      "floorId": "HT-T011-F02",
+      "outline": [
+        [
+          65346.02,
+          9430.62
+        ],
+        [
+          78046.02,
+          9430.62
+        ],
+        [
+          78046.02,
+          2530.62
+        ],
+        [
+          69746.02,
+          2530.62
+        ],
+        [
+          69746.02,
+          -469.38
+        ],
+        [
+          65346.02,
+          -469.38
+        ]
+      ],
+      "areaM2": 100.83,
+      "reviewStatus": "architect_confirmed"
+    }
+  ],
+  "grossFloorAreaM2": 200.21,
+  "objectCounts": {
+    "floors": 2,
+    "rooms": 12,
+    "walls": 174,
+    "doors": 9,
+    "windows": 14,
+    "stairs": 60
+  },
+  "drawingBoundsMm": [
+    22619.14,
+    -8809.87,
+    89058.73,
+    15190.13
+  ],
+  "checks": [
+    {
+      "ruleCode": "DAT-007",
+      "severity": "info",
+      "passed": true,
+      "message": "TCH proxy entity count: 0"
+    },
+    {
+      "ruleCode": "REQ-FLOOR",
+      "severity": "info",
+      "passed": true,
+      "message": "Two separate floor plans parsed"
+    },
+    {
+      "ruleCode": "REQ-BEDROOM",
+      "severity": "info",
+      "passed": true,
+      "message": "Four-bedroom two-storey program confirmed"
+    },
+    {
+      "ruleCode": "GEO-FOOTPRINT",
+      "severity": "info",
+      "passed": true,
+      "message": "Exterior-face footprints confirmed; floor-1 porch and floor-2 terrace excluded"
+    },
+    {
+      "ruleCode": "GEO-ROOM-BOUNDARY",
+      "severity": "info",
+      "passed": true,
+      "message": "All Chinese room names and wall-side boundaries confirmed"
+    },
+    {
+      "ruleCode": "GEO-STAIR",
+      "severity": "info",
+      "passed": true,
+      "message": "Stair and upper-hall boundaries are non-overlapping; inter-floor correspondence confirmed"
+    },
+    {
+      "ruleCode": "GEO-WALL-TOPOLOGY",
+      "severity": "info",
+      "passed": true,
+      "message": "All unintended non-opening breaks auto-completed"
+    }
+  ],
+  "approval": {
+    "status": "APPROVED",
+    "approvedAt": "2026-08-16",
+    "approvedBy": "user_architect_review",
+    "scope": [
+      "floor_1_exterior_footprint_excluding_porch",
+      "floor_2_exterior_footprint_excluding_terrace",
+      "all_chinese_room_names_and_boundaries",
+      "non_overlapping_stair_and_upper_hall",
+      "stair_correspondence",
+      "wall_break_auto_repair"
+    ]
+  }
+}

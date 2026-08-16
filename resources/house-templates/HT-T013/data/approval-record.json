@@ -1,0 +1,12 @@
+{
+  "status": "APPROVED",
+  "approvedAt": "2026-08-16",
+  "approvedBy": "user_architect_review",
+  "scope": [
+    "floor_1_exterior_footprint",
+    "floor_2_exterior_footprint_excluding_terrace",
+    "all_room_positions_and_boundaries",
+    "stair_location_range_and_correspondence",
+    "wall_break_auto_repair"
+  ]
+}

@@ -108,6 +108,15 @@
       "manifest": "HT-T012/import-manifest.json",
       "searchable": true,
       "publishable": true
+    },
+    {
+      "id": "HT-T013",
+      "name": "二层三房01",
+      "version": "1.0.0",
+      "status": "APPROVED",
+      "manifest": "HT-T013/import-manifest.json",
+      "searchable": true,
+      "publishable": true
     }
   ]
 }

@@ -1,0 +1,55 @@
+{
+  "source": "resources\\house-templates\\HT-T014\\source\\HT_T014_V0.1_SOURCE.dxf",
+  "acadVersion": "AC1032",
+  "entityTypes": {
+    "LINE": 281,
+    "LWPOLYLINE": 10,
+    "DIMENSION": 35,
+    "TEXT": 39,
+    "INSERT": 78,
+    "ATTRIB": 59,
+    "SEQEND": 59
+  },
+  "layers": {
+    "DOTE": 18,
+    "0": 6,
+    "PUB_TITLE": 2,
+    "AXIS": 143,
+    "WALL": 167,
+    "PUB_TEXT": 2,
+    "DIM_SYMB": 2,
+    "STAIR": 60,
+    "SPACE": 37,
+    "COLUMN": 19,
+    "AXIS_TEXT": 36,
+    "WINDOW": 46,
+    "WINDOW_TEXT": 23
+  },
+  "tchEntityCount": 0,
+  "drawingBoundsMm": [
+    22619.14,
+    -8809.87,
+    89058.73,
+    15190.13
+  ],
+  "floorRegions": [
+    {
+      "floor": "一层平面图",
+      "bounds": [
+        30000,
+        -2500,
+        45500,
+        10500
+      ]
+    },
+    {
+      "floor": "二层平面图",
+      "bounds": [
+        63700,
+        -2500,
+        79200,
+        10500
+      ]
+    }
+  ]
+}

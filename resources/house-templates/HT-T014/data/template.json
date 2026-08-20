@@ -1,0 +1,4837 @@
+{
+  "schemaVersion": "1.0.0",
+  "template": {
+    "id": "HT-T014",
+    "code": "HT-F2-W4-3B-014",
+    "name": "二层三房02",
+    "version": "1.0.0",
+    "status": "APPROVED"
+  },
+  "classification": {
+    "floorType": "F2",
+    "primaryWidthType": "W4",
+    "compatibleWidthTypes": [
+      "W4"
+    ],
+    "depthType": "D2",
+    "areaType": "A4",
+    "layoutType": "LX",
+    "featureTags": [
+      "FT-3B",
+      "FT-TWO-STOREY",
+      "FT-PORCH",
+      "FT-BALCONY"
+    ]
+  },
+  "coordinateSystem": {
+    "type": "local_cartesian",
+    "unit": "mm",
+    "origin": [
+      22619.14,
+      -8809.87,
+      0
+    ]
+  },
+  "source": {
+    "file": "normalized/HT_T014_V0.3_STANDARDIZED_AC1032.dxf",
+    "normalizedSource": "normalized/HT_T014_V0.2_NORMALIZED_AC1032.dxf",
+    "acadVersion": "AC1032",
+    "tianzhengExport": "T3",
+    "layerMap": {
+      "WALL": "HT-A-WALL-F01-NEW",
+      "COLUMN": "HT-A-COLUMN-F01-NEW",
+      "WINDOW": "HT-A-WIND-F01-NEW",
+      "WINDOW_TEXT": "HT-A-WIND-TEXT-F01-NEW",
+      "SPACE": "HT-A-ROOM-F01-NEW",
+      "AXIS": "HT-A-AXIS-F01-NEW",
+      "AXIS_TEXT": "HT-A-AXIS-TEXT-F01-NEW",
+      "DIM_ELEV": "HT-A-DIMS-F01-NEW",
+      "DIM_SYMB": "HT-A-DIMS-SYMB-F01-NEW",
+      "PUB_TEXT": "HT-A-TEXT-F01-NEW",
+      "DOTE": "HT-A-NOPLOT-F01-NEW"
+    }
+  },
+  "geometry": {
+    "floorFootprints": [
+      {
+        "floorId": "HT-T014-F01",
+        "outline": [
+          [
+            31606.44,
+            9430.62
+          ],
+          [
+            44306.44,
+            9430.62
+          ],
+          [
+            44306.44,
+            4030.62
+          ],
+          [
+            36006.44,
+            4030.62
+          ],
+          [
+            36006.44,
+            -1769.38
+          ],
+          [
+            31606.44,
+            -1769.38
+          ]
+        ],
+        "areaM2": 94.1,
+        "reviewStatus": "architect_confirmed"
+      },
+      {
+        "floorId": "HT-T014-F02",
+        "outline": [
+          [
+            65346.02,
+            9430.62
+          ],
+          [
+            78046.02,
+            9430.62
+          ],
+          [
+            78046.02,
+            2530.62
+          ],
+          [
+            65346.02,
+            2530.62
+          ]
+        ],
+        "areaM2": 87.63,
+        "reviewStatus": "architect_confirmed"
+      }
+    ],
+    "grossFloorAreaM2": 181.73,
+    "ancillaryAreas": [
+      {
+        "floorId": "HT-T014-F01",
+        "type": "PORCH",
+        "areaM2": 12.15,
+        "includedInPrincipalBuildingArea": false
+      },
+      {
+        "floorId": "HT-T014-F02",
+        "type": "BALCONY",
+        "areaM2": 16.4,
+        "includedInPrincipalBuildingArea": false
+      }
+    ],
+    "drawingBounds": {
+      "min": [
+        22619.14,
+        -8809.87
+      ],
+      "max": [
+        89058.73,
+        15190.13
+      ]
+    },
+    "wallTopologyRepairs": [
+      {
+        "policy": "AUTO_COMPLETE_ALL_UNINTENDED_BREAKS",
+        "status": "APPLIED"
+      }
+    ],
+    "stairCorrespondences": [
+      {
+        "id": "HT-T014-ST-001",
+        "fromFloor": "HT-T014-F01",
+        "toFloor": "HT-T014-F02",
+        "status": "ARCHITECT_CONFIRMED"
+      }
+    ]
+  },
+  "floors": [
+    {
+      "id": "HT-T014-F01",
+      "number": 1,
+      "name": "一层",
+      "elevation": 0,
+      "height": 3300,
+      "rooms": [
+        {
+          "id": "HT-T014-F01-RM-001",
+          "floorId": "HT-T014-F01",
+          "type": "STAIR-HALL",
+          "name": "楼梯间",
+          "area": 8.97,
+          "boundary": [
+            [
+              31806.44,
+              5330.62
+            ],
+            [
+              34106.44,
+              5330.62
+            ],
+            [
+              34106.44,
+              9230.62
+            ],
+            [
+              31806.44,
+              9230.62
+            ]
+          ],
+          "boundaryAreaM2": 8.97,
+          "labelPoint": [
+            32956.44,
+            7280.62
+          ],
+          "labelPlacement": "GEOMETRIC_CENTROID",
+          "geometryStatus": "ARCHITECT_CONFIRMED",
+          "required": true
+        },
+        {
+          "id": "HT-T014-F01-RM-002",
+          "floorId": "HT-T014-F01",
+          "type": "BAT-COMMON",
+          "name": "卫生间一",
+          "area": 5.55,
+          "boundary": [
+            [
+              34306.44,
+              5530.62
+            ],
+            [
+              35806.44,
+              5530.62
+            ],
+            [
+              35806.44,
+              9230.62
+            ],
+            [
+              34306.44,
+              9230.62
+            ]
+          ],
+          "boundaryAreaM2": 5.55,
+          "labelPoint": [
+            35056.44,
+            7380.62
+          ],
+          "labelPlacement": "GEOMETRIC_CENTROID",
+          "geometryStatus": "ARCHITECT_CONFIRMED",
+          "required": true
+        },
+        {
+          "id": "HT-T014-F01-RM-003",
+          "floorId": "HT-T014-F01",
+          "type": "LIVING",
+          "name": "客厅",
+          "area": 21.0,
+          "boundary": [
+            [
+              36006.44,
+              4230.62
+            ],
+            [
+              40206.44,
+              4230.62
+            ],
+            [
+              40206.44,
+              9230.62
+            ],
+            [
+              36006.44,
+              9230.62
+            ]
+          ],
+          "boundaryAreaM2": 21.0,
+          "labelPoint": [
+            38106.44,
+            6730.62
+          ],
+          "labelPlacement": "GEOMETRIC_CENTROID",
+          "geometryStatus": "ARCHITECT_CONFIRMED",
+          "required": true
+        },
+        {
+          "id": "HT-T014-F01-RM-004",
+          "floorId": "HT-T014-F01",
+          "type": "BED-SECONDARY",
+          "name": "卧室一",
+          "area": 18.5,
+          "boundary": [
+            [
+              40406.44,
+              4230.62
+            ],
+            [
+              44106.44,
+              4230.62
+            ],
+            [
+              44106.44,
+              9230.62
+            ],
+            [
+              40406.44,
+              9230.62
+            ]
+          ],
+          "boundaryAreaM2": 18.5,
+          "labelPoint": [
+            42256.44,
+            6730.62
+          ],
+          "labelPlacement": "GEOMETRIC_CENTROID",
+          "geometryStatus": "ARCHITECT_CONFIRMED",
+          "required": true
+        },
+        {
+          "id": "HT-T014-F01-RM-005",
+          "floorId": "HT-T014-F01",
+          "type": "DINING",
+          "name": "餐厅",
+          "area": 12.4,
+          "boundary": [
+            [
+              31806.44,
+              930.62
+            ],
+            [
+              35806.44,
+              930.62
+            ],
+            [
+              35806.44,
+              4030.62
+            ],
+            [
+              31806.44,
+              4030.62
+            ]
+          ],
+          "boundaryAreaM2": 12.4,
+          "labelPoint": [
+            33806.44,
+            2480.62
+          ],
+          "labelPlacement": "GEOMETRIC_CENTROID",
+          "geometryStatus": "ARCHITECT_CONFIRMED",
+          "required": true
+        },
+        {
+          "id": "HT-T014-F01-RM-006",
+          "floorId": "HT-T014-F01",
+          "type": "KIT-CLOSED",
+          "name": "厨房",
+          "area": 9.2,
+          "boundary": [
+            [
+              31806.44,
+              -1569.38
+            ],
+            [
+              35806.44,
+              -1569.38
+            ],
+            [
+              35806.44,
+              730.62
+            ],
+            [
+              31806.44,
+              730.62
+            ]
+          ],
+          "boundaryAreaM2": 9.2,
+          "labelPoint": [
+            33806.44,
+            -419.38
+          ],
+          "labelPlacement": "GEOMETRIC_CENTROID",
+          "geometryStatus": "ARCHITECT_CONFIRMED",
+          "required": true
+        }
+      ],
+      "walls": [
+        {
+          "id": "HT-T014-F01-WL-001",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3A3",
+          "start": [
+            31806.44,
+            9230.62
+          ],
+          "end": [
+            32506.44,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-002",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3A4",
+          "start": [
+            32506.44,
+            9230.62
+          ],
+          "end": [
+            32506.44,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-003",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3A5",
+          "start": [
+            32506.44,
+            9430.62
+          ],
+          "end": [
+            31806.44,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-004",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3A6",
+          "start": [
+            34206.44,
+            9430.62
+          ],
+          "end": [
+            33406.44,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-005",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3A7",
+          "start": [
+            33406.44,
+            9430.62
+          ],
+          "end": [
+            33406.44,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-006",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3A8",
+          "start": [
+            33406.44,
+            9230.62
+          ],
+          "end": [
+            34106.44,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-007",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3A9",
+          "start": [
+            44306.44,
+            9430.62
+          ],
+          "end": [
+            44306.44,
+            4130.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-008",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3AA",
+          "start": [
+            44106.44,
+            9230.62
+          ],
+          "end": [
+            44106.44,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-009",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3AB",
+          "start": [
+            44106.44,
+            4230.62
+          ],
+          "end": [
+            43156.44,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-010",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3AC",
+          "start": [
+            43156.44,
+            4230.62
+          ],
+          "end": [
+            43156.44,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-011",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3AD",
+          "start": [
+            43156.44,
+            4030.62
+          ],
+          "end": [
+            44106.44,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-012",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3AE",
+          "start": [
+            40406.44,
+            4030.62
+          ],
+          "end": [
+            41356.44,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-013",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3AF",
+          "start": [
+            41356.44,
+            4030.62
+          ],
+          "end": [
+            41356.44,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-014",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3B0",
+          "start": [
+            41356.44,
+            4230.62
+          ],
+          "end": [
+            40406.44,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-015",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3B1",
+          "start": [
+            35806.44,
+            4030.62
+          ],
+          "end": [
+            35806.44,
+            3730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-016",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3B2",
+          "start": [
+            35806.44,
+            3730.62
+          ],
+          "end": [
+            36006.44,
+            3730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-017",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3B3",
+          "start": [
+            36006.44,
+            3730.62
+          ],
+          "end": [
+            36006.44,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-018",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3B4",
+          "start": [
+            36006.44,
+            930.62
+          ],
+          "end": [
+            36006.44,
+            1030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-019",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3B5",
+          "start": [
+            36006.44,
+            1030.62
+          ],
+          "end": [
+            35806.44,
+            1030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-020",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3B6",
+          "start": [
+            35806.44,
+            1030.62
+          ],
+          "end": [
+            35806.44,
+            930.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-021",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3B7",
+          "start": [
+            35806.44,
+            2530.62
+          ],
+          "end": [
+            35806.44,
+            2030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-022",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3B8",
+          "start": [
+            35806.44,
+            2030.62
+          ],
+          "end": [
+            36006.44,
+            2030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-023",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3B9",
+          "start": [
+            36006.44,
+            2030.62
+          ],
+          "end": [
+            36006.44,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-024",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3BA",
+          "start": [
+            36006.44,
+            2530.62
+          ],
+          "end": [
+            35806.44,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-025",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3BB",
+          "start": [
+            35806.44,
+            -1769.38
+          ],
+          "end": [
+            31806.44,
+            -1769.38
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-026",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3BC",
+          "start": [
+            35806.44,
+            -1569.38
+          ],
+          "end": [
+            31806.44,
+            -1569.38
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-027",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3BD",
+          "start": [
+            31606.44,
+            -1569.38
+          ],
+          "end": [
+            31606.44,
+            730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-028",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3BE",
+          "start": [
+            31806.44,
+            -1569.38
+          ],
+          "end": [
+            31806.44,
+            730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-029",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3BF",
+          "start": [
+            31806.44,
+            4230.62
+          ],
+          "end": [
+            34306.44,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-030",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3C0",
+          "start": [
+            31806.44,
+            4030.62
+          ],
+          "end": [
+            34306.44,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-031",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3C1",
+          "start": [
+            34306.44,
+            4230.62
+          ],
+          "end": [
+            34306.44,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-032",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3C2",
+          "start": [
+            35806.44,
+            730.62
+          ],
+          "end": [
+            35806.44,
+            480.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-033",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3C3",
+          "start": [
+            35806.44,
+            480.62
+          ],
+          "end": [
+            36006.44,
+            480.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-034",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3C4",
+          "start": [
+            36006.44,
+            480.62
+          ],
+          "end": [
+            36006.44,
+            730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-035",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3C5",
+          "start": [
+            36006.44,
+            -1569.38
+          ],
+          "end": [
+            36006.44,
+            -1319.38
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-036",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3C6",
+          "start": [
+            36006.44,
+            -1319.38
+          ],
+          "end": [
+            35806.44,
+            -1319.38
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-037",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3C7",
+          "start": [
+            35806.44,
+            -1319.38
+          ],
+          "end": [
+            35806.44,
+            -1569.38
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-038",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3C8",
+          "start": [
+            31606.44,
+            930.62
+          ],
+          "end": [
+            31606.44,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-039",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3C9",
+          "start": [
+            31806.44,
+            930.62
+          ],
+          "end": [
+            31806.44,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-040",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3CA",
+          "start": [
+            31806.44,
+            930.62
+          ],
+          "end": [
+            35806.44,
+            930.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-041",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3CB",
+          "start": [
+            31806.44,
+            730.62
+          ],
+          "end": [
+            35806.44,
+            730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-042",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3CC",
+          "start": [
+            36006.44,
+            9230.62
+          ],
+          "end": [
+            37206.44,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-043",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3CD",
+          "start": [
+            37206.44,
+            9230.62
+          ],
+          "end": [
+            37206.44,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-044",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3CE",
+          "start": [
+            37206.44,
+            9430.62
+          ],
+          "end": [
+            36006.44,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-045",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3CF",
+          "start": [
+            40206.44,
+            9430.62
+          ],
+          "end": [
+            39006.44,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-046",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3D0",
+          "start": [
+            39006.44,
+            9430.62
+          ],
+          "end": [
+            39006.44,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-047",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3D1",
+          "start": [
+            39006.44,
+            9230.62
+          ],
+          "end": [
+            40206.44,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-048",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3D2",
+          "start": [
+            36006.44,
+            9230.62
+          ],
+          "end": [
+            36006.44,
+            5330.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-049",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3D3",
+          "start": [
+            35806.44,
+            9230.62
+          ],
+          "end": [
+            35806.44,
+            5530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-050",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3D4",
+          "start": [
+            31606.44,
+            4230.62
+          ],
+          "end": [
+            31606.44,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-051",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3D5",
+          "start": [
+            31806.44,
+            4230.62
+          ],
+          "end": [
+            31806.44,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-052",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3D6",
+          "start": [
+            35806.44,
+            5530.62
+          ],
+          "end": [
+            35206.44,
+            5530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-053",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3D7",
+          "start": [
+            35206.44,
+            5530.62
+          ],
+          "end": [
+            35206.44,
+            5330.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-054",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3D8",
+          "start": [
+            35206.44,
+            5330.62
+          ],
+          "end": [
+            36006.44,
+            5330.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-055",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3D9",
+          "start": [
+            34106.44,
+            5330.62
+          ],
+          "end": [
+            34406.44,
+            5330.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-056",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3DA",
+          "start": [
+            34406.44,
+            5330.62
+          ],
+          "end": [
+            34406.44,
+            5530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-057",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3DB",
+          "start": [
+            34406.44,
+            5530.62
+          ],
+          "end": [
+            34306.44,
+            5530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-058",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3DC",
+          "start": [
+            34306.44,
+            9230.62
+          ],
+          "end": [
+            34306.44,
+            5530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-059",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3DD",
+          "start": [
+            34106.44,
+            9230.62
+          ],
+          "end": [
+            34106.44,
+            5330.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-060",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3DE",
+          "start": [
+            34306.44,
+            9230.62
+          ],
+          "end": [
+            34556.44,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-061",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3DF",
+          "start": [
+            34556.44,
+            9230.62
+          ],
+          "end": [
+            34556.44,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-062",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3E0",
+          "start": [
+            34556.44,
+            9430.62
+          ],
+          "end": [
+            34206.44,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-063",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3E1",
+          "start": [
+            35806.44,
+            9430.62
+          ],
+          "end": [
+            35456.44,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-064",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3E2",
+          "start": [
+            35456.44,
+            9430.62
+          ],
+          "end": [
+            35456.44,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-065",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3E3",
+          "start": [
+            35456.44,
+            9230.62
+          ],
+          "end": [
+            35806.44,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-066",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3E4",
+          "start": [
+            40206.44,
+            9230.62
+          ],
+          "end": [
+            40206.44,
+            5330.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-067",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3E5",
+          "start": [
+            40206.44,
+            5330.62
+          ],
+          "end": [
+            40406.44,
+            5330.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-068",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3E6",
+          "start": [
+            40406.44,
+            5330.62
+          ],
+          "end": [
+            40406.44,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-069",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3E7",
+          "start": [
+            40406.44,
+            4230.62
+          ],
+          "end": [
+            40406.44,
+            4330.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-070",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3E8",
+          "start": [
+            40406.44,
+            4330.62
+          ],
+          "end": [
+            40206.44,
+            4330.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-071",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3E9",
+          "start": [
+            40206.44,
+            4330.62
+          ],
+          "end": [
+            40206.44,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-072",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3EA",
+          "start": [
+            40406.44,
+            9430.62
+          ],
+          "end": [
+            44306.44,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-073",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3EB",
+          "start": [
+            40406.44,
+            9230.62
+          ],
+          "end": [
+            44106.44,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-074",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3EC",
+          "start": [
+            40206.44,
+            4230.62
+          ],
+          "end": [
+            39006.44,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-075",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3ED",
+          "start": [
+            39006.44,
+            4230.62
+          ],
+          "end": [
+            39006.44,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-076",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3EE",
+          "start": [
+            39006.44,
+            4030.62
+          ],
+          "end": [
+            40206.44,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-077",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3EF",
+          "start": [
+            36006.44,
+            4030.62
+          ],
+          "end": [
+            37206.44,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-078",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3F0",
+          "start": [
+            37206.44,
+            4030.62
+          ],
+          "end": [
+            37206.44,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-079",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "3F1",
+          "start": [
+            37206.44,
+            4230.62
+          ],
+          "end": [
+            36006.44,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-080",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "413",
+          "start": [
+            44306.44,
+            4130.62
+          ],
+          "end": [
+            44306.44,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-081",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "414",
+          "start": [
+            44106.44,
+            4030.62
+          ],
+          "end": [
+            44106.44,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F01-WL-082",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "415",
+          "start": [
+            44306.44,
+            2530.62
+          ],
+          "end": [
+            44106.44,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        }
+      ],
+      "openings": [
+        {
+          "id": "HT-T014-F01-DR-001",
+          "type": "DOOR",
+          "sourceHandle": "48D",
+          "sourceBlock": "$DorLib2D$00000001",
+          "insertionPoint": [
+            34806.44,
+            5430.62
+          ],
+          "rotationDeg": 180.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F01-DR-002",
+          "type": "DOOR",
+          "sourceHandle": "490",
+          "sourceBlock": "$DorLib2D$00000002",
+          "insertionPoint": [
+            38106.44,
+            4130.62
+          ],
+          "rotationDeg": 180.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F01-WN-001",
+          "type": "WINDOW",
+          "sourceHandle": "493",
+          "sourceBlock": "$TCHSYS$WIN2D",
+          "insertionPoint": [
+            42256.44,
+            4130.62
+          ],
+          "rotationDeg": 180.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F01-WN-002",
+          "type": "WINDOW",
+          "sourceHandle": "496",
+          "sourceBlock": "$TCHSYS$WIN2D",
+          "insertionPoint": [
+            35906.44,
+            -419.38
+          ],
+          "rotationDeg": 270.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F01-WN-003",
+          "type": "WINDOW",
+          "sourceHandle": "499",
+          "sourceBlock": "$TCHSYS$WIN2D",
+          "insertionPoint": [
+            35906.44,
+            3130.62
+          ],
+          "rotationDeg": 270.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F01-WN-004",
+          "type": "WINDOW",
+          "sourceHandle": "49F",
+          "sourceBlock": "$TCHSYS$WIN2D",
+          "insertionPoint": [
+            38106.44,
+            9330.62
+          ],
+          "rotationDeg": 0.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F01-WN-005",
+          "type": "WINDOW",
+          "sourceHandle": "4A2",
+          "sourceBlock": "$TCHSYS$WIN2D",
+          "insertionPoint": [
+            35006.44,
+            9330.62
+          ],
+          "rotationDeg": 0.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F01-WN-006",
+          "type": "WINDOW",
+          "sourceHandle": "4A5",
+          "sourceBlock": "$TCHSYS$WIN2D",
+          "insertionPoint": [
+            32956.44,
+            9330.62
+          ],
+          "rotationDeg": 360.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F01-DR-003",
+          "type": "DOOR",
+          "sourceHandle": "4A8",
+          "sourceBlock": "$DorLib2D$00000001",
+          "insertionPoint": [
+            40306.44,
+            4830.62
+          ],
+          "rotationDeg": 270.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F01-DR-004",
+          "type": "DOOR",
+          "sourceHandle": "4AB",
+          "sourceBlock": "$DorLib2D$00000001",
+          "insertionPoint": [
+            35906.44,
+            1530.62
+          ],
+          "rotationDeg": 270.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        }
+      ],
+      "stairs": [
+        {
+          "id": "HT-T014-F01-ST-001",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "3F4",
+          "start": [
+            33066.44,
+            5600.62
+          ],
+          "end": [
+            34106.44,
+            5600.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F01-ST-002",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "3F5",
+          "start": [
+            33066.44,
+            5870.62
+          ],
+          "end": [
+            34106.44,
+            5870.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F01-ST-003",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "3F6",
+          "start": [
+            33066.44,
+            6140.62
+          ],
+          "end": [
+            34106.44,
+            6140.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F01-ST-004",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "3F7",
+          "start": [
+            33322.61,
+            6410.62
+          ],
+          "end": [
+            34106.44,
+            6410.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F01-ST-005",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "3F8",
+          "start": [
+            33790.26,
+            6680.62
+          ],
+          "end": [
+            34106.44,
+            6680.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F01-ST-006",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "3F9",
+          "start": [
+            34106.44,
+            5330.62
+          ],
+          "end": [
+            34106.44,
+            6863.16
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F01-ST-007",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "3FA",
+          "start": [
+            33066.44,
+            5330.62
+          ],
+          "end": [
+            34106.44,
+            5330.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F01-ST-008",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "3FB",
+          "start": [
+            33006.44,
+            5330.62
+          ],
+          "end": [
+            33006.44,
+            6228.08
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F01-ST-009",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "3FC",
+          "start": [
+            34106.44,
+            6863.16
+          ],
+          "end": [
+            33616.96,
+            6580.56
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F01-ST-010",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "3FD",
+          "start": [
+            33616.96,
+            6580.56
+          ],
+          "end": [
+            33651.9,
+            6450.16
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F01-ST-011",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "3FE",
+          "start": [
+            33651.9,
+            6450.16
+          ],
+          "end": [
+            33445.85,
+            6623.05
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F01-ST-012",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "3FF",
+          "start": [
+            33445.85,
+            6623.05
+          ],
+          "end": [
+            33478.63,
+            6500.7
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F01-ST-013",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "400",
+          "start": [
+            33478.63,
+            6500.7
+          ],
+          "end": [
+            33006.44,
+            6228.08
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F01-ST-014",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "401",
+          "start": [
+            33006.44,
+            5300.62
+          ],
+          "end": [
+            33006.44,
+            6228.08
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F01-ST-015",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "402",
+          "start": [
+            33066.44,
+            5300.62
+          ],
+          "end": [
+            33066.44,
+            6262.72
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F01-ST-016",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "403",
+          "start": [
+            33006.44,
+            5300.62
+          ],
+          "end": [
+            33066.44,
+            5300.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        }
+      ],
+      "columns": [],
+      "annotations": [
+        {
+          "type": "TEXT",
+          "layer": "PUB_TEXT",
+          "value": "上",
+          "position": [
+            33452.18,
+            4740.62
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "卧室",
+          "position": [
+            41964.95,
+            7181.11
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "18.50m",
+          "position": [
+            41661.13,
+            6669.24
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "2",
+          "position": [
+            42821.13,
+            6844.24
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "厨房",
+          "position": [
+            33415.97,
+            -124.61
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "9.20m",
+          "position": [
+            33208.1,
+            -636.49
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "2",
+          "position": [
+            34208.1,
+            -461.49
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "餐厅",
+          "position": [
+            33477.29,
+            2606.35
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "12.40m",
+          "position": [
+            33194.74,
+            2094.48
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "2",
+          "position": [
+            34354.74,
+            2269.48
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "卫生间",
+          "position": [
+            34654.91,
+            7869.7
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "5.55m",
+          "position": [
+            34598.63,
+            7357.82
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "2",
+          "position": [
+            35598.63,
+            7532.82
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "客厅",
+          "position": [
+            37885.27,
+            6941.84
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "21.00m",
+          "position": [
+            37594.74,
+            6429.97
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "2",
+          "position": [
+            38754.74,
+            6604.97
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "门廊",
+          "position": [
+            37785.77,
+            3006.69
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "1",
+          "position": [
+            31641.58,
+            -7341.76
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "1",
+          "position": [
+            31641.58,
+            14458.24
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "2",
+          "position": [
+            35751.12,
+            -7302.35
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "2",
+          "position": [
+            35751.12,
+            14497.65
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "3",
+          "position": [
+            40151.12,
+            -7302.35
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "3",
+          "position": [
+            40151.12,
+            14497.65
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "4",
+          "position": [
+            44043.69,
+            -7297.22
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "4",
+          "position": [
+            44043.69,
+            14502.78
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            34611.44,
+            5006.87
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            37911.44,
+            4356.87
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            42061.44,
+            3606.87
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            35680.19,
+            -1314.38
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            36430.19,
+            2935.62
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "楼梯间",
+          "position": [
+            32437.89,
+            7869.7
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "8.97m",
+          "position": [
+            32376.29,
+            7357.82
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "2",
+          "position": [
+            33376.29,
+            7532.82
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            37911.44,
+            8906.87
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            34811.44,
+            8806.87
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            32761.44,
+            9556.87
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            40080.19,
+            4635.62
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            36430.19,
+            635.62
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HT-T014-F02",
+      "number": 2,
+      "name": "二层",
+      "elevation": 3300,
+      "height": 3300,
+      "rooms": [
+        {
+          "id": "HT-T014-F02-RM-001",
+          "floorId": "HT-T014-F02",
+          "type": "STAIR-HALL",
+          "name": "楼梯间",
+          "area": 9.11,
+          "boundary": [
+            [
+              65546.02,
+              5330.62
+            ],
+            [
+              67846.02,
+              5330.62
+            ],
+            [
+              67846.02,
+              9230.62
+            ],
+            [
+              65546.02,
+              9230.62
+            ]
+          ],
+          "boundaryAreaM2": 8.97,
+          "labelPoint": [
+            66696.02,
+            7280.62
+          ],
+          "labelPlacement": "GEOMETRIC_CENTROID",
+          "geometryStatus": "ARCHITECT_CONFIRMED",
+          "required": true
+        },
+        {
+          "id": "HT-T014-F02-RM-002",
+          "floorId": "HT-T014-F02",
+          "type": "BAT-COMMON",
+          "name": "卫生间二",
+          "area": 5.55,
+          "boundary": [
+            [
+              68046.02,
+              5530.62
+            ],
+            [
+              69546.02,
+              5530.62
+            ],
+            [
+              69546.02,
+              9230.62
+            ],
+            [
+              68046.02,
+              9230.62
+            ]
+          ],
+          "boundaryAreaM2": 5.55,
+          "labelPoint": [
+            68796.02,
+            7380.62
+          ],
+          "labelPlacement": "GEOMETRIC_CENTROID",
+          "geometryStatus": "ARCHITECT_CONFIRMED",
+          "required": true
+        },
+        {
+          "id": "HT-T014-F02-RM-003",
+          "floorId": "HT-T014-F02",
+          "type": "BED-SECONDARY",
+          "name": "卧室二",
+          "area": 21.0,
+          "boundary": [
+            [
+              69746.02,
+              4230.62
+            ],
+            [
+              73946.02,
+              4230.62
+            ],
+            [
+              73946.02,
+              9230.62
+            ],
+            [
+              69746.02,
+              9230.62
+            ]
+          ],
+          "boundaryAreaM2": 21.0,
+          "labelPoint": [
+            71846.02,
+            6730.62
+          ],
+          "labelPlacement": "GEOMETRIC_CENTROID",
+          "geometryStatus": "ARCHITECT_CONFIRMED",
+          "required": true
+        },
+        {
+          "id": "HT-T014-F02-RM-004",
+          "floorId": "HT-T014-F02",
+          "type": "BED-SECONDARY",
+          "name": "卧室三",
+          "area": 18.5,
+          "boundary": [
+            [
+              74146.02,
+              4230.62
+            ],
+            [
+              77846.02,
+              4230.62
+            ],
+            [
+              77846.02,
+              9230.62
+            ],
+            [
+              74146.02,
+              9230.62
+            ]
+          ],
+          "boundaryAreaM2": 18.5,
+          "labelPoint": [
+            75996.02,
+            6730.62
+          ],
+          "labelPlacement": "GEOMETRIC_CENTROID",
+          "geometryStatus": "ARCHITECT_CONFIRMED",
+          "required": true
+        },
+        {
+          "id": "HT-T014-F02-RM-005",
+          "floorId": "HT-T014-F02",
+          "type": "HALL",
+          "name": "过厅",
+          "area": 10.4,
+          "boundary": [
+            [
+              65546.02,
+              2730.62
+            ],
+            [
+              69546.02,
+              2730.62
+            ],
+            [
+              69546.02,
+              5330.62
+            ],
+            [
+              65546.02,
+              5330.62
+            ]
+          ],
+          "boundaryAreaM2": 10.4,
+          "labelPoint": [
+            67546.02,
+            4030.62
+          ],
+          "labelPlacement": "GEOMETRIC_CENTROID",
+          "geometryStatus": "ARCHITECT_CONFIRMED",
+          "required": true
+        }
+      ],
+      "walls": [
+        {
+          "id": "HT-T014-F02-WL-001",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4AE",
+          "start": [
+            65546.02,
+            9230.62
+          ],
+          "end": [
+            66246.02,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-002",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4AF",
+          "start": [
+            66246.02,
+            9230.62
+          ],
+          "end": [
+            66246.02,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-003",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4B0",
+          "start": [
+            66246.02,
+            9430.62
+          ],
+          "end": [
+            65546.02,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-004",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4B1",
+          "start": [
+            67946.02,
+            9430.62
+          ],
+          "end": [
+            67146.02,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-005",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4B2",
+          "start": [
+            67146.02,
+            9430.62
+          ],
+          "end": [
+            67146.02,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-006",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4B3",
+          "start": [
+            67146.02,
+            9230.62
+          ],
+          "end": [
+            67846.02,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-007",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4B7",
+          "start": [
+            78046.02,
+            9430.62
+          ],
+          "end": [
+            78046.02,
+            4130.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-008",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4B8",
+          "start": [
+            77846.02,
+            9230.62
+          ],
+          "end": [
+            77846.02,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-009",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4B9",
+          "start": [
+            77846.02,
+            4230.62
+          ],
+          "end": [
+            75246.02,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-010",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4BA",
+          "start": [
+            75246.02,
+            4230.62
+          ],
+          "end": [
+            75246.02,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-011",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4BB",
+          "start": [
+            75246.02,
+            4030.62
+          ],
+          "end": [
+            77846.02,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-012",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4BC",
+          "start": [
+            74146.02,
+            4030.62
+          ],
+          "end": [
+            74246.02,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-013",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4BD",
+          "start": [
+            74246.02,
+            4030.62
+          ],
+          "end": [
+            74246.02,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-014",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4BE",
+          "start": [
+            74246.02,
+            4230.62
+          ],
+          "end": [
+            74146.02,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-015",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4BF",
+          "start": [
+            69746.02,
+            9230.62
+          ],
+          "end": [
+            70946.02,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-016",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4C0",
+          "start": [
+            70946.02,
+            9230.62
+          ],
+          "end": [
+            70946.02,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-017",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4C1",
+          "start": [
+            70946.02,
+            9430.62
+          ],
+          "end": [
+            69746.02,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-018",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4C2",
+          "start": [
+            73946.02,
+            9430.62
+          ],
+          "end": [
+            72746.02,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-019",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4C3",
+          "start": [
+            72746.02,
+            9430.62
+          ],
+          "end": [
+            72746.02,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-020",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4C4",
+          "start": [
+            72746.02,
+            9230.62
+          ],
+          "end": [
+            73946.02,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-021",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4C8",
+          "start": [
+            69746.02,
+            9230.62
+          ],
+          "end": [
+            69746.02,
+            5430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-022",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4C9",
+          "start": [
+            69546.02,
+            9230.62
+          ],
+          "end": [
+            69546.02,
+            5530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-023",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4CA",
+          "start": [
+            65346.02,
+            4230.62
+          ],
+          "end": [
+            65346.02,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-024",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4CB",
+          "start": [
+            65546.02,
+            4230.62
+          ],
+          "end": [
+            65546.02,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-025",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4CC",
+          "start": [
+            73946.02,
+            4230.62
+          ],
+          "end": [
+            73846.02,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-026",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4CD",
+          "start": [
+            73846.02,
+            4230.62
+          ],
+          "end": [
+            73846.02,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-027",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4CE",
+          "start": [
+            73846.02,
+            4030.62
+          ],
+          "end": [
+            73946.02,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-028",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4CF",
+          "start": [
+            69546.02,
+            4030.62
+          ],
+          "end": [
+            72846.02,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-029",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4D0",
+          "start": [
+            72846.02,
+            4030.62
+          ],
+          "end": [
+            72846.02,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-030",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4D1",
+          "start": [
+            72846.02,
+            4230.62
+          ],
+          "end": [
+            69746.02,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-031",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4D5",
+          "start": [
+            68046.02,
+            9230.62
+          ],
+          "end": [
+            68046.02,
+            5530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-032",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4D6",
+          "start": [
+            67846.02,
+            9230.62
+          ],
+          "end": [
+            67846.02,
+            5330.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-033",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4D7",
+          "start": [
+            68046.02,
+            9230.62
+          ],
+          "end": [
+            68296.02,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-034",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4D8",
+          "start": [
+            68296.02,
+            9230.62
+          ],
+          "end": [
+            68296.02,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-035",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4D9",
+          "start": [
+            68296.02,
+            9430.62
+          ],
+          "end": [
+            67946.02,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-036",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4DA",
+          "start": [
+            69546.02,
+            9430.62
+          ],
+          "end": [
+            69196.02,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-037",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4DB",
+          "start": [
+            69196.02,
+            9430.62
+          ],
+          "end": [
+            69196.02,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-038",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4DC",
+          "start": [
+            69196.02,
+            9230.62
+          ],
+          "end": [
+            69546.02,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-039",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4E0",
+          "start": [
+            74146.02,
+            9230.62
+          ],
+          "end": [
+            74146.02,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-040",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4E1",
+          "start": [
+            73946.02,
+            9230.62
+          ],
+          "end": [
+            73946.02,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-041",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4E2",
+          "start": [
+            74146.02,
+            9230.62
+          ],
+          "end": [
+            75096.02,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-042",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4E3",
+          "start": [
+            75096.02,
+            9230.62
+          ],
+          "end": [
+            75096.02,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-043",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4E4",
+          "start": [
+            75096.02,
+            9430.62
+          ],
+          "end": [
+            74146.02,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-044",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4E5",
+          "start": [
+            78046.02,
+            9430.62
+          ],
+          "end": [
+            76896.02,
+            9430.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-045",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4E6",
+          "start": [
+            76896.02,
+            9430.62
+          ],
+          "end": [
+            76896.02,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-046",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "4E7",
+          "start": [
+            76896.02,
+            9230.62
+          ],
+          "end": [
+            77846.02,
+            9230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-047",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "51C",
+          "start": [
+            78046.02,
+            4130.62
+          ],
+          "end": [
+            78046.02,
+            2630.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-048",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "51D",
+          "start": [
+            77846.02,
+            4030.62
+          ],
+          "end": [
+            77846.02,
+            2730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-049",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "570",
+          "start": [
+            65546.02,
+            2730.62
+          ],
+          "end": [
+            65546.02,
+            2930.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-050",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "571",
+          "start": [
+            65546.02,
+            2930.62
+          ],
+          "end": [
+            65346.02,
+            2930.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-051",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "572",
+          "start": [
+            65346.02,
+            2930.62
+          ],
+          "end": [
+            65346.02,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-052",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "573",
+          "start": [
+            65346.02,
+            4030.62
+          ],
+          "end": [
+            65346.02,
+            3830.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-053",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "574",
+          "start": [
+            65346.02,
+            3830.62
+          ],
+          "end": [
+            65546.02,
+            3830.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-054",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "575",
+          "start": [
+            65546.02,
+            3830.62
+          ],
+          "end": [
+            65546.02,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-055",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "576",
+          "start": [
+            69546.02,
+            5530.62
+          ],
+          "end": [
+            68946.02,
+            5530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-056",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "577",
+          "start": [
+            68946.02,
+            5530.62
+          ],
+          "end": [
+            68946.02,
+            5330.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-057",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "578",
+          "start": [
+            68946.02,
+            5330.62
+          ],
+          "end": [
+            69546.02,
+            5330.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-058",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "579",
+          "start": [
+            67846.02,
+            5330.62
+          ],
+          "end": [
+            68146.02,
+            5330.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-059",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "57A",
+          "start": [
+            68146.02,
+            5330.62
+          ],
+          "end": [
+            68146.02,
+            5530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-060",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "57B",
+          "start": [
+            68146.02,
+            5530.62
+          ],
+          "end": [
+            68046.02,
+            5530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-061",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "57C",
+          "start": [
+            78046.02,
+            2630.62
+          ],
+          "end": [
+            78046.02,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-062",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "57D",
+          "start": [
+            77846.02,
+            2530.62
+          ],
+          "end": [
+            77846.02,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-063",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "57E",
+          "start": [
+            78046.02,
+            2530.62
+          ],
+          "end": [
+            77846.02,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-064",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "57F",
+          "start": [
+            65346.02,
+            2530.62
+          ],
+          "end": [
+            66196.02,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-065",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "580",
+          "start": [
+            66196.02,
+            2530.62
+          ],
+          "end": [
+            66196.02,
+            2730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-066",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "581",
+          "start": [
+            66196.02,
+            2730.62
+          ],
+          "end": [
+            65546.02,
+            2730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-067",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "582",
+          "start": [
+            77846.02,
+            2530.62
+          ],
+          "end": [
+            77846.02,
+            2730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-068",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "583",
+          "start": [
+            67996.02,
+            2530.62
+          ],
+          "end": [
+            68446.02,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-069",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "584",
+          "start": [
+            68446.02,
+            2530.62
+          ],
+          "end": [
+            68446.02,
+            2730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-070",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "585",
+          "start": [
+            68446.02,
+            2730.62
+          ],
+          "end": [
+            67996.02,
+            2730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-071",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "586",
+          "start": [
+            67996.02,
+            2730.62
+          ],
+          "end": [
+            67996.02,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-072",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "587",
+          "start": [
+            69446.02,
+            2530.62
+          ],
+          "end": [
+            69746.02,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-073",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "588",
+          "start": [
+            69746.02,
+            2530.62
+          ],
+          "end": [
+            69746.02,
+            2730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-074",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "589",
+          "start": [
+            69746.02,
+            2730.62
+          ],
+          "end": [
+            69446.02,
+            2730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-075",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "58A",
+          "start": [
+            69446.02,
+            2730.62
+          ],
+          "end": [
+            69446.02,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-076",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "58B",
+          "start": [
+            71046.02,
+            2530.62
+          ],
+          "end": [
+            71246.02,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-077",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "58C",
+          "start": [
+            71246.02,
+            2530.62
+          ],
+          "end": [
+            71246.02,
+            2730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-078",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "58D",
+          "start": [
+            71246.02,
+            2730.62
+          ],
+          "end": [
+            71046.02,
+            2730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-079",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "58E",
+          "start": [
+            71046.02,
+            2730.62
+          ],
+          "end": [
+            71046.02,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-080",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "58F",
+          "start": [
+            73946.02,
+            2530.62
+          ],
+          "end": [
+            74146.02,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-081",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "590",
+          "start": [
+            74146.02,
+            2530.62
+          ],
+          "end": [
+            74146.02,
+            2730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-082",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "591",
+          "start": [
+            74146.02,
+            2730.62
+          ],
+          "end": [
+            73946.02,
+            2730.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-083",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "592",
+          "start": [
+            73946.02,
+            2730.62
+          ],
+          "end": [
+            73946.02,
+            2530.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-084",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "593",
+          "start": [
+            69746.02,
+            5430.62
+          ],
+          "end": [
+            69746.02,
+            4230.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        },
+        {
+          "id": "HT-T014-F02-WL-085",
+          "type": "WALL-SEGMENT",
+          "sourceHandle": "594",
+          "start": [
+            69546.02,
+            5330.62
+          ],
+          "end": [
+            69546.02,
+            4030.62
+          ],
+          "topologyStatus": "AUTO_REPAIRED_OR_ARCHITECT_CONFIRMED_OPENING"
+        }
+      ],
+      "openings": [
+        {
+          "id": "HT-T014-F02-WN-001",
+          "type": "WINDOW",
+          "sourceHandle": "4B4",
+          "sourceBlock": "$TCHSYS$WIN2D",
+          "insertionPoint": [
+            66696.02,
+            9330.62
+          ],
+          "rotationDeg": 360.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F02-WN-002",
+          "type": "WINDOW",
+          "sourceHandle": "4C5",
+          "sourceBlock": "$TCHSYS$WIN2D",
+          "insertionPoint": [
+            71846.02,
+            9330.62
+          ],
+          "rotationDeg": 0.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F02-DR-001",
+          "type": "DOOR",
+          "sourceHandle": "4D2",
+          "sourceBlock": "$DorLib2D$00000001",
+          "insertionPoint": [
+            68546.02,
+            5430.62
+          ],
+          "rotationDeg": 180.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F02-WN-003",
+          "type": "WINDOW",
+          "sourceHandle": "4DD",
+          "sourceBlock": "$TCHSYS$WIN2D",
+          "insertionPoint": [
+            68746.02,
+            9330.62
+          ],
+          "rotationDeg": 0.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F02-WN-004",
+          "type": "WINDOW",
+          "sourceHandle": "595",
+          "sourceBlock": "$TCHSYS$WIN2D",
+          "insertionPoint": [
+            75996.02,
+            9330.62
+          ],
+          "rotationDeg": 0.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F02-DR-002",
+          "type": "DOOR",
+          "sourceHandle": "59C",
+          "sourceBlock": "$DorLib2D$00000001",
+          "insertionPoint": [
+            68946.02,
+            2630.62
+          ],
+          "rotationDeg": 360.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F02-DR-003",
+          "type": "DOOR",
+          "sourceHandle": "59F",
+          "sourceBlock": "$DorLib2D$00000001",
+          "insertionPoint": [
+            73346.02,
+            4130.62
+          ],
+          "rotationDeg": 180.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F02-DR-004",
+          "type": "DOOR",
+          "sourceHandle": "5A5",
+          "sourceBlock": "$DorLib2D$00000001",
+          "insertionPoint": [
+            74746.02,
+            4130.62
+          ],
+          "rotationDeg": 180.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F02-WN-005",
+          "type": "WINDOW",
+          "sourceHandle": "5A8",
+          "sourceBlock": "$TCHSYS$WIN2D",
+          "insertionPoint": [
+            65446.02,
+            3380.62
+          ],
+          "rotationDeg": 90.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F02-WN-006",
+          "type": "WINDOW",
+          "sourceHandle": "5AB",
+          "sourceBlock": "$TCHSYS$WIN2D",
+          "insertionPoint": [
+            72596.02,
+            2630.62
+          ],
+          "rotationDeg": 360.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F02-WN-007",
+          "type": "WINDOW",
+          "sourceHandle": "5AE",
+          "sourceBlock": "$TCHSYS$WIN2D",
+          "insertionPoint": [
+            75996.02,
+            2630.62
+          ],
+          "rotationDeg": 360.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F02-WN-008",
+          "type": "WINDOW",
+          "sourceHandle": "5B1",
+          "sourceBlock": "$TCHSYS$WIN2D",
+          "insertionPoint": [
+            70396.02,
+            2630.62
+          ],
+          "rotationDeg": 360.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        },
+        {
+          "id": "HT-T014-F02-WN-009",
+          "type": "WINDOW",
+          "sourceHandle": "5B6",
+          "sourceBlock": "$TCHSYS$WIN2D",
+          "insertionPoint": [
+            67096.02,
+            2630.62
+          ],
+          "rotationDeg": 360.0,
+          "geometryStatus": "SOURCE_CONFIRMED",
+          "combinationId": null
+        }
+      ],
+      "stairs": [
+        {
+          "id": "HT-T014-F02-ST-001",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4EA",
+          "start": [
+            67846.02,
+            5330.62
+          ],
+          "end": [
+            67846.02,
+            8030.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-002",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4EB",
+          "start": [
+            66806.02,
+            5600.62
+          ],
+          "end": [
+            67846.02,
+            5600.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-003",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4EC",
+          "start": [
+            66806.02,
+            5870.62
+          ],
+          "end": [
+            67846.02,
+            5870.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-004",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4ED",
+          "start": [
+            66806.02,
+            6140.62
+          ],
+          "end": [
+            67846.02,
+            6140.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-005",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4EE",
+          "start": [
+            66806.02,
+            6410.62
+          ],
+          "end": [
+            67846.02,
+            6410.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-006",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4EF",
+          "start": [
+            66806.02,
+            6680.62
+          ],
+          "end": [
+            67846.02,
+            6680.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-007",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4F0",
+          "start": [
+            66806.02,
+            6950.62
+          ],
+          "end": [
+            67846.02,
+            6950.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-008",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4F1",
+          "start": [
+            66806.02,
+            7220.62
+          ],
+          "end": [
+            67846.02,
+            7220.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-009",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4F2",
+          "start": [
+            66806.02,
+            7490.62
+          ],
+          "end": [
+            67846.02,
+            7490.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-010",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4F3",
+          "start": [
+            66806.02,
+            7760.62
+          ],
+          "end": [
+            67846.02,
+            7760.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-011",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4F4",
+          "start": [
+            66806.02,
+            8030.62
+          ],
+          "end": [
+            67846.02,
+            8030.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-012",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4F5",
+          "start": [
+            66746.02,
+            5330.62
+          ],
+          "end": [
+            66746.02,
+            8030.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-013",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4F6",
+          "start": [
+            66806.02,
+            5330.62
+          ],
+          "end": [
+            67846.02,
+            5330.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-014",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4F7",
+          "start": [
+            66746.02,
+            5330.62
+          ],
+          "end": [
+            66806.02,
+            5330.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-015",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4F8",
+          "start": [
+            65546.02,
+            8030.62
+          ],
+          "end": [
+            65546.02,
+            5330.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-016",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4F9",
+          "start": [
+            66586.02,
+            8030.62
+          ],
+          "end": [
+            65546.02,
+            8030.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-017",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4FA",
+          "start": [
+            66586.02,
+            7760.62
+          ],
+          "end": [
+            65546.02,
+            7760.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-018",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4FB",
+          "start": [
+            66586.02,
+            7490.62
+          ],
+          "end": [
+            65546.02,
+            7490.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-019",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4FC",
+          "start": [
+            66586.02,
+            7220.62
+          ],
+          "end": [
+            65546.02,
+            7220.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-020",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4FD",
+          "start": [
+            66586.02,
+            6950.62
+          ],
+          "end": [
+            65546.02,
+            6950.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-021",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4FE",
+          "start": [
+            66586.02,
+            6680.62
+          ],
+          "end": [
+            65546.02,
+            6680.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-022",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "4FF",
+          "start": [
+            66586.02,
+            6410.62
+          ],
+          "end": [
+            65546.02,
+            6410.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-023",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "500",
+          "start": [
+            66586.02,
+            6140.62
+          ],
+          "end": [
+            65546.02,
+            6140.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-024",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "501",
+          "start": [
+            66586.02,
+            5870.62
+          ],
+          "end": [
+            65546.02,
+            5870.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-025",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "502",
+          "start": [
+            66586.02,
+            5600.62
+          ],
+          "end": [
+            65546.02,
+            5600.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-026",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "503",
+          "start": [
+            66586.02,
+            5330.62
+          ],
+          "end": [
+            65546.02,
+            5330.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-027",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "504",
+          "start": [
+            66646.02,
+            8030.62
+          ],
+          "end": [
+            66646.02,
+            5330.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-028",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "505",
+          "start": [
+            66746.02,
+            5330.62
+          ],
+          "end": [
+            66746.02,
+            8030.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-029",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "506",
+          "start": [
+            66746.02,
+            8030.62
+          ],
+          "end": [
+            66646.02,
+            8030.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-030",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "507",
+          "start": [
+            66646.02,
+            8030.62
+          ],
+          "end": [
+            66646.02,
+            5330.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-031",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "508",
+          "start": [
+            66646.02,
+            5330.62
+          ],
+          "end": [
+            67846.02,
+            5330.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-032",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "509",
+          "start": [
+            66806.02,
+            5330.62
+          ],
+          "end": [
+            66806.02,
+            8090.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-033",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "50A",
+          "start": [
+            66806.02,
+            8090.62
+          ],
+          "end": [
+            66586.02,
+            8090.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-034",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "50B",
+          "start": [
+            66586.02,
+            8090.62
+          ],
+          "end": [
+            66586.02,
+            5270.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-035",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "50C",
+          "start": [
+            66586.02,
+            5270.62
+          ],
+          "end": [
+            67846.02,
+            5270.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-036",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "50D",
+          "start": [
+            66746.02,
+            5330.62
+          ],
+          "end": [
+            66806.02,
+            5330.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-037",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "50E",
+          "start": [
+            67846.02,
+            5330.62
+          ],
+          "end": [
+            67846.02,
+            5270.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-038",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "50F",
+          "start": [
+            67846.02,
+            8030.62
+          ],
+          "end": [
+            67846.02,
+            9230.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-039",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "510",
+          "start": [
+            67846.02,
+            9230.62
+          ],
+          "end": [
+            65546.02,
+            9230.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-040",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "511",
+          "start": [
+            65546.02,
+            9230.62
+          ],
+          "end": [
+            65546.02,
+            8030.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-041",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "512",
+          "start": [
+            65546.02,
+            8030.62
+          ],
+          "end": [
+            66586.02,
+            8030.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-042",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "513",
+          "start": [
+            66806.02,
+            8030.62
+          ],
+          "end": [
+            67846.02,
+            8030.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-043",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "514",
+          "start": [
+            66646.02,
+            8030.62
+          ],
+          "end": [
+            66746.02,
+            8030.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        },
+        {
+          "id": "HT-T014-F02-ST-044",
+          "type": "STAIR-GEOMETRY",
+          "sourceHandle": "515",
+          "start": [
+            66746.02,
+            5330.62
+          ],
+          "end": [
+            66646.02,
+            5330.62
+          ],
+          "correspondenceId": "HT-T014-ST-001",
+          "geometryStatus": "ARCHITECT_CONFIRMED"
+        }
+      ],
+      "columns": [],
+      "annotations": [
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            66501.02,
+            9556.87
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            71651.02,
+            8906.87
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            68351.02,
+            5006.87
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            68551.02,
+            8806.87
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "PUB_TEXT",
+          "value": "下",
+          "position": [
+            66001.08,
+            4740.62
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "卧室",
+          "position": [
+            75704.54,
+            6937.92
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "18.50m",
+          "position": [
+            75400.71,
+            6426.05
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "2",
+          "position": [
+            76560.71,
+            6601.05
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "卫生间",
+          "position": [
+            68394.49,
+            7869.7
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "5.55m",
+          "position": [
+            68338.22,
+            7357.82
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "2",
+          "position": [
+            69338.22,
+            7532.82
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "1",
+          "position": [
+            65381.17,
+            -7341.76
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "1",
+          "position": [
+            65381.17,
+            14458.24
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "2",
+          "position": [
+            69490.71,
+            -7302.35
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "2",
+          "position": [
+            69490.71,
+            14497.65
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "3",
+          "position": [
+            73890.71,
+            -7302.35
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "3",
+          "position": [
+            73890.71,
+            14497.65
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "4",
+          "position": [
+            77783.28,
+            -7297.22
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "AXIS_TEXT",
+          "value": "4",
+          "position": [
+            77783.28,
+            14502.78
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "楼梯间",
+          "position": [
+            66222.62,
+            8730.62
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "9.11m",
+          "position": [
+            66201.02,
+            8218.75
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "2",
+          "position": [
+            67121.02,
+            8393.75
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            75801.02,
+            9006.87
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "露台",
+          "position": [
+            67168.86,
+            -504.73
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "卧室",
+          "position": [
+            71488.16,
+            6789.18
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "21.00m",
+          "position": [
+            71184.34,
+            6277.3
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "2",
+          "position": [
+            72344.34,
+            6452.3
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            68751.02,
+            2756.87
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            73151.02,
+            3606.87
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "过厅",
+          "position": [
+            67224.86,
+            4247.17
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "10.40m",
+          "position": [
+            66934.32,
+            3735.3
+          ]
+        },
+        {
+          "type": "TEXT",
+          "layer": "SPACE",
+          "value": "2",
+          "position": [
+            68094.32,
+            3910.3
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            74551.02,
+            3606.87
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            65969.77,
+            3185.62
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            72401.02,
+            2106.87
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            75801.02,
+            2106.87
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            70201.02,
+            2106.87
+          ]
+        },
+        {
+          "type": "ATTRIB",
+          "layer": "WINDOW_TEXT",
+          "value": "",
+          "position": [
+            66901.02,
+            2106.87
+          ]
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "rulesetVersion": "1.0.0",
+    "status": "APPROVED",
+    "results": [
+      {
+        "ruleCode": "DAT-007",
+        "severity": "info",
+        "passed": true,
+        "message": "TCH proxy entity count: 0"
+      },
+      {
+        "ruleCode": "REQ-FLOOR",
+        "severity": "info",
+        "passed": true,
+        "message": "Two separate floor plans parsed"
+      },
+      {
+        "ruleCode": "REQ-BEDROOM",
+        "severity": "info",
+        "passed": true,
+        "message": "Three-bedroom two-storey program confirmed"
+      },
+      {
+        "ruleCode": "GEO-FOOTPRINT",
+        "severity": "info",
+        "passed": true,
+        "message": "Floor exterior-face footprints architect-confirmed at 94.10m2 and 87.63m2; porch and balcony excluded"
+      },
+      {
+        "ruleCode": "GEO-ROOM-BOUNDARY",
+        "severity": "info",
+        "passed": true,
+        "message": "All floor room positions and wall-side boundaries architect-confirmed"
+      },
+      {
+        "ruleCode": "GEO-STAIR",
+        "severity": "info",
+        "passed": true,
+        "message": "Stair location, range and inter-floor correspondence confirmed"
+      },
+      {
+        "ruleCode": "GEO-WALL-TOPOLOGY",
+        "severity": "info",
+        "passed": true,
+        "message": "All unintended non-opening breaks auto-completed"
+      }
+    ]
+  },
+  "metadata": {
+    "importedAt": "2026-08-16T00:00:00+08:00",
+    "copyrightSource": "user_provided_project_use_only"
+  },
+  "approval": {
+    "status": "APPROVED",
+    "approvedAt": "2026-08-16",
+    "approvedBy": "user_architect_review",
+    "scope": [
+      "floor_1_exterior_footprint_excluding_porch",
+      "floor_2_exterior_footprint_excluding_balcony",
+      "all_room_positions_and_boundaries",
+      "stair_location_range_and_correspondence",
+      "wall_break_auto_repair"
+    ]
+  }
+}

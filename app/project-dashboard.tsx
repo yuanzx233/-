@@ -34,6 +34,8 @@ const stageLabel: Record<string, string> = {
   REQUIREMENT_DRAFT: "填写需求",
   PLAN_REVIEW: "确认平面",
   PLAN_READY: "需求已确认",
+  STYLE_DRAFT: "选择建筑风格",
+  RENDER_QUEUED: "效果图生成中",
   COMPLETED: "已完成",
 };
 
@@ -129,7 +131,7 @@ export function ProjectDashboard({ user }: { user: DashboardUser }) {
 
       <section className="hero">
         <div>
-          <p className="eyebrow">DAY 4 · 场地与户型需求</p>
+          <p className="eyebrow">DAY 6 · 方案对比与风格选择</p>
           <h1>从一张地块图，<br />到可沟通的家。</h1>
           <p className="hero-copy">
             创建项目，上传标准 DXF，系统将统一管理场地、版本、文件和异步生成任务。
@@ -246,7 +248,7 @@ export function ProjectDashboard({ user }: { user: DashboardUser }) {
 
       <footer>
         <p>筑想家生成内容仅用于前期概念沟通，不可直接用于施工、报建或结构安全判断。</p>
-        <span>Day 4 · 场地确认 + 结构化户型需求</span>
+        <span>Day 6 · 方案对比 + 版本锁定 + 风格任务</span>
       </footer>
     </main>
   );

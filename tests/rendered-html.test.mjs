@@ -71,3 +71,21 @@ test("Day 5 plan generation, comparison and confirmation are present", async () 
   assert.match(library, /HT-T001/); assert.match(library, /STANDARDIZED_AC1032\.dxf/); assert.match(generator, /generatePlanCandidates/); assert.match(generator, /bestPlacement/); assert.match(generator, /renderTemplateSvg/);
   assert.match(route, /action === "confirm"/); assert.match(route, /stage, status, data_json/);
 });
+
+test("Day 6 comparison, locked plan and style render brief are present", async () => {
+  const [workspace, route, styleBrief] = await Promise.all([
+    readFile("app/plan-workspace.tsx", "utf8"),
+    readFile("app/api/projects/[id]/plans/route.ts", "utf8"),
+    readFile("lib/style-brief.ts", "utf8"),
+  ]);
+  assert.match(workspace, /多方案对比/);
+  assert.match(workspace, /面积指标与需求满足度/);
+  assert.match(workspace, /平面版本已锁定/);
+  assert.match(workspace, /选择建筑风格与效果图参数/);
+  assert.match(workspace, /参考图链接/);
+  assert.match(route, /status = 'LOCKED'/);
+  assert.match(route, /PLAN_VERSION_ALREADY_LOCKED/);
+  assert.match(route, /RENDER_GENERATE/);
+  assert.match(styleBrief, /assembleRenderPrompt/);
+  assert.match(styleBrief, /preserveLockedPlan: true/);
+});

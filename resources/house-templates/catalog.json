@@ -54,6 +54,33 @@
       "manifest": "HT-T006/import-manifest.json",
       "searchable": true,
       "publishable": true
+    },
+    {
+      "id": "HT-T007", "name": "单层三房04（庭院型）", "version": "1.0.0", "status": "APPROVED", "manifest": "HT-T007/import-manifest.json", "searchable": true, "publishable": true
+    },
+    {
+      "id": "HT-T008", "name": "单层四房01（庭院泳池型）", "version": "1.0.0", "status": "APPROVED", "manifest": "HT-T008/import-manifest.json", "searchable": true, "publishable": true
+    },
+    {
+      "id": "HT-T009", "name": "单层四房02", "version": "1.0.0", "status": "APPROVED", "manifest": "HT-T009/import-manifest.json", "searchable": true, "publishable": true
+    },
+    {
+      "id": "HT-T010", "name": "二层五房01", "version": "1.0.0", "status": "APPROVED", "manifest": "HT-T010/import-manifest.json", "searchable": true, "publishable": true
+    },
+    {
+      "id": "HT-T011", "name": "二层四房01", "version": "1.0.0", "status": "APPROVED", "manifest": "HT-T011/import-manifest.json", "searchable": true, "publishable": true
+    },
+    {
+      "id": "HT-T012", "name": "二层六房01", "version": "1.0.0", "status": "APPROVED", "manifest": "HT-T012/import-manifest.json", "searchable": true, "publishable": true
+    },
+    {
+      "id": "HT-T013", "name": "二层三房01", "version": "1.0.0", "status": "APPROVED", "manifest": "HT-T013/import-manifest.json", "searchable": true, "publishable": true
+    },
+    {
+      "id": "HT-T014", "name": "二层三房02", "version": "1.0.0", "status": "APPROVED", "manifest": "HT-T014/import-manifest.json", "searchable": true, "publishable": true
+    },
+    {
+      "id": "HT-T015", "name": "二层四房02", "version": "1.0.0", "status": "APPROVED", "manifest": "HT-T015/import-manifest.json", "searchable": true, "publishable": true
     }
   ]
 }

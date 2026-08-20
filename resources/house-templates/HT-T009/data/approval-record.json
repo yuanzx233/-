@@ -1,0 +1,14 @@
+{
+  "status": "APPROVED",
+  "approvedAt": "2026-08-16",
+  "approvedBy": "user_architect_review",
+  "scope": [
+    "primary_exterior_footprint_and_area",
+    "outdoor_terrace_excluded",
+    "all_room_boundaries",
+    "room_boundary_stops_at_door_threshold",
+    "wall_break_auto_repair",
+    "door_and_window_positions",
+    "no_door_window_combinations"
+  ]
+}

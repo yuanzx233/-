@@ -51,7 +51,7 @@ function buildCandidate(template: MaturePlanTemplate, input: RequirementSubmissi
   };
   const rooms: PlanRoom[] = template.rooms.map(room => {
     const box = pairBounds(room.boundary);
-    return { id: room.id, name: room.name, floor: 1, area: round(room.area * scale * scale), x: box.minX, y: box.minY, width: box.maxX - box.minX, height: box.maxY - box.minY };
+    return { id: room.id, name: room.name, floor: room.floorNumber ?? 1, area: round(room.area * scale * scale), x: box.minX, y: box.minY, width: box.maxX - box.minX, height: box.maxY - box.minY };
   });
   const satisfaction = [
     { label: "成熟模板来源", met: true, detail: `${template.id} · v${template.version}` },
@@ -119,7 +119,7 @@ function renderTemplateSvgLegacy(template: MaturePlanTemplate, name: string): st
 }
 
 function renderTemplateSvg(template: MaturePlanTemplate, name: string): string {
-  const b = pairBounds([...template.footprint, ...ancillaryExtentPoints(template)]); const pad = 1500; const width = b.maxX - b.minX + pad * 2; const height = b.maxY - b.minY + pad * 2;
+  const b = pairBounds([...template.displayFootprints.flat(), ...ancillaryExtentPoints(template)]); const pad = 1500; const width = b.maxX - b.minX + pad * 2; const height = b.maxY - b.minY + pad * 2;
   const point = ([x, y]: number[]) => `${x - b.minX + pad},${b.maxY - y + pad}`;
   const rooms = template.rooms.map(room => {
     const center = polygonVisualCenter(room.boundary); const x = center[0] - b.minX + pad; const y = b.maxY - center[1] + pad;
@@ -129,7 +129,9 @@ function renderTemplateSvg(template: MaturePlanTemplate, name: string): string {
   const walls = template.walls.map(wall => `<line x1="${wall.start[0] - b.minX + pad}" y1="${b.maxY - wall.start[1] + pad}" x2="${wall.end[0] - b.minX + pad}" y2="${b.maxY - wall.end[1] + pad}" stroke="#454b49" stroke-width="70" stroke-linecap="square"/>`).join("");
   const openings = template.openings.map(opening => renderOpeningSegment(opening, template.walls, template.rooms, b, pad)).join("");
   const dimensions = renderAxisGrid(template, b, pad);
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(name)}成熟DXF户型及总尺寸"><rect width="100%" height="100%" fill="#f5f1e8"/>${dimensions}${renderAncillaryAreas(template, b, pad)}<polygon data-room-category="service-base" points="${template.footprint.map(point).join(" ")}" fill="#ddd9d0"/>${rooms}${walls}<polygon points="${template.footprint.map(point).join(" ")}" fill="none" stroke="#454b49" stroke-width="90"/>${openings}</svg>`;
+  const footprints = template.displayFootprints.map((footprint, index) => `<polygon data-floor-footprint="${index + 1}" data-room-category="service-base" points="${footprint.map(point).join(" ")}" fill="#ddd9d0" stroke="#454b49" stroke-width="90"/>`).join("");
+  const floorLabels = template.displayFootprints.length > 1 ? template.displayFootprints.map((footprint, index) => { const floorBounds = pairBounds(footprint); return `<text x="${(floorBounds.minX + floorBounds.maxX) / 2 - b.minX + pad}" y="${b.maxY - floorBounds.maxY + pad - 320}" text-anchor="middle" font-size="260" font-weight="700" fill="#173d34">${index + 1}F</text>`; }).join("") : "";
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(name)}成熟DXF户型及总尺寸"><rect width="100%" height="100%" fill="#f5f1e8"/>${dimensions}${renderAncillaryAreas(template, b, pad)}${footprints}${rooms}${walls}${openings}${floorLabels}</svg>`;
 }
 
 function ancillaryExtentPoints(template: MaturePlanTemplate): number[][] { return [...template.ancillaryAreas.flatMap(area => area.geometry?.kind === "POLYGON" ? area.geometry.points : area.geometry?.kind === "QUADRATIC_ARC_SEGMENT" ? [area.geometry.chordStart, area.geometry.chordEnd, area.geometry.controlPoint] : []), ...template.exteriorSteps.flatMap(step => step.kind === "LINEAR" ? [...step.treadLines.flat(), ...step.sideLines.flat()] : [...step.sideLines.flat(), ...step.curves.flatMap(curve => [curve.start, curve.end, [(curve.start[0] + curve.end[0] + curve.control[0] * 2) / 4, (curve.start[1] + curve.end[1] + curve.control[1] * 2) / 4] as [number, number]])])]; }

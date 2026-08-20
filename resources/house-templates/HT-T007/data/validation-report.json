@@ -1,0 +1,516 @@
+{
+  "templateId": "HT-T007",
+  "status": "APPROVED",
+  "source": "resources\\house-templates\\HT-T007\\normalized\\HT_T007_V0.3_STANDARDIZED_AC1032.dxf",
+  "entityTypes": {
+    "LINE": 202,
+    "LWPOLYLINE": 5,
+    "MTEXT": 1,
+    "DIMENSION": 18,
+    "TEXT": 33,
+    "INSERT": 40,
+    "ATTRIB": 40,
+    "SEQEND": 40
+  },
+  "sourceLayers": {
+    "DOTE": 9,
+    "0": 6,
+    "AXIS": 72,
+    "WALL": 171,
+    "SPACE": 33,
+    "WINDOW": 48,
+    "WINDOW_TEXT": 22,
+    "AXIS_TEXT": 18
+  },
+  "tchEntityCount": 0,
+  "buildingFootprintOutline": [
+    [
+      -262.72,
+      24632.46
+    ],
+    [
+      4437.28,
+      24632.46
+    ],
+    [
+      4437.28,
+      20132.46
+    ],
+    [
+      11237.28,
+      20132.46
+    ],
+    [
+      11237.28,
+      24632.46
+    ],
+    [
+      15437.28,
+      24632.46
+    ],
+    [
+      15437.28,
+      20932.46
+    ],
+    [
+      14937.28,
+      20932.46
+    ],
+    [
+      14937.28,
+      17632.46
+    ],
+    [
+      15437.28,
+      17632.46
+    ],
+    [
+      15437.28,
+      13432.46
+    ],
+    [
+      11237.28,
+      13432.46
+    ],
+    [
+      11237.28,
+      14432.46
+    ],
+    [
+      4437.28,
+      14432.46
+    ],
+    [
+      4437.28,
+      13432.46
+    ],
+    [
+      -262.72,
+      13432.46
+    ],
+    [
+      -262.72,
+      17632.46
+    ],
+    [
+      2537.28,
+      17632.46
+    ],
+    [
+      2537.28,
+      20432.46
+    ],
+    [
+      -262.72,
+      20432.46
+    ]
+  ],
+  "buildingAreaM2": 128.95,
+  "ancillaryAreas": [],
+  "rooms": [
+    {
+      "id": "HT-T007-F01-RM-001",
+      "floorId": "HT-T007-F01",
+      "type": "GYM",
+      "name": "健身房",
+      "area": 9.88,
+      "boundary": [
+        [
+          -62.72,
+          20632.46
+        ],
+        [
+          2537.28,
+          20632.46
+        ],
+        [
+          2537.28,
+          24432.46
+        ],
+        [
+          -62.72,
+          24432.46
+        ]
+      ],
+      "boundaryAreaM2": 9.88,
+      "labelPoint": [
+        1237.28,
+        22532.46
+      ],
+      "labelPlacement": "GEOMETRIC_CENTROID",
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    },
+    {
+      "id": "HT-T007-F01-RM-002",
+      "floorId": "HT-T007-F01",
+      "type": "BAT-COMMON",
+      "name": "卫生间一",
+      "area": 3.75,
+      "boundary": [
+        [
+          2737.28,
+          21932.46
+        ],
+        [
+          4237.28,
+          21932.46
+        ],
+        [
+          4237.28,
+          24432.46
+        ],
+        [
+          2737.28,
+          24432.46
+        ]
+      ],
+      "boundaryAreaM2": 3.75,
+      "labelPoint": [
+        3487.28,
+        23182.46
+      ],
+      "labelPlacement": "GEOMETRIC_CENTROID",
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    },
+    {
+      "id": "HT-T007-F01-RM-003",
+      "floorId": "HT-T007-F01",
+      "type": "BED-SECONDARY",
+      "name": "卧室一",
+      "area": 12.54,
+      "boundary": [
+        [
+          11437.28,
+          21132.46
+        ],
+        [
+          15237.28,
+          21132.46
+        ],
+        [
+          15237.28,
+          24432.46
+        ],
+        [
+          11437.28,
+          24432.46
+        ]
+      ],
+      "boundaryAreaM2": 12.54,
+      "labelPoint": [
+        13337.28,
+        22782.46
+      ],
+      "labelPlacement": "GEOMETRIC_CENTROID",
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    },
+    {
+      "id": "HT-T007-F01-RM-004",
+      "floorId": "HT-T007-F01",
+      "type": "BAT-COMMON",
+      "name": "卫生间二",
+      "area": 5.94,
+      "boundary": [
+        [
+          12937.28,
+          17632.46
+        ],
+        [
+          14737.28,
+          17632.46
+        ],
+        [
+          14737.28,
+          20932.46
+        ],
+        [
+          12937.28,
+          20932.46
+        ]
+      ],
+      "boundaryAreaM2": 5.94,
+      "labelPoint": [
+        13837.28,
+        19282.46
+      ],
+      "labelPlacement": "GEOMETRIC_CENTROID",
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    },
+    {
+      "id": "HT-T007-F01-RM-005",
+      "floorId": "HT-T007-F01",
+      "type": "BED-MASTER",
+      "name": "卧室二",
+      "area": 14.44,
+      "boundary": [
+        [
+          11437.28,
+          13632.46
+        ],
+        [
+          15237.28,
+          13632.46
+        ],
+        [
+          15237.28,
+          17432.46
+        ],
+        [
+          11437.28,
+          17432.46
+        ]
+      ],
+      "boundaryAreaM2": 14.44,
+      "labelPoint": [
+        13337.28,
+        15532.46
+      ],
+      "labelPlacement": "GEOMETRIC_CENTROID",
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    },
+    {
+      "id": "HT-T007-F01-RM-006",
+      "floorId": "HT-T007-F01",
+      "type": "BED-SECONDARY",
+      "name": "卧室三",
+      "area": 9.88,
+      "boundary": [
+        [
+          -62.72,
+          13632.46
+        ],
+        [
+          2537.28,
+          13632.46
+        ],
+        [
+          2537.28,
+          17432.46
+        ],
+        [
+          -62.72,
+          17432.46
+        ]
+      ],
+      "boundaryAreaM2": 9.88,
+      "labelPoint": [
+        1237.28,
+        15532.46
+      ],
+      "labelPlacement": "GEOMETRIC_CENTROID",
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    },
+    {
+      "id": "HT-T007-F01-RM-007",
+      "floorId": "HT-T007-F01",
+      "type": "STUDY",
+      "name": "书房",
+      "area": 5.7,
+      "boundary": [
+        [
+          2737.28,
+          13632.46
+        ],
+        [
+          4237.28,
+          13632.46
+        ],
+        [
+          4237.28,
+          17432.46
+        ],
+        [
+          2737.28,
+          17432.46
+        ]
+      ],
+      "boundaryAreaM2": 5.7,
+      "labelPoint": [
+        3487.28,
+        15532.46
+      ],
+      "labelPlacement": "GEOMETRIC_CENTROID",
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    },
+    {
+      "id": "HT-T007-F01-RM-008",
+      "floorId": "HT-T007-F01",
+      "type": "FOYER",
+      "name": "玄关",
+      "area": 4.2,
+      "boundary": [
+        [
+          2737.28,
+          17632.46
+        ],
+        [
+          4237.28,
+          17632.46
+        ],
+        [
+          4237.28,
+          20432.46
+        ],
+        [
+          2737.28,
+          20432.46
+        ]
+      ],
+      "boundaryAreaM2": 4.2,
+      "labelPoint": [
+        3487.28,
+        19032.46
+      ],
+      "labelPlacement": "GEOMETRIC_CENTROID",
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    },
+    {
+      "id": "HT-T007-F01-RM-009",
+      "floorId": "HT-T007-F01",
+      "type": "KIT-CLOSED",
+      "name": "厨房",
+      "area": 7.0,
+      "boundary": [
+        [
+          9237.28,
+          14632.46
+        ],
+        [
+          11237.28,
+          14632.46
+        ],
+        [
+          11237.28,
+          18132.46
+        ],
+        [
+          9237.28,
+          18132.46
+        ]
+      ],
+      "boundaryAreaM2": 7.0,
+      "labelPoint": [
+        10237.28,
+        16382.46
+      ],
+      "labelPlacement": "GEOMETRIC_CENTROID",
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    },
+    {
+      "id": "HT-T007-F01-RM-010",
+      "floorId": "HT-T007-F01",
+      "type": "LIVING-DINING",
+      "name": "餐客厅",
+      "area": 24.38,
+      "boundary": [
+        [
+          4437.28,
+          14632.46
+        ],
+        [
+          9037.28,
+          14632.46
+        ],
+        [
+          9037.28,
+          19932.46
+        ],
+        [
+          4437.28,
+          19932.46
+        ]
+      ],
+      "boundaryAreaM2": 24.38,
+      "labelPoint": [
+        6737.28,
+        17282.46
+      ],
+      "labelPlacement": "GEOMETRIC_CENTROID",
+      "geometryStatus": "ARCHITECT_CONFIRMED",
+      "required": true
+    }
+  ],
+  "objectCounts": {
+    "rooms": 10,
+    "wallSegments": 171,
+    "doors": 9,
+    "windows": 13
+  },
+  "drawingBoundsMm": [
+    -5162.72,
+    8532.46,
+    20337.28,
+    29532.46
+  ],
+  "checks": [
+    {
+      "ruleCode": "DAT-007",
+      "severity": "info",
+      "passed": true,
+      "message": "TCH proxy entity count: 0"
+    },
+    {
+      "ruleCode": "REQ-FLOOR",
+      "severity": "info",
+      "passed": true,
+      "message": "One-storey template confirmed"
+    },
+    {
+      "ruleCode": "REQ-BEDROOM",
+      "severity": "info",
+      "passed": true,
+      "message": "Architect confirmed 3 bedrooms"
+    },
+    {
+      "ruleCode": "REQ-AREA",
+      "severity": "info",
+      "passed": true,
+      "message": "Architect confirmed primary footprint area 128.95m2 and open-air courtyard 29.24m2 excluded"
+    },
+    {
+      "ruleCode": "GEO-ROOM-BOUNDARY",
+      "severity": "info",
+      "passed": true,
+      "reviewRequired": false,
+      "message": "All 10 indoor room boundaries and courtyard boundary confirmed; labels at geometric centroids"
+    },
+    {
+      "ruleCode": "GEO-WALL-TOPOLOGY",
+      "severity": "info",
+      "passed": true,
+      "reviewRequired": false,
+      "message": "Unintended wall breaks auto-repaired; living/dining connection retained"
+    },
+    {
+      "ruleCode": "GEO-OPENINGS",
+      "severity": "info",
+      "passed": true,
+      "reviewRequired": false,
+      "message": "Door/window positions confirmed; no door-window combinations"
+    }
+  ],
+  "approval": {
+    "status": "APPROVED",
+    "approvedAt": "2026-08-14",
+    "approvedBy": "user_architect_review",
+    "scope": [
+      "primary_exterior_footprint_and_area",
+      "no_ancillary_area",
+      "all_room_boundaries",
+      "living_dining_connection",
+      "wall_break_auto_repair",
+      "door_and_window_positions",
+      "no_door_window_combinations",
+      "room_labels_at_geometric_centroids"
+    ]
+  }
+}

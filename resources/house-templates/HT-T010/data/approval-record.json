@@ -1,0 +1,13 @@
+{
+  "status": "APPROVED",
+  "approvedAt": "2026-08-16",
+  "approvedBy": "user_architect_review",
+  "scope": [
+    "floor_1_exterior_footprint",
+    "floor_2_exterior_footprint",
+    "all_room_positions_and_boundaries",
+    "bedroom_1_and_3_extended_boundaries",
+    "stair_location_range_and_correspondence",
+    "wall_break_auto_repair"
+  ]
+}

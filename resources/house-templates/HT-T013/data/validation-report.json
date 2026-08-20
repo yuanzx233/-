@@ -1,0 +1,157 @@
+{
+  "templateId": "HT-T013",
+  "status": "APPROVED",
+  "source": "resources\\house-templates\\HT-T013\\normalized\\HT_T013_V0.3_STANDARDIZED_AC1032.dxf",
+  "entityTypes": {
+    "LINE": 311,
+    "LWPOLYLINE": 10,
+    "DIMENSION": 36,
+    "TEXT": 41,
+    "INSERT": 82,
+    "ATTRIB": 60,
+    "SEQEND": 60
+  },
+  "sourceLayers": {
+    "DOTE": 18,
+    "PUB_TITLE": 2,
+    "0": 6,
+    "AXIS": 144,
+    "WALL": 198,
+    "SPACE": 39,
+    "WINDOW": 48,
+    "WINDOW_TEXT": 24,
+    "PUB_TEXT": 2,
+    "DIM_SYMB": 2,
+    "STAIR": 59,
+    "AXIS_TEXT": 36,
+    "COLUMN": 22
+  },
+  "tchEntityCount": 0,
+  "floorFootprints": [
+    {
+      "floorId": "HT-T013-F01",
+      "outline": [
+        [
+          22773.03,
+          9250.49
+        ],
+        [
+          35773.03,
+          9250.49
+        ],
+        [
+          35773.03,
+          650.49
+        ],
+        [
+          22773.03,
+          650.49
+        ]
+      ],
+      "areaM2": 111.8,
+      "reviewStatus": "architect_confirmed"
+    },
+    {
+      "floorId": "HT-T013-F02",
+      "outline": [
+        [
+          76897.07,
+          9250.49
+        ],
+        [
+          89897.07,
+          9250.49
+        ],
+        [
+          89897.07,
+          650.49
+        ],
+        [
+          85697.07,
+          650.49
+        ],
+        [
+          85697.07,
+          5050.49
+        ],
+        [
+          76897.07,
+          5050.49
+        ]
+      ],
+      "areaM2": 73.08,
+      "reviewStatus": "architect_confirmed"
+    }
+  ],
+  "grossFloorAreaM2": 184.88,
+  "objectCounts": {
+    "floors": 2,
+    "rooms": 11,
+    "walls": 198,
+    "doors": 11,
+    "windows": 13,
+    "stairs": 59
+  },
+  "drawingBoundsMm": [
+    13453.76,
+    -7033.98,
+    98477.8,
+    15166.02
+  ],
+  "checks": [
+    {
+      "ruleCode": "DAT-007",
+      "severity": "info",
+      "passed": true,
+      "message": "TCH proxy entity count: 0"
+    },
+    {
+      "ruleCode": "REQ-FLOOR",
+      "severity": "info",
+      "passed": true,
+      "message": "Two separate floor plans parsed"
+    },
+    {
+      "ruleCode": "REQ-BEDROOM",
+      "severity": "info",
+      "passed": true,
+      "message": "Three-bedroom two-storey program confirmed"
+    },
+    {
+      "ruleCode": "GEO-FOOTPRINT",
+      "severity": "info",
+      "passed": true,
+      "message": "Floor exterior-face footprints architect-confirmed at 111.80m2 and 73.08m2; terrace excluded"
+    },
+    {
+      "ruleCode": "GEO-ROOM-BOUNDARY",
+      "severity": "info",
+      "passed": true,
+      "message": "All floor room positions and wall-side boundaries architect-confirmed"
+    },
+    {
+      "ruleCode": "GEO-STAIR",
+      "severity": "info",
+      "passed": true,
+      "message": "Stair location, range and inter-floor correspondence confirmed"
+    },
+    {
+      "ruleCode": "GEO-WALL-TOPOLOGY",
+      "severity": "info",
+      "passed": true,
+      "message": "All unintended non-opening breaks auto-completed"
+    }
+  ],
+  "approval": {
+    "status": "APPROVED",
+    "approvedAt": "2026-08-16",
+    "approvedBy": "user_architect_review",
+    "scope": [
+      "floor_1_exterior_footprint",
+      "floor_2_exterior_footprint_excluding_terrace",
+      "all_room_positions_and_boundaries",
+      "stair_location_range_and_correspondence",
+      "wall_break_auto_repair"
+    ]
+  }
+}

@@ -115,3 +115,13 @@ test("Day 7 render generation, gallery, retry and final selection are present", 
   assert.match(service, /MAIN_ENTRANCE/);
   assert.match(schema, /renderAssets/);
 });
+
+test("fixed HTML proposal report covers all required chapters and QA", async () => {
+  const [workspace, route, generator] = await Promise.all([readFile("app/report-workspace.tsx", "utf8"), readFile("app/api/projects/[id]/report/route.ts", "utf8"), readFile("lib/report-generator.ts", "utf8")]);
+  assert.match(workspace, /生成并下载方案 HTML/);
+  assert.match(route, /x-report-metrics-consistent/);
+  for (const chapter of ["cover","overview","requirements","cad","site","strategy","master-plan","floor-plans","metrics","style","renders","summary","risks","back-cover"]) assert.match(generator, new RegExp(`data-section|${chapter}`));
+  assert.match(generator, /object-fit:cover/);
+  assert.match(generator, /scrollHeight>page\.clientHeight/);
+  assert.match(generator, /metricsConsistent/);
+});

@@ -80,7 +80,7 @@ test("Day 6 comparison, locked plan and style render brief are present", async (
   ]);
   assert.match(workspace, /多方案对比/);
   assert.match(workspace, /面积指标与需求满足度/);
-  assert.match(workspace, /平面版本已锁定/);
+  assert.match(workspace, /基于当前方案创建新版本/);
   assert.match(workspace, /选择建筑风格与效果图参数/);
   assert.match(workspace, /参考图链接/);
   assert.match(route, /status = 'LOCKED'/);
@@ -88,6 +88,14 @@ test("Day 6 comparison, locked plan and style render brief are present", async (
   assert.match(route, /RENDER_GENERATE/);
   assert.match(styleBrief, /assembleRenderPrompt/);
   assert.match(styleBrief, /preserveLockedPlan: true/);
+});
+
+test("locked plans can create a child candidate version", async () => {
+  const workspace = await readFile("app/plan-workspace.tsx", "utf8");
+  const route = await readFile("app/api/projects/[id]/plans/route.ts", "utf8");
+  assert.match(workspace, /基于当前方案创建新版本/);
+  assert.match(workspace, /basedOnLocked: locked/);
+  assert.match(route, /lockedPlan\?\.id \?\? requirement\.id/);
 });
 
 test("Day 7 render generation, gallery, retry and final selection are present", async () => {

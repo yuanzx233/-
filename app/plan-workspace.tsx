@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { PlanCandidate } from "../lib/plan-generator";
 import { architecturalStyles, colorOptions, materialOptions, roofOptions, type StyleSelection } from "../lib/style-brief";
 import { RenderGallery } from "./render-gallery";
@@ -11,18 +11,30 @@ export function PlanWorkspace({ projectId, authHeaders, onConfirmed }: { project
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [confirmed, setConfirmed] = useState(false);
+  const [locked, setLocked] = useState(false);
   const [planVersionId, setPlanVersionId] = useState("");
   const [styleSaved, setStyleSaved] = useState(false);
   const [renderTaskId, setRenderTaskId] = useState("");
   const [style, setStyle] = useState<StyleSelection>({ architecturalStyle: architecturalStyles[0], materials: [materialOptions[0]], colorScheme: colorOptions[0], roofType: roofOptions[0], referenceImage: "", notes: "" });
 
+  useEffect(() => {
+    let cancelled = false;
+    void fetch(`/api/projects/${projectId}/plans`, { headers: authHeaders }).then(async response => {
+      if (!response.ok) return;
+      const payload = await response.json() as { plans?: PlanCandidate[]; selectedPlanId?: string; locked?: boolean; version?: { id?: string } };
+      if (cancelled || !payload.plans?.length) return;
+      setPlans(payload.plans); setSelected(payload.selectedPlanId ?? payload.plans[0]?.id ?? ""); setPlanVersionId(payload.version?.id ?? ""); setLocked(Boolean(payload.locked)); setConfirmed(Boolean(payload.locked));
+    }).catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [projectId]);
+
   async function generate() {
-    setLoading(true); setError(""); setConfirmed(false);
+    setLoading(true); setError("");
     try {
-      const response = await fetch(`/api/projects/${projectId}/plans`, { method: "POST", headers: { "content-type": "application/json", ...authHeaders }, body: JSON.stringify({ action: "generate" }) });
+      const response = await fetch(`/api/projects/${projectId}/plans`, { method: "POST", headers: { "content-type": "application/json", ...authHeaders }, body: JSON.stringify({ action: "generate", basedOnLocked: locked }) });
       const payload = await response.json() as { plans?: PlanCandidate[]; error?: string; message?: string };
       if (!response.ok || !payload.plans) throw new Error(payload.message ?? payload.error ?? "方案生成失败");
-      setPlans(payload.plans); setSelected(payload.plans[0]?.id ?? ""); setPlanVersionId((payload as { version?: { id: string } }).version?.id ?? "");
+      setPlans(payload.plans); setSelected(payload.plans[0]?.id ?? ""); setPlanVersionId((payload as { version?: { id: string } }).version?.id ?? ""); setLocked(false); setConfirmed(false);
     } catch (cause) { setError(cause instanceof Error ? cause.message : "方案生成失败"); }
     finally { setLoading(false); }
   }
@@ -61,7 +73,7 @@ export function PlanWorkspace({ projectId, authHeaders, onConfirmed }: { project
     finally { setLoading(false); }
   }
   return <section className="plan-workspace" id="plans">
-    <div className="cad-heading"><div><p className="eyebrow">DAY 6 · 方案对比与风格选择</p><h2>比较成熟方案，锁定平面并建立建筑风格</h2></div><button className="submit-button plan-generate" type="button" disabled={loading || confirmed} onClick={() => void generate()}>{confirmed ? "平面版本已锁定" : loading ? "正在生成…" : plans.length ? "重新匹配方案" : "生成候选方案"}</button></div>
+    <div className="cad-heading"><div><p className="eyebrow">DAY 6 · 方案对比与风格选择</p><h2>比较成熟方案，锁定平面并建立建筑风格</h2></div><button className="submit-button plan-generate" type="button" disabled={loading} onClick={() => void generate()}>{loading ? "正在生成…" : locked ? "基于当前方案创建新版本" : plans.length ? "重新匹配方案" : "生成候选方案"}</button></div>
     {error && <p className="error-banner">{error}</p>}
     {!plans.length && <div className="plan-empty"><strong>需求已保存，可以开始匹配</strong><p>直接读取已审核模板的标准化 DXF 与 template.json，保留原始墙体、门窗和房间关系；若没有成熟模板满足需求，系统不会临时拼装户型。</p></div>}
     {plans.length > 0 && <><div className="plan-list">{plans.map((plan) => <button type="button" key={plan.id} className={`plan-card ${selected === plan.id ? "active" : ""}`} onClick={() => !confirmed && setSelected(plan.id)}><span className="plan-rank">{plan.id}</span><div dangerouslySetInnerHTML={{ __html: plan.svg }} /><strong>{plan.name}</strong><span>{plan.totalArea.toFixed(1)} ㎡ · {plan.floors} 层</span><em>匹配度 {plan.score.toFixed(1)}% · 场地校验通过</em></button>)}</div>

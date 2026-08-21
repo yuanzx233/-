@@ -29,7 +29,7 @@ test("login and API routes are present in the production build", async () => {
   assert.match(login, /使用 ChatGPT 登录/);
   assert.match(projectsRoute, /export async function POST/);
   assert.match(uploadRoute, /uploadUrl/);
-  assert.match(uploadRoute, /body\.sourceUnit &&/);
+  assert.match(uploadRoute, /validateDxfUploadMetadata\(body\)/);
   assert.doesNotMatch(uploadRoute, /!body\.sourceUnit/);
   assert.match(parseRoute, /parseDxf/);
 });

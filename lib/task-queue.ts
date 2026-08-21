@@ -1,4 +1,5 @@
 import { getD1 } from "../db/runtime";
+import { canRetryTask } from "./task-policy";
 
 export const taskTypes = ["DXF_PARSE", "PLAN_GENERATE", "RENDER_GENERATE", "MODEL_GENERATE", "DOCUMENT_GENERATE"] as const;
 export type TaskType = (typeof taskTypes)[number];
@@ -67,7 +68,9 @@ export async function failTask(id: string, errorCode: string, errorMessage: stri
     .bind(errorCode, errorMessage, now, now, id).run();
 }
 
-export async function retryTask(id: string) {
+export async function retryTask(id: string, maximumRetries = 3) {
+  const current = await getD1().prepare("SELECT status, retries FROM generation_tasks WHERE id = ?").bind(id).first<{ status: string; retries: number }>();
+  if (!current || !canRetryTask(current.status, current.retries, maximumRetries)) return current;
   const now = new Date().toISOString();
   await getD1().prepare("UPDATE generation_tasks SET status = 'QUEUED', progress = 0, retries = retries + 1, error_code = NULL, error_message = NULL, available_at = ?, started_at = NULL, finished_at = NULL, updated_at = ? WHERE id = ? AND status IN ('FAILED', 'TIMED_OUT')")
     .bind(now, now, id).run();

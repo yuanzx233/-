@@ -1,9 +1,7 @@
 import type { NextRequest } from "next/server";
 import { getD1 } from "../../../../db/runtime";
 import { apiError, requireApiUser } from "../../../../lib/api-auth";
-
-const MAX_DXF_BYTES = 50 * 1024 * 1024;
-const ALLOWED_CONTENT_TYPES = new Set(["application/dxf", "application/x-dxf", "application/octet-stream", "text/plain", ""]);
+import { MAX_DXF_BYTES, validateDxfUploadMetadata } from "../../../../lib/upload-policy";
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,17 +18,8 @@ export async function POST(request: NextRequest) {
     if (!body.projectId || !body.fileName || body.size === undefined) {
       return Response.json({ error: "缺少 projectId、fileName 或 size" }, { status: 400 });
     }
-    if (!body.fileName.toLowerCase().endsWith(".dxf")) {
-      return Response.json({ error: "MVP 仅支持 DXF 文件" }, { status: 400 });
-    }
-    if (!ALLOWED_CONTENT_TYPES.has(body.contentType ?? "")) {
-      return Response.json({ error: "DXF_FILE_TYPE_INVALID" }, { status: 415 });
-    }
-    if (body.size <= 0) return Response.json({ error: "DXF_FILE_EMPTY" }, { status: 400 });
-    if (body.sourceUnit && !["mm", "cm", "m"].includes(body.sourceUnit)) {
-      return Response.json({ error: "DXF_UNIT_INVALID" }, { status: 400 });
-    }
-    if (body.size > MAX_DXF_BYTES) return Response.json({ error: "DXF 文件不能超过 50 MB" }, { status: 413 });
+    const policy = validateDxfUploadMetadata(body);
+    if (!policy.ok) return Response.json({ error: policy.error }, { status: policy.status });
     const project = await getD1().prepare("SELECT id FROM projects WHERE id = ? AND owner_id = ?")
       .bind(body.projectId, user.id).first();
     if (!project) return Response.json({ error: "PROJECT_NOT_FOUND" }, { status: 404 });

@@ -156,13 +156,16 @@ def write_pptx(preview: Path, output: Path, site_metrics: dict[str, object]) -> 
     p = title.text_frame.paragraphs[0]
     p.text = "自建房概念方案 - 技术验证"
     p.font.size, p.font.bold = Pt(26), True
-    slide.shapes.add_picture(str(preview), Inches(0.7), Inches(1.35), width=Inches(7.6))
-    box = slide.shapes.add_textbox(Inches(8.7), Inches(1.6), Inches(4), Inches(3))
+    slide.shapes.add_picture(str(preview), Inches(0.7), Inches(1.35), width=Inches(6.2))
+    box = slide.shapes.add_textbox(Inches(7.2), Inches(1.55), Inches(2.3), Inches(4.2))
     tf = box.text_frame
     tf.text = f"地块面积\n{site_metrics['areaMm2']/1_000_000:.1f} m²"
+    for paragraph in tf.paragraphs:
+        paragraph.font.size = Pt(15)
     for text in [f"周长 {site_metrics['perimeterMm']/1000:.1f} m", "输出：PNG / OBJ / PPTX / PDF", "仅用于概念验证，不可直接施工"]:
         para = tf.add_paragraph()
         para.text = text
+        para.font.size = Pt(13)
         para.space_before = Pt(14)
     prs.save(output)
 
@@ -184,7 +187,8 @@ def run() -> dict[str, object]:
     generate_fixtures()
     OUTPUT.mkdir(parents=True, exist_ok=True)
     report: dict[str, object] = {"valid": {}, "invalid": {}, "artifacts": {}}
-    for path in sorted(FIXTURES.glob("0*.dxf")):
+    for name in VALID_SITES:
+        path = FIXTURES / f"{name}.dxf"
         points = parse_site_boundary(path)
         report["valid"][path.name] = metrics(points)
     for path in sorted(FIXTURES.glob("invalid_*.dxf")):

@@ -131,7 +131,7 @@ export function ProjectDashboard({ user }: { user: DashboardUser }) {
 
       <section className="hero">
         <div>
-          <p className="eyebrow">DAY 6 · 方案对比与风格选择</p>
+          <p className="eyebrow">DAY 7 · 建筑效果图生成</p>
           <h1>从一张地块图，<br />到可沟通的家。</h1>
           <p className="hero-copy">
             创建项目，上传标准 DXF，系统将统一管理场地、版本、文件和异步生成任务。
@@ -248,7 +248,7 @@ export function ProjectDashboard({ user }: { user: DashboardUser }) {
 
       <footer>
         <p>筑想家生成内容仅用于前期概念沟通，不可直接用于施工、报建或结构安全判断。</p>
-        <span>Day 6 · 方案对比 + 版本锁定 + 风格任务</span>
+        <span>Day 7 · 三视角效果图 + 画廊确认 + 失败重试</span>
       </footer>
     </main>
   );

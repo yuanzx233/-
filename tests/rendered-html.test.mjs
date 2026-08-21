@@ -89,3 +89,21 @@ test("Day 6 comparison, locked plan and style render brief are present", async (
   assert.match(styleBrief, /assembleRenderPrompt/);
   assert.match(styleBrief, /preserveLockedPlan: true/);
 });
+
+test("Day 7 render generation, gallery, retry and final selection are present", async () => {
+  const [gallery, route, service, schema] = await Promise.all([
+    readFile("app/render-gallery.tsx", "utf8"),
+    readFile("app/api/projects/[id]/renders/route.ts", "utf8"),
+    readFile("lib/render-service.ts", "utf8"),
+    readFile("db/schema.ts", "utf8"),
+  ]);
+  assert.match(gallery, /主入口、鸟瞰与庭院视角/);
+  assert.match(gallery, /重新生成三种视角/);
+  assert.match(gallery, /选择为最终图/);
+  assert.match(route, /RENDER_TIMEOUT/);
+  assert.match(route, /retryTask/);
+  assert.match(route, /render_assets/);
+  assert.match(service, /IMAGE_API_URL/);
+  assert.match(service, /MAIN_ENTRANCE/);
+  assert.match(schema, /renderAssets/);
+});

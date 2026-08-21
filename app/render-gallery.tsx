@@ -1,0 +1,27 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+
+type RenderTask = { id: string; status: string; progress: number; errorCode?: string | null; errorMessage?: string | null; retries: number };
+type RenderAsset = { id: string; taskId: string; view: string; provider: string; selected: boolean; url: string; createdAt: string };
+const labels: Record<string, string> = { MAIN_ENTRANCE: "主入口", AERIAL: "鸟瞰", COURTYARD: "庭院" };
+
+export function RenderGallery({ projectId, authHeaders, initialTaskId, onConfirmed }: { projectId: string; authHeaders: Record<string, string>; initialTaskId: string; onConfirmed: () => void }) {
+  const [task, setTask] = useState<RenderTask | null>(initialTaskId ? { id: initialTaskId, status: "QUEUED", progress: 0, retries: 0 } : null);
+  const [assets, setAssets] = useState<RenderAsset[]>([]); const [busy, setBusy] = useState(false); const [error, setError] = useState("");
+  const load = useCallback(async () => { const response = await fetch(`/api/projects/${projectId}/renders`, { headers: authHeaders }); if (!response.ok) return; const payload = await response.json() as { task: RenderTask | null; assets: RenderAsset[] }; setTask(payload.task); setAssets(payload.assets); }, [projectId, authHeaders]);
+
+  useEffect(() => { if (!initialTaskId) return; let cancelled = false; const run = async () => { setBusy(true); setError(""); const process = fetch(`/api/projects/${projectId}/renders`, { method: "POST", headers: { "content-type": "application/json", ...authHeaders }, body: JSON.stringify({ action: "process", taskId: initialTaskId }) }); const timer = setInterval(() => { if (!cancelled) void load(); }, 700); try { const response = await process; const payload = await response.json() as { message?: string; error?: string }; if (!response.ok) throw new Error(payload.message ?? payload.error ?? "效果图生成失败"); await load(); } catch (cause) { setError(cause instanceof Error ? cause.message : "效果图生成失败"); await load(); } finally { clearInterval(timer); if (!cancelled) setBusy(false); } }; void run(); return () => { cancelled = true; }; }, [initialTaskId]);
+
+  async function action(name: "retry" | "regenerate", taskId?: string) { setBusy(true); setError(""); try { const response = await fetch(`/api/projects/${projectId}/renders`, { method: "POST", headers: { "content-type": "application/json", ...authHeaders }, body: JSON.stringify({ action: name, taskId }) }); const payload = await response.json() as { task?: RenderTask; message?: string; error?: string }; if (!response.ok) throw new Error(payload.message ?? payload.error ?? "操作失败"); await load(); } catch (cause) { setError(cause instanceof Error ? cause.message : "操作失败"); } finally { setBusy(false); } }
+  async function select(assetId: string) { setBusy(true); try { const response = await fetch(`/api/projects/${projectId}/renders`, { method: "POST", headers: { "content-type": "application/json", ...authHeaders }, body: JSON.stringify({ action: "select", assetId }) }); if (!response.ok) throw new Error("确认效果图失败"); setAssets(current => current.map(asset => ({ ...asset, selected: asset.id === assetId }))); onConfirmed(); } catch (cause) { setError(cause instanceof Error ? cause.message : "确认失败"); } finally { setBusy(false); } }
+
+  const failed = task && ["FAILED", "TIMED_OUT"].includes(task.status); const progress = task?.status === "SUCCEEDED" ? 100 : task?.progress ?? 0;
+  return <section className="render-workspace" id="renders"><div className="section-heading"><div><p className="eyebrow">DAY 7 · 建筑效果图</p><h3>从锁定平面生成外观方向</h3></div><span>{assets.length >= 2 ? `${assets.length} 张结果可选` : "至少交付 2 张"}</span></div>
+    {task && task.status !== "SUCCEEDED" && !failed && <div className="render-progress"><div><span style={{ width: `${progress}%` }} /></div><strong>{busy ? "正在生成主入口、鸟瞰与庭院视角…" : "等待生成任务"}</strong><em>{progress}%</em></div>}
+    {(error || failed) && <div className="render-error"><strong>{task?.status === "TIMED_OUT" ? "生成超时" : "生成失败"}</strong><p>{error || task?.errorMessage || "图像接口暂时不可用，可安全重试。"}</p><button type="button" disabled={busy} onClick={() => void action("retry", task?.id)}>重试任务</button></div>}
+    {assets.length > 0 && <><div className="render-gallery">{assets.map(asset => <article className={asset.selected ? "render-card selected" : "render-card"} key={asset.id}><RenderImage asset={asset} authHeaders={authHeaders}/><div><strong>{labels[asset.view] ?? asset.view}视角</strong><span>{asset.provider === "external-image-api" ? "图像生成接口" : "内置概念渲染"}</span></div><button type="button" disabled={busy || asset.selected} onClick={() => void select(asset.id)}>{asset.selected ? "✓ 已确认最终图" : "选择为最终图"}</button></article>)}</div><div className="render-actions"><p>重新生成会保留已锁定平面与风格参数，创建新的结果批次，不覆盖历史图片。</p><button className="quiet-button" type="button" disabled={busy} onClick={() => void action("regenerate")}>重新生成三种视角</button></div></>}
+  </section>;
+}
+
+function RenderImage({ asset, authHeaders }: { asset: RenderAsset; authHeaders: Record<string, string> }) { const [url, setUrl] = useState(""); useEffect(() => { let objectUrl = ""; let active = true; fetch(asset.url, { headers: authHeaders }).then(response => response.blob()).then(blob => { if (!active) return; objectUrl = URL.createObjectURL(blob); setUrl(objectUrl); }); return () => { active = false; if (objectUrl) URL.revokeObjectURL(objectUrl); }; }, [asset.url, authHeaders]); return url ? <img src={url} alt={`${labels[asset.view] ?? asset.view}建筑效果图`} /> : <div className="render-image-loading">正在读取图片…</div>; }

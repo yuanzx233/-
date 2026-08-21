@@ -13,13 +13,15 @@ export type StyleSelection = {
 };
 
 export type RenderPromptPayload = {
-  promptVersion: "DAY6_V1";
+  promptVersion: "DAY7_V1";
   planVersionId: string;
   selectedPlanId: string;
   templateId: string;
   style: StyleSelection;
   prompt: string;
   negativePrompt: string;
+  views: ["MAIN_ENTRANCE", "AERIAL", "COURTYARD"];
+  minimumDeliverables: 2;
   downstream: { taskType: "RENDER_GENERATE"; preserveLockedPlan: true };
 };
 
@@ -41,7 +43,7 @@ export function assembleRenderPrompt(input: {
 }): RenderPromptPayload {
   const { style } = input;
   return {
-    promptVersion: "DAY6_V1",
+    promptVersion: "DAY7_V1",
     planVersionId: input.planVersionId,
     selectedPlanId: input.selectedPlanId,
     templateId: input.templateId,
@@ -57,6 +59,8 @@ export function assembleRenderPrompt(input: {
       "真实建筑摄影质感，村镇独栋住宅尺度，日间柔和自然光，结构合理，材质节点清晰，正立面与入口可读。",
     ].filter(Boolean).join(" "),
     negativePrompt: "不得改动锁定平面，不得增减楼层，不得虚构悬挑结构，不得遮挡主入口，不出现文字、水印、人物畸变或不合理门窗。",
+    views: ["MAIN_ENTRANCE", "AERIAL", "COURTYARD"],
+    minimumDeliverables: 2,
     downstream: { taskType: "RENDER_GENERATE", preserveLockedPlan: true },
   };
 }

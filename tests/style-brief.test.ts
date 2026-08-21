@@ -16,6 +16,9 @@ test("assembles a downstream render task bound to the locked plan", () => {
   });
   assert.equal(payload.planVersionId, "plan-v6");
   assert.equal(payload.downstream.taskType, "RENDER_GENERATE");
+  assert.equal(payload.promptVersion, "DAY7_V1");
+  assert.deepEqual(payload.views, ["MAIN_ENTRANCE", "AERIAL", "COURTYARD"]);
+  assert.equal(payload.minimumDeliverables, 2);
   assert.equal(payload.downstream.preserveLockedPlan, true);
   assert.match(payload.prompt, /严格保持已锁定平面方案/);
   assert.match(payload.prompt, /新中式/);

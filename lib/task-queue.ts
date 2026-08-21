@@ -54,3 +54,22 @@ export async function finishTask(id: string, result: unknown) {
     "UPDATE generation_tasks SET status = 'SUCCEEDED', progress = 100, result_json = ?, finished_at = ?, updated_at = ? WHERE id = ?",
   ).bind(JSON.stringify(result), now, now, id).run();
 }
+
+export async function updateTaskProgress(id: string, progress: number) {
+  const now = new Date().toISOString();
+  await getD1().prepare("UPDATE generation_tasks SET status = 'RUNNING', progress = ?, started_at = COALESCE(started_at, ?), updated_at = ? WHERE id = ?")
+    .bind(Math.max(5, Math.min(95, Math.round(progress))), now, now, id).run();
+}
+
+export async function failTask(id: string, errorCode: string, errorMessage: string) {
+  const now = new Date().toISOString();
+  await getD1().prepare("UPDATE generation_tasks SET status = 'FAILED', error_code = ?, error_message = ?, finished_at = ?, updated_at = ? WHERE id = ?")
+    .bind(errorCode, errorMessage, now, now, id).run();
+}
+
+export async function retryTask(id: string) {
+  const now = new Date().toISOString();
+  await getD1().prepare("UPDATE generation_tasks SET status = 'QUEUED', progress = 0, retries = retries + 1, error_code = NULL, error_message = NULL, available_at = ?, started_at = NULL, finished_at = NULL, updated_at = ? WHERE id = ? AND status IN ('FAILED', 'TIMED_OUT')")
+    .bind(now, now, id).run();
+  return getD1().prepare("SELECT * FROM generation_tasks WHERE id = ?").bind(id).first();
+}

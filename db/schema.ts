@@ -91,3 +91,23 @@ export const generationTasks = sqliteTable("generation_tasks", {
   index("generation_tasks_queue_idx").on(table.status, table.availableAt),
   index("generation_tasks_project_idx").on(table.projectId),
 ]);
+
+export const renderAssets = sqliteTable("render_assets", {
+  id: text("id").primaryKey(),
+  projectId: text("project_id").notNull().references(() => projects.id),
+  taskId: text("task_id").notNull().references(() => generationTasks.id),
+  versionId: text("version_id").notNull().references(() => projectVersions.id),
+  ownerId: text("owner_id").notNull().references(() => users.id),
+  view: text("view").notNull(),
+  objectKey: text("object_key").notNull(),
+  contentType: text("content_type").notNull(),
+  promptJson: text("prompt_json").notNull(),
+  provider: text("provider").notNull(),
+  status: text("status").notNull().default("READY"),
+  selected: integer("selected", { mode: "boolean" }).notNull().default(false),
+  createdAt: text("created_at").notNull(),
+}, (table) => [
+  uniqueIndex("render_assets_object_key_idx").on(table.objectKey),
+  index("render_assets_project_idx").on(table.projectId, table.createdAt),
+  index("render_assets_task_idx").on(table.taskId),
+]);

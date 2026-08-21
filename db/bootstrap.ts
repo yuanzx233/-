@@ -77,6 +77,23 @@ const statements = [
     updated_at TEXT NOT NULL
   )`,
   "CREATE INDEX IF NOT EXISTS generation_tasks_queue_idx ON generation_tasks(status, available_at)",
+  `CREATE TABLE IF NOT EXISTS render_assets (
+    id TEXT PRIMARY KEY NOT NULL,
+    project_id TEXT NOT NULL REFERENCES projects(id),
+    task_id TEXT NOT NULL REFERENCES generation_tasks(id),
+    version_id TEXT NOT NULL REFERENCES project_versions(id),
+    owner_id TEXT NOT NULL REFERENCES users(id),
+    view TEXT NOT NULL,
+    object_key TEXT NOT NULL UNIQUE,
+    content_type TEXT NOT NULL,
+    prompt_json TEXT NOT NULL,
+    provider TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'READY',
+    selected INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL
+  )`,
+  "CREATE INDEX IF NOT EXISTS render_assets_project_idx ON render_assets(project_id, created_at)",
+  "CREATE INDEX IF NOT EXISTS render_assets_task_idx ON render_assets(task_id)",
 ];
 
 let ready: Promise<void> | null = null;

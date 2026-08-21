@@ -1,6 +1,12 @@
 "use client";
 import { useState } from "react";
 
+export function ReportPreviewButton({ projectId, authHeaders }: { projectId: string; authHeaders: Record<string,string> }) {
+  const [loading,setLoading]=useState(false); const [error,setError]=useState("");
+  async function preview(){ const tab=window.open("about:blank","_blank"); setLoading(true);setError(""); try{const response=await fetch(`/api/projects/${projectId}/report`,{headers:authHeaders});if(!response.ok)throw new Error("报告生成失败");const url=URL.createObjectURL(new Blob([await response.text()],{type:"text/html;charset=utf-8"}));if(tab)tab.location.href=url;else window.location.href=url;setTimeout(()=>URL.revokeObjectURL(url),300000)}catch(cause){tab?.close();setError(cause instanceof Error?cause.message:"生成失败")}finally{setLoading(false)}}
+  return <span className="report-preview-action"><button className="quiet-button" type="button" disabled={loading} onClick={()=>void preview()}>{loading?"生成中…":"预览方案 HTML"}</button>{error&&<small>{error}</small>}</span>;
+}
+
 export function ReportWorkspace({ projectId, authHeaders }: { projectId: string; authHeaders: Record<string,string> }) {
   const [loading,setLoading]=useState(false); const [error,setError]=useState(""); const [qa,setQa]=useState("");
   async function generate(){ setLoading(true);setError("");setQa(""); try { const response=await fetch(`/api/projects/${projectId}/report`,{headers:authHeaders}); if(!response.ok) throw new Error("方案 HTML 生成失败"); const html=await response.text(); const blob=new Blob([html],{type:"text/html;charset=utf-8"}); const url=URL.createObjectURL(blob); const link=document.createElement("a");link.href=url;link.download=`筑想家-方案报告.html`;link.click(); setTimeout(()=>URL.revokeObjectURL(url),30000); setQa(`已生成 ${response.headers.get("x-report-sections") || 14} 个固定章节 · 指标一致性${response.headers.get("x-report-metrics-consistent") === "true" ? "通过" : "需复核"}`); } catch(cause){setError(cause instanceof Error?cause.message:"生成失败")} finally{setLoading(false)} }

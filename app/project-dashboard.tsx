@@ -2,6 +2,7 @@
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { SiteUploadWorkspace } from "./site-upload-workspace";
+import { ReportPreviewButton } from "./report-workspace";
 
 type Project = {
   id: string;
@@ -203,6 +204,7 @@ export function ProjectDashboard({ user }: { user: DashboardUser }) {
                     {stageLabel[project.status] ?? project.status}
                   </span>
                   <time>{new Date(project.updatedAt).toLocaleDateString("zh-CN")}</time>
+                  <ReportPreviewButton projectId={project.id} authHeaders={authHeaders} />
                 </article>
               ))}
             </div>
